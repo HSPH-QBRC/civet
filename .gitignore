@@ -28,3 +28,13 @@ Icon
 Network Trash Folder
 Temporary Items
 .apdisk
+
+
+.env
+.vagrant/
+.librarian
+.terraform
+.terraform.tfstate*
+terraform.tfstate*
+terraform.tfvars
+__pycache__

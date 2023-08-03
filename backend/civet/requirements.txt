@@ -1,0 +1,10 @@
+boto3
+Django
+django-cors-headers
+django-storages
+djangorestframework
+djangorestframework-simplejwt
+gunicorn
+python-dotenv
+psycopg2
+watchtower

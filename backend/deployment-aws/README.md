@@ -1,0 +1,74 @@
+Install [AWS CLI](https://aws.amazon.com/cli/) and [Terraform](https://www.terraform.io/)
+
+Ensure you are working with the intended AWS account (or set `AWS_PROFILE` accordingly)
+
+If this is the first time deploying in your AWS account, [see the initial setup first](#init_setup).
+
+Configure Terraform:
+```shell
+cd deployment-aws/terraform
+terraform init
+```
+Create a new Terraform workspace, for example `dev`:
+```shell
+terraform workspace new dev
+```
+Note:
+* workspace name will be used for:
+  * naming AWS resources and Route53 records
+  * Terraform state S3 object prefix
+
+Configure the site using `terraform.tfvars` file, for example:
+```terraform
+TODO
+```
+
+Create a CNAME record with the `tm4.org` domain registrar or DNS provider, for example:
+```
+spiromics-dev-api.tm4.org    CNAME    spiromics-dev.aws.tm4.org
+```
+where `dev` is your Terraform workspace name
+
+Deploy the site:
+```shell
+terraform apply
+```
+Delete the site:
+```shell
+terraform destroy
+```
+
+<a name="init_setup"></a>
+## Initial setup
+The following steps need to be done only once to bootstrap the project in your AWS account.
+
+Create a private S3 bucket named `spiromics-terraform` to store Terraform state and secrets:
+```shell
+aws s3 mb s3://spiromics-terraform --region us-east-2
+aws s3api put-bucket-tagging --bucket spiromics-terraform --tagging 'TagSet=[{Key=Project,Value=spiromics}]'
+```
+(note that if you name the bucket as something else, you will need to modify the s3 backend in `main.tf`-- edit accordingly)
+
+[Create an HTTPS certificate](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html) for `*.tm4.org` in Certificate Manager
+
+[Create a public Route53 hosted zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html) `aws.tm4.org`
+
+
+## Connecting to the EC2 instances
+
+For debugging or other reasons, you may need to connect to the API server or Cromwell EC2 instances. To track/audit connections to these servers and avoid managing SSH keys, we use AWS Systems Manager (SSM).
+
+There are multiple ways to connect to the instance, but below we describe initiating a session using your local machine using the AWS cli (which we assume is installed).
+
+To initiate a session/connection from your local machine, you need to [install the SSM plugin.](https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html)
+
+Once that is installed, you can start a session using the following:
+
+```shell
+aws ssm start-session --target <INSTANCE_ID>
+```
+which will return a session ID in addition to connecting to your instance.
+
+Note that issuing `exit` in your session will terminate the connection, but you can also close it using `aws ssm terminate-session --session-id <SESSION_ID>`.
+
+Also note that by default, SSM will connect using Bourne shell (sh). [You can modify this preference usign the AWS cli or via console](https://aws.amazon.com/premiumsupport/knowledge-center/ssm-session-manager-change-shell/).

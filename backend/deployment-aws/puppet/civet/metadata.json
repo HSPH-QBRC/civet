@@ -1,0 +1,47 @@
+{
+  "name": "civet-api",
+  "version": "0.1.0",
+  "author": "hsph-qbrc",
+  "summary": "Installs and configures CIVET API server",
+  "license": "MIT",
+  "source": "https://github.com/hsph-qbrc/civet",
+  "dependencies": [
+    {
+      "name": "landcareresearch-solr",
+      "version_requirement": "7.0.0"
+    },
+    {
+      "name": "puppet-nginx",
+      "version_requirement": "3.3.0"
+    },
+    {
+      "name": "puppet-python",
+      "version_requirement": "6.2.1"
+    },
+    {
+      "name": "puppetlabs-postgresql",
+      "version_requirement": "8.1.0"
+    },
+    {
+      "name": "puppetlabs-stdlib",
+      "version_requirement": "6.6.0"
+    }
+  ],
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "Ubuntu",
+      "operatingsystemrelease": [
+        "22.04"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 7.18.0 < 8.0.0"
+    }
+  ],
+  "pdk-version": "2.5.0",
+  "template-url": "pdk-default#2.5.0",
+  "template-ref": "tags/2.5.0-0-g369d483"
+}
