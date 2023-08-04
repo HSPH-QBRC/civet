@@ -1,10 +1,10 @@
-boto3
-Django
-django-cors-headers
-django-storages
-djangorestframework
-djangorestframework-simplejwt
-gunicorn
-python-dotenv
-psycopg2
-watchtower
+boto3 == 1.28.20
+Django == 4.2.4
+django-cors-headers == 4.2.0
+django-storages == 1.13.2
+djangorestframework == 3.14.0
+djangorestframework-simplejwt == 5.2.2
+gunicorn == 21.2.0
+psycopg2 == 2.9.6
+python-dotenv == 1.0.0
+watchtower == 3.0.1
