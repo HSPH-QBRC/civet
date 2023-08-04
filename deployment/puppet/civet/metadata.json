@@ -16,7 +16,7 @@
     },
     {
       "name": "puppet-python",
-      "version_requirement": "6.2.1"
+      "version_requirement": "7.0.0"
     },
     {
       "name": "puppetlabs-postgresql",

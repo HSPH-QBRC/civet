@@ -2,16 +2,25 @@ class civet::django () {
   $root = "${civet::project_root}/civet"
   $secret_key = fqdn_rand_string(50)
   $static_root = '/srv/static'
+  $app_user_home = "/home/${civet::app_user}"
+  $virtualenv = "${app_user_home}/venv"
 
   class { 'python':
-    version => '3.10',
+    version  => '3.10',
+    venv     => 'present',
   }
 
-  python::requirements { 'civet':
-    requirements           => "${root}/requirements.txt",
-    pip_provider           => 'pip3',
-    forceupdate            => true,
-    fix_requirements_owner => false,
+  python::pyvenv { $virtualenv:
+    version => '3.10',
+    owner   => $civet::app_user,
+    group   => $civet::app_group,
+  }
+
+  python::requirements { "${root}/requirements.txt":
+    virtualenv  => $virtualenv,
+    forceupdate => true,
+    owner       => $civet::app_user,
+    group       => $civet::app_group,
   }
 
   file { 'dotenv':
@@ -23,7 +32,7 @@ class civet::django () {
   }
 
   file_line { 'django_settings_module':
-    path => "/home/${civet::app_user}/.profile",
+    path => "${app_user_home}/.profile",
     line => "export DJANGO_SETTINGS_MODULE=${civet::django_settings_module}",
   }
 
@@ -33,7 +42,7 @@ class civet::django () {
     group  => $civet::app_group,
   }
 
-  $manage = "/usr/bin/python3 ${root}/manage.py"
+  $manage = "${virtualenv}/bin/python ${root}/manage.py"
 
   exec { 'migrate':
     command     => "${manage} migrate",
@@ -41,7 +50,7 @@ class civet::django () {
     user        => $civet::app_user,
     group       => $civet::app_group,
     require     => [
-      Python::Requirements['civet'],
+      Python::Requirements["${root}/requirements.txt"],
       File['dotenv'],
     ],
   }

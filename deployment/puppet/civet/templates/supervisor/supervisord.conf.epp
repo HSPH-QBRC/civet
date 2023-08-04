@@ -9,7 +9,7 @@ logfile=/tmp/supervisord.log ; (main log file;default $CWD/supervisord.log)
 pidfile=/tmp/supervisord.pid ; (supervisord pidfile;default supervisord.pid)
 childlogdir=/tmp/supervisor            ; ('AUTO' child log dir, default $TEMP)
 user=<%= $civet::app_user %>
-environment = DJANGO_SETTINGS_MODULE="<%= $civet::django_settings_module %>"
+environment = PATH="<%= $civet::django::virtualenv %>/bin",DJANGO_SETTINGS_MODULE="<%= $civet::django_settings_module %>"
 
 ; the below section must remain in the config file for RPC
 ; (supervisorctl/web interface) to work, additional interfaces may be
