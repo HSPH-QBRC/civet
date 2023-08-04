@@ -1,14 +1,11 @@
 [program:gunicorn]
 
-command=/usr/local/bin/gunicorn civet.wsgi:application
-    --bind=unix:///tmp/gunicorn.sock
-    --workers 3
-    --timeout 120
+command=gunicorn civet.wsgi:application --bind=unix:///tmp/gunicorn.sock --workers 3 --timeout 120
 
 ; If supervisord is run as the root user, switch users to this UNIX user account
 ; before doing any processing.
 user=<%= $civet::app_user %>
-environment=HOME="/home/<%= $civet::app_user %>",USER="<%= $civet::app_user %>"
+environment = HOME="/home/<%= $civet::app_user %>",PATH="<%= $civet::django::virtualenv %>/bin",USER="<%= $civet::app_user %>"
 
 ; Location of Django project
 directory=<%= $civet::django::root %>
