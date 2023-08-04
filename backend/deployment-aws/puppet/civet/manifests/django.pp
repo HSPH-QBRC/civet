@@ -4,7 +4,7 @@ class civet::django () {
   $static_root = '/srv/static'
 
   class { 'python':
-    version => '3.8',
+    version => '3.10',
   }
 
   python::requirements { 'civet':
@@ -36,27 +36,32 @@ class civet::django () {
   $manage = "/usr/bin/python3 ${root}/manage.py"
 
   exec { 'migrate':
-    command => "${manage} migrate",
-    user    => $civet::app_user,
-    group   => $civet::app_group,
-    require => [
+    command     => "${manage} migrate",
+    environment => ["DJANGO_SETTINGS_MODULE=${civet::django_settings_module}"],
+    user        => $civet::app_user,
+    group       => $civet::app_group,
+    require     => [
       Python::Requirements['civet'],
       File['dotenv'],
-      File_line['django_settings_module'],
     ],
   }
   ->
   exec { 'superuser':
     command     => "${manage} superuser --noinput --email ${civet::django_superuser_email}",
-    environment => ["DJANGO_SUPERUSER_PASSWORD=${civet::django_superuser_password}"],
+    environment => [
+      "DJANGO_SETTINGS_MODULE=${civet::django_settings_module}",
+      "DJANGO_SUPERUSER_USERNAME=admin",
+      "DJANGO_SUPERUSER_PASSWORD=${civet::django_superuser_password}",
+    ],
     user        => $civet::app_user,
     group       => $civet::app_group,
   }
   ->
   exec { 'collectstatic':
-    command => "${manage} collectstatic --noinput",
-    user    => $civet::app_user,
-    group   => $civet::app_group,
-    require => File[$static_root],
+    command     => "${manage} collectstatic --noinput",
+    environment => ["DJANGO_SETTINGS_MODULE=${civet::django_settings_module}"],
+    user        => $civet::app_user,
+    group       => $civet::app_group,
+    require     => File[$static_root],
   }
 }

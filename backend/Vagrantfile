@@ -4,6 +4,17 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/jammy64"
 
+  config.vm.hostname = "civet"
+
+  config.vm.network "forwarded_port", guest: 80, host: 8080  # Gunicorn
+  config.vm.network "forwarded_port", guest: 8000, host: 8000  # Django dev server
+  config.vm.network "forwarded_port", guest: 8983, host: 8983  # Solr
+
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = 2048
+    vb.cpus = 2
+  end
+
   config.vm.provision "shell", inline: <<-SHELL
     # https://serverfault.com/a/670688
     export DEBIAN_FRONTEND=noninteractive
@@ -27,26 +38,7 @@ Vagrant.configure("2") do |config|
   SHELL
 
   config.vm.provision :puppet do |puppet|
-
-    puppet.facter['django_settings_module'] = "civet.settings_local"
-    
     puppet.manifests_path = "deployment-aws/puppet/manifests"
     puppet.manifest_file  = "site.pp"
-    
   end
-
-  config.vm.define "api", primary: true do |api|
-    api.vm.hostname = "civet-api"
-
-    api.vm.network "forwarded_port", guest: 80, host: 8080  # Gunicorn
-    api.vm.network "forwarded_port", guest: 8000, host: 8000  # Django dev server
-    api.vm.network "forwarded_port", guest: 8983, host: 8983  # Solr
-
-    api.vm.provider "virtualbox" do |vb|
-      vb.memory = 4096
-      vb.cpus = 2
-    end
-
-  end
-
 end
