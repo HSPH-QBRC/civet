@@ -6,7 +6,7 @@ If this is the first time deploying in your AWS account, [see the initial setup 
 
 Configure Terraform:
 ```shell
-cd deployment-aws/terraform
+cd deployment/terraform
 terraform init
 ```
 Create a new Terraform workspace, for example `dev`:

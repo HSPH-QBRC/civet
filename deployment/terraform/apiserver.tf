@@ -126,7 +126,7 @@ resource "aws_instance" "api" {
   /usr/bin/su -c "cd $PROJECT_ROOT && /usr/bin/git checkout -q ${local.commit_id}" ubuntu
 
   # install and configure librarian-puppet
-  export PUPPET_ROOT="$PROJECT_ROOT/deployment-aws/puppet"
+  export PUPPET_ROOT="$PROJECT_ROOT/deployment/puppet"
   /opt/puppetlabs/puppet/bin/gem install librarian-puppet -v 3.0.1 --no-document
   # need to set $HOME: https://github.com/rodjek/librarian-puppet/issues/258
   export HOME=/root

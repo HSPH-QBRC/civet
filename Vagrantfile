@@ -34,11 +34,11 @@ Vagrant.configure("2") do |config|
     /opt/puppetlabs/puppet/bin/gem install librarian-puppet -v 3.0.1 --no-document
     /opt/puppetlabs/puppet/bin/librarian-puppet config path /opt/puppetlabs/puppet/modules --global
     /opt/puppetlabs/puppet/bin/librarian-puppet config tmp /tmp --global
-    PATH="${PATH}:/opt/puppetlabs/bin" && cd /vagrant/deployment-aws/puppet && /opt/puppetlabs/puppet/bin/librarian-puppet install
+    PATH="${PATH}:/opt/puppetlabs/bin" && cd /vagrant/deployment/puppet && /opt/puppetlabs/puppet/bin/librarian-puppet install
   SHELL
 
   config.vm.provision :puppet do |puppet|
-    puppet.manifests_path = "deployment-aws/puppet/manifests"
+    puppet.manifests_path = "deployment/puppet/manifests"
     puppet.manifest_file  = "site.pp"
   end
 end
