@@ -4,14 +4,15 @@ class civet::django () {
   $static_root = '/srv/static'
   $app_user_home = "/home/${civet::app_user}"
   $virtualenv = "${app_user_home}/venv"
+  $python_version = '3.10'
 
   class { 'python':
-    version  => '3.10',
+    version  => $python_version,
     venv     => 'present',
   }
 
   python::pyvenv { $virtualenv:
-    version => '3.10',
+    version => $python_version,
     owner   => $civet::app_user,
     group   => $civet::app_group,
   }
