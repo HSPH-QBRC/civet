@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 #^syntax detection
 
-forge "https://forgeapi.puppetlabs.com"
+forge "https://forgeapi.puppet.com"
 
 mod 'qbrc-civet', '0.1.0', :path => './civet'
