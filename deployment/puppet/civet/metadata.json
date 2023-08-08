@@ -7,24 +7,28 @@
   "source": "https://github.com/hsph-qbrc/civet",
   "dependencies": [
     {
-      "name": "landcareresearch-solr",
-      "version_requirement": "7.0.2"
+      "name": "markt-solr",
+      "version_requirement": "3.2.0"
     },
     {
       "name": "puppet-nginx",
       "version_requirement": "5.0.0"
     },
     {
+      "name": "puppetlabs-postgresql",
+      "version_requirement": "9.1.0"
+    },
+    {
       "name": "puppet-python",
       "version_requirement": "7.0.0"
     },
     {
-      "name": "puppetlabs-postgresql",
-      "version_requirement": "8.2.1"
+      "name": "puppetlabs-stdlib",
+      "version_requirement": "8.6.0"
     },
     {
-      "name": "puppetlabs-stdlib",
-      "version_requirement": "6.6.0"
+      "name": "puppetlabs-apt",
+      "version_requirement": "9.0.2"
     }
   ],
   "operatingsystem_support": [
