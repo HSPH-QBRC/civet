@@ -5,8 +5,8 @@ from api.models.visit import SubjectVisit
 
 
 class VisitData(models.Model):
-    '''
-    Captures info about a subject at a specific visit.
+    """
+    Captures info/measures about a subject at a specific visit.
     
     Note that some of these measurements (again, think of BMI)
     are repeated from the initial visit. In that case, 
@@ -16,7 +16,7 @@ class VisitData(models.Model):
     is something we have to live with. For instance, there's no generic
     way to link BMI_V1 with the BMI field in the longitudinal data
     (which includes that same data point for visit 1)
-    '''
+    """
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     visit = models.ForeignKey(SubjectVisit, on_delete=models.CASCADE)
 

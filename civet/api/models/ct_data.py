@@ -5,9 +5,7 @@ from api.models.visit import SubjectVisit
 
 
 class ModifiedAirwaysData(models.Model):
-    '''
-    Corresponds to data described in the "Modified Airways" sheet
-    '''
+    """Corresponds to data described in the "Modified Airways" sheet"""
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     visit = models.ForeignKey(SubjectVisit, on_delete=models.CASCADE)
 
@@ -22,9 +20,7 @@ class ModifiedAirwaysData(models.Model):
 
 
 class MasterData(models.Model):
-    '''
-    Corresponds to data described in the "Master" sheet
-    '''
+    """Corresponds to data described in the "Master" sheet"""
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     visit = models.ForeignKey(SubjectVisit, on_delete=models.CASCADE)
 
@@ -39,9 +35,7 @@ class MasterData(models.Model):
 
 
 class TextureData(models.Model):
-    '''
-    Corresponds to data described in the "TextureAnalysis" sheet
-    '''
+    """Corresponds to data described in the "TextureAnalysis" sheet"""
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     visit = models.ForeignKey(SubjectVisit, on_delete=models.CASCADE)
 
@@ -54,9 +48,7 @@ class TextureData(models.Model):
 
 
 class TPVVData(models.Model):
-    '''
-    Corresponds to data described in the "TPVV" sheet
-    '''
+    """Corresponds to data described in the "TPVV" sheet"""
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     visit = models.ForeignKey(SubjectVisit, on_delete=models.CASCADE)
 
