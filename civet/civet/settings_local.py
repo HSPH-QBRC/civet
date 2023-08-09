@@ -8,6 +8,8 @@ SECRET_KEY = get_env('DJANGO_SECRET_KEY')
 
 DEBUG = True
 
+CSRF_TRUSTED_ORIGINS.append('http://localhost:8080')
+
 ###############################################################################
 # START logging settings for dev
 ###############################################################################
