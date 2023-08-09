@@ -1,5 +1,5 @@
 class civet::django () {
-  $root = "${civet::project_root}/civet"
+  $root = "${civet::project_root}/backend"
   $secret_key = fqdn_rand_string(50)
   $static_root = '/srv/static'
   $app_user_home = "/home/${civet::app_user}"

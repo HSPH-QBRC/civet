@@ -30,7 +30,7 @@ variable "database_superuser_password" {
 variable "django_settings_module" {
   description = "Settings module for the Django app"
   type        = string
-  default     = "civet.settings_production"
+  default     = "config.settings_cloud"
 }
 
 variable "django_superuser_email" {
