@@ -1,4 +1,3 @@
-from posixpath import basename
 from django.urls import path
 
 from api.views import ApiRoot, \
