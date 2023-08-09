@@ -1,7 +1,7 @@
 [program:gunicorn]
 
 command=<%= $civet::django::virtualenv %>/bin/gunicorn
-    civet.wsgi:application
+    config.wsgi:application
     --bind=unix:///tmp/gunicorn.sock --workers 3 --timeout 120
 
 ; If supervisord is run as the root user, switch users to this UNIX user account
