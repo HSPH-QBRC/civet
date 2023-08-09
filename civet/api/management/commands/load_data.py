@@ -31,6 +31,9 @@ class Command(BaseCommand):
         filepath = options['filepath']
         if table_type == 'subject':
             self._load_subject_table(filepath)
+        else:
+            raise NotImplementedError(f'NOPE! Loading the {table_type} table'
+                                      ' is not a valid option yet.')
 
     def _load_subject_table(self, filepath):
 
