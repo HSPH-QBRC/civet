@@ -6,6 +6,7 @@ import sys
 
 from api.models.subject import Subject
 from api.models.visit import SubjectVisit
+from api.models.mt_dna import MitoDNAMeasurement
 
 
 class Command(BaseCommand):
@@ -34,9 +35,86 @@ class Command(BaseCommand):
             self._load_subject_table(filepath)
         elif table_type == 'visit':
             self._load_visits(filepath)
+        elif table_type == 'mtdna':
+            self._load_mtdna(filepath)
         else:
             raise NotImplementedError(f'NOPE! Loading the {table_type} table'
                                       ' is not a valid option yet.')
+
+    def _load_mtdna(self, filepath):
+        """
+        Load a CSV file containing mitochondrial DNA data 
+        abundances into the api.models.mt_dna.MitDNAMeasurement
+        database model.
+        """
+        # columns in the dataframe we need.
+        # Note that the column headers have an
+        # implicit reference to the visit which we need
+        # to capture
+        selected_columns = ['SUBJID',
+                            'PLASMA_MT_DNA_V1',
+                            'URINE_MT_DNA_COPIES_G_V1',
+                            'PLASMA_MT_DNA_V4']
+        df = pd.read_csv(filepath, usecols=selected_columns)
+
+        for i, row in df.iterrows():
+            try:
+                subject = Subject.objects.get(subjid=row['SUBJID'])
+            except Subject.DoesNotExist:
+                print('You need to load the subjects first, before'
+                      ' you can create their associated visits.')
+                sys.exit(1)
+
+            # visit 1 data:
+            v1_plasma = row['PLASMA_MT_DNA_V1']
+            v1_urine = row['URINE_MT_DNA_COPIES_G_V1']
+
+            # we need to have a reference to this visit in the DB:
+            try:
+                subject_visit_v1 = SubjectVisit.objects.get(
+                    subject=subject, visit_id='VISIT_1')
+            except SubjectVisit.DoesNotExist:
+                print('A corresponding visit was not found. Ensure'
+                      ' that the visits data has already been loaded.')
+                sys.exit(1)
+
+            for key,val in zip(['pl', 'ur'], [v1_plasma, v1_urine]):
+                if not pd.isna(val):
+                    try:
+                        MitoDNAMeasurement.objects.create(
+                            visit=subject_visit_v1,
+                            measurement=val,
+                            source=key
+                        )
+                    except Exception as ex:
+                        print(f'Issue with row: {row.to_dict()}')
+                        print(ex)
+                        sys.exit(1)
+
+            # while v1 (initial) visits are required, we can have
+            # dropout and a subject might not have a v4 visit.
+            v4_plasma = row['PLASMA_MT_DNA_V4']
+
+            if not pd.isna(v4_plasma):
+                try:
+                    subject_visit_v4 = SubjectVisit.objects.get(
+                        subject=subject, visit_id='VISIT_4')
+                except SubjectVisit.DoesNotExist:
+                    print('Data indicated a measurement, but the corresponding'
+                          ' visit could not be found. Check the input tables.'
+                          f' Record was: {row.to_dict()}')
+                    sys.exit(1)
+
+                try:
+                    MitoDNAMeasurement.objects.create(
+                        visit=subject_visit_v4,
+                        measurement=v4_plasma,
+                        source='pl'
+                    )
+                except Exception as ex:
+                    print(f'Issue with row: {row.to_dict()}')
+                    print(ex)
+                    sys.exit(1)
 
     def _load_visits(self, filepath):
         """
