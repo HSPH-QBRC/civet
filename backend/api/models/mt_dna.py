@@ -1,6 +1,5 @@
 from django.db import models
 
-from api.models.subject import Subject
 from api.models.visit import SubjectVisit
 
 
