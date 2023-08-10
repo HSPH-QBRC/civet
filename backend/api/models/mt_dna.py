@@ -6,7 +6,6 @@ from api.models.visit import SubjectVisit
 
 class MitoDNAMeasurement(models.Model):
     """Corresponds to data collected on urine or plasma at a visit"""
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     visit = models.ForeignKey(SubjectVisit, on_delete=models.CASCADE)
 
     # the measured value (some number)
