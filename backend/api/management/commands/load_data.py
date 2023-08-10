@@ -88,7 +88,15 @@ class Command(BaseCommand):
             # `record` is a dictionary
             # note that the dataframe column names (and hence the keys of `record`)
             # are uppercase and the field names are lowercase.
-            d = {k: record[k.upper()] for k in model_fields}
+            d = {}
+            for k in model_fields:
+                # Note the try/except here is due to the model META API
+                # which returns foreign key relations in addition to the 
+                # explicitly defined fields. 
+                try:
+                    d[k] = record[k.upper()]
+                except KeyError:
+                    pass
 
             try:
                 Subject.objects.create(**d)

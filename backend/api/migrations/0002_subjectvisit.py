@@ -14,10 +14,20 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='SubjectVisit',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('visit_id', models.CharField()),
+                ('id', models.BigAutoField(auto_created=True,
+                                           primary_key=True,
+                                           serialize=False,
+                                           verbose_name='ID')),
+                ('visit_id', models.CharField(choices=[
+                                                       ('VISIT_1', 'Visit 1'),
+                                                       ('VISIT_2', 'Visit 2'),
+                                                       ('VISIT_3', 'Visit 3'),
+                                                       ('VISIT_4', 'Visit 4'),
+                                                      ],
+                                              max_length=7)),
                 ('date_visit', models.DateField(default=None)),
-                ('subject', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='api.subject')),
+                ('subject', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='api.subject')),
             ],
             options={
                 'unique_together': {('subject', 'visit_id')},
