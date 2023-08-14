@@ -23,6 +23,10 @@
       "version_requirement": "9.0.2"
     },
     {
+      "name": "puppetlabs-java",
+      "version_requirement": "10.1.2"
+    },
+    {
       "name": "puppetlabs-postgresql",
       "version_requirement": "9.1.0"
     },

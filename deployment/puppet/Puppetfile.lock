@@ -44,6 +44,7 @@ PATH
       puppet-nginx (= 5.0.0)
       puppet-python (= 7.0.0)
       puppetlabs-apt (= 9.0.2)
+      puppetlabs-java (= 10.1.2)
       puppetlabs-postgresql (= 9.1.0)
       puppetlabs-stdlib (= 8.6.0)
 
