@@ -3,7 +3,8 @@ from django.urls import path
 from api.views import ApiRoot, \
     SubjectViewSet, \
     SubjectVisitList, \
-    MitoDNAList
+    MitoDNAList, \
+    MitoDNACohortView
 
 urlpatterns = [
     path('', ApiRoot.as_view(), name='api-root'),
@@ -25,4 +26,9 @@ urlpatterns = [
     path('mt-dna/<str:source>/',
          MitoDNAList.as_view(),
          name='mito-list'),
+    # returns mt-DNA measurements for a set
+    # of selected subjects
+    path('mt-dna/<str:source>/cohort/',
+         MitoDNACohortView.as_view(),
+         name='mito-cohort')
 ]
