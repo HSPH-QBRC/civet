@@ -144,7 +144,8 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'PAGE_SIZE': 50,
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination'
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'COERCE_DECIMAL_TO_STRING': False
 }
 # This silences the page_size and default_pagination_class warning
 # that happens on startup.
