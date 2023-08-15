@@ -21,7 +21,7 @@ terraform {
   }
 
   backend "s3" {
-    bucket               = "civet-tf"
+    bucket               = "civet-terraform"
     key                  = "terraform.state"
     region               = "us-east-2"
     workspace_key_prefix = "workspace"

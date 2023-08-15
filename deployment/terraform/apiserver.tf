@@ -85,8 +85,8 @@ resource "aws_iam_instance_profile" "api_server_instance_profile" {
 
 resource "aws_instance" "api" {
   # Ubuntu 22.04 LTS https://cloud-images.ubuntu.com/locator/ec2/
-  ami                    = "ami-0ff39345bd62c82a5"
-  instance_type          = "t2.small"
+  ami                    = "ami-024e6efaf93d85776"
+  instance_type          = "t3.micro"
   monitoring             = true
   subnet_id              = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.api_server.id]
