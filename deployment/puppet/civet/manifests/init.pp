@@ -58,6 +58,7 @@ class civet (
     'libsqlite3-dev',
     'libpq-dev',
     'nano',
+    'nmon',
     'git',
     'curl',
     'pkg-config',
