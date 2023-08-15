@@ -57,15 +57,18 @@ class civet (
     'liblzma-dev',
     'libsqlite3-dev',
     'libpq-dev',
-    'nano',
-    'nmon',
-    'git',
-    'curl',
     'pkg-config',
-    'netcat',
-    'procps',
   ]
   package { $civet_dependencies: }
+
+  $helper_utilities = [
+    'curl',
+    'nano',
+    'netcat',
+    'nmon',
+    'procps',
+  ]
+  package { $helper_utilities: }
 
   contain civet::cloudwatch_agent
   contain civet::django
