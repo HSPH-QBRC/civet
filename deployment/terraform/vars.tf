@@ -58,11 +58,9 @@ variable "git_commit" {
 variable "https_certificate_id" {
   description = "ID of the HTTPS certificate"
   type        = string
-  default     = null
 }
 
 variable "route53_managed_zone" {
   description = "Name of the Route53 managed zone"
   type        = string
-  default     = null
 }

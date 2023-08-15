@@ -85,7 +85,7 @@ resource "aws_iam_instance_profile" "api_server_instance_profile" {
 
 resource "aws_instance" "api" {
   # Ubuntu 22.04 LTS https://cloud-images.ubuntu.com/locator/ec2/
-  ami                    = "ami-024e6efaf93d85776"
+  ami                    = "ami-05d251e0fc338590c"
   instance_type          = "t3.micro"
   monitoring             = true
   subnet_id              = aws_subnet.public.id
@@ -98,7 +98,7 @@ resource "aws_instance" "api" {
   volume_tags = merge(local.common_tags, { Name = "${local.common_tags.Name}-api" })
   root_block_device {
     volume_type = "gp3"
-    volume_size = 100
+    volume_size = 10
     encrypted   = true
   }
   user_data_replace_on_change = true
@@ -127,7 +127,7 @@ resource "aws_instance" "api" {
 
   # install and configure librarian-puppet
   export PUPPET_ROOT="$PROJECT_ROOT/deployment/puppet"
-  /opt/puppetlabs/puppet/bin/gem install librarian-puppet -v 3.0.1 --no-document
+  /opt/puppetlabs/puppet/bin/gem install librarian-puppet -v 5.0.0 --no-document
   # need to set $HOME: https://github.com/rodjek/librarian-puppet/issues/258
   export HOME=/root
   /opt/puppetlabs/puppet/bin/librarian-puppet config path /opt/puppetlabs/puppet/modules --global
