@@ -24,6 +24,8 @@ terraform init
 
 [Create a public Route53 hosted zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html) `civet.tm4.org`
 
+Create an [NS record](https://www.cloudflare.com/learning/dns/dns-records/dns-ns-record/) for `civet.tm4.org` subdomain at the DNS provider/registrar for `tm4.org` domain using values from the Route53 hosted zone above
+
 ## Deployment
 Create a new workspace, for example `dev`:
 ```shell
