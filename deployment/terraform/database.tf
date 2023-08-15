@@ -11,7 +11,7 @@ resource "aws_db_instance" "default" {
   identifier                 = local.common_tags.Name
   instance_class             = "db.t3.micro"
   engine                     = "postgres"
-  engine_version             = "15"
+  engine_version             = "14"
   auto_minor_version_upgrade = true
   allocated_storage          = 5
   storage_type               = "standard"

@@ -12,16 +12,10 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# regardless of dev or production, we need a DB:
-try:
-    db_name = os.environ['DB_NAME']
-except KeyError:
-    db_name = 'civetdb'
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': db_name,
+        'NAME': get_env('DB_NAME'),
         'USER': get_env('DB_USER'),
         'PASSWORD': get_env('DB_PASSWD'),
         'HOST': get_env('DB_HOST'),

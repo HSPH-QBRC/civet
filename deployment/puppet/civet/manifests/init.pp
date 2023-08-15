@@ -34,6 +34,7 @@ class civet (
     group  => $app_group,
   }
 
+  $database_name = 'civet'
   $database_user = $app_user
 
   $log_dir = '/var/log/civet'
