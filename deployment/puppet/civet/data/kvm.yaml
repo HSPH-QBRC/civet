@@ -1,4 +1,4 @@
 ---
 civet::app_user: "ubuntu"
 civet::django_settings_module: "config.settings_cloud"
-civet::project_root: "/srv/civet-backend"
+civet::project_root: "/srv/civet"

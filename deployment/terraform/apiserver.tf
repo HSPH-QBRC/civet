@@ -142,7 +142,7 @@ resource "aws_instance" "api" {
   export FACTER_CLOUDWATCH_LOG_GROUP='${aws_cloudwatch_log_group.default.name}'
   export FACTER_DATABASE_HOST='${aws_db_instance.default.address}'
   export FACTER_DATABASE_SUPERUSER='${aws_db_instance.default.username}'
-  export FACTER_DATABASE_SUPERUSER_PASSWORD='${var.database_superuser_password}'
+  export FACTER_DATABASE_SUPERUSER_PASSWORD='${aws_db_instance.default.password}'
   export FACTER_DATABASE_USER_PASSWORD='${var.database_password}'
   export FACTER_DEPLOYMENT_STACK='${local.stack}'
   export FACTER_DJANGO_CORS_ORIGINS='https://${var.frontend_domain},${var.additional_cors_origins}'

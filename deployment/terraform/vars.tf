@@ -24,6 +24,7 @@ variable "database_snapshot" {
 variable "database_superuser_password" {
   description = "Root password for database"
   type        = string
+  default     = null
   sensitive   = true
 }
 
