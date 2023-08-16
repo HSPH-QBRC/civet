@@ -83,6 +83,20 @@ resource "aws_iam_instance_profile" "api_server_instance_profile" {
   role = aws_iam_role.api_server_role.name
 }
 
+# password used by django for db access.
+# Only used if not explicitly set in tfvars
+resource "random_password" "civet_db" {
+  length  = 8
+  special = false
+}
+
+# superuser password for django.
+# Only used if not explicitly set in tfvars 
+resource "random_password" "django_superuser" {
+  length  = 8
+  special = false
+}
+
 resource "aws_instance" "api" {
   # Ubuntu 22.04 LTS https://cloud-images.ubuntu.com/locator/ec2/
   ami                    = "ami-05d251e0fc338590c"
@@ -143,12 +157,12 @@ resource "aws_instance" "api" {
   export FACTER_DATABASE_HOST='${aws_db_instance.default.address}'
   export FACTER_DATABASE_SUPERUSER='${aws_db_instance.default.username}'
   export FACTER_DATABASE_SUPERUSER_PASSWORD='${aws_db_instance.default.password}'
-  export FACTER_DATABASE_USER_PASSWORD='${var.database_password}'
+  export FACTER_DATABASE_USER_PASSWORD='${var.database_password == null ? random_password.civet_db.result : var.database_password}'
   export FACTER_DEPLOYMENT_STACK='${local.stack}'
   export FACTER_DJANGO_CORS_ORIGINS='https://${var.frontend_domain},${var.additional_cors_origins}'
   export FACTER_DJANGO_SETTINGS_MODULE='${var.django_settings_module}'
   export FACTER_DJANGO_SUPERUSER_EMAIL='${var.django_superuser_email}'
-  export FACTER_DJANGO_SUPERUSER_PASSWORD='${var.django_superuser_password}'
+  export FACTER_DJANGO_SUPERUSER_PASSWORD='${var.django_superuser_password == null ? random_password.django_superuser.result : var.django_superuser_password}'
   export FACTER_FRONTEND_DOMAIN='${var.frontend_domain}'
   export FACTER_STORAGE_BUCKET_NAME='${aws_s3_bucket.api_storage_bucket.id}'
 

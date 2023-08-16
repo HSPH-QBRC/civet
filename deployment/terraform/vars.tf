@@ -13,6 +13,7 @@ variable "database_password" {
   description = "Password for database user"
   type        = string
   sensitive   = true
+  default     = null
 }
 
 variable "database_snapshot" {
@@ -43,6 +44,7 @@ variable "django_superuser_password" {
   description = "Django superuser password"
   type        = string
   sensitive   = true
+  default     = null
 }
 
 variable "frontend_domain" {
