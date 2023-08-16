@@ -1,5 +1,8 @@
 from django.urls import path
 
+from rest_framework_simplejwt.views import TokenObtainPairView, \
+    TokenRefreshView
+
 from api.views import ApiRoot, \
     SubjectViewSet, \
     SubjectVisitList, \
@@ -7,7 +10,10 @@ from api.views import ApiRoot, \
     MitoDNACohortView
 
 urlpatterns = [
-    path('', ApiRoot.as_view(), name='api-root'),
+
+    # for handling api authentication:
+    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
     # lists all subjects
     path('subjects/',
@@ -30,5 +36,7 @@ urlpatterns = [
     # of selected subjects
     path('mt-dna/<str:source>/cohort/',
          MitoDNACohortView.as_view(),
-         name='mito-cohort')
+         name='mito-cohort'),
+
+    path('', ApiRoot.as_view(), name='api-root'),
 ]
