@@ -54,3 +54,18 @@ Delete the site:
 ```shell
 terraform destroy
 ```
+
+## Loading data
+
+After the application is provisioned, you still need to populate the database from CSV files. To do that, log onto the instance with either `vagrant ssh` (local) or `aws ssm start-session --target <ID>` (AWS).
+
+If local, ensure that the VM has access to the data files by placing them in an appropriate location. If on an AWS instance, you can place the files in `s3://<stack>-civet-storage/` and they will be available at `/data/`
+
+Then load in the following order:
+```
+source ~/venv/bin/activate
+cd /srv/civet/backend
+python3 manage.py load_data -t subject -f /data/clinical_data.csv
+python3 manage.py load_data -t visit -f /data/longitudinal_data.csv
+python3 manage.py load_data -t mtdna -f /data/AS072_MS170_mtDNA_2_230615.csv
+```

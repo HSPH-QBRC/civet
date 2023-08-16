@@ -71,6 +71,7 @@ class civet (
   ]
   package { $helper_utilities: }
 
+  contain civet::mountpoint_s3
   contain civet::cloudwatch_agent
   contain civet::django
   contain civet::nginx
