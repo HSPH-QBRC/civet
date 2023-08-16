@@ -10,9 +10,10 @@ variable "backend_domain" {
 }
 
 variable "database_password" {
-  description = "Password for mev database user"
+  description = "Password for database user"
   type        = string
   sensitive   = true
+  default     = null
 }
 
 variable "database_snapshot" {
@@ -24,6 +25,7 @@ variable "database_snapshot" {
 variable "database_superuser_password" {
   description = "Root password for database"
   type        = string
+  default     = null
   sensitive   = true
 }
 
@@ -42,6 +44,7 @@ variable "django_superuser_password" {
   description = "Django superuser password"
   type        = string
   sensitive   = true
+  default     = null
 }
 
 variable "frontend_domain" {
@@ -58,11 +61,10 @@ variable "git_commit" {
 variable "https_certificate_id" {
   description = "ID of the HTTPS certificate"
   type        = string
-  default     = null
 }
 
-variable "route53_managed_zone" {
-  description = "Name of the Route53 managed zone"
+variable "route53_hosted_zone" {
+  description = "Name of the Route53 hosted zone"
   type        = string
-  default     = null
+  default     = "civet.tm4.org"
 }

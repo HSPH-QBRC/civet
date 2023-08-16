@@ -15,3 +15,42 @@ Only done once to bootstrap the project on AWS. Create and tag a private S3 buck
 aws s3 mb s3://civet-terraform --region us-east-2
 aws s3api put-bucket-tagging --bucket civet-terraform --tagging 'TagSet=[{Key=Project,Value=CIVET}]'
 ```
+Configure Terraform:
+```shell
+cd deployment/terraform
+terraform init
+```
+[Create an HTTPS certificate](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html) for `*.tm4.org` in Certificate Manager
+
+[Create a public Route53 hosted zone](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/CreatingHostedZone.html) `civet.tm4.org`
+
+Create an [NS record](https://www.cloudflare.com/learning/dns/dns-records/dns-ns-record/) for `civet.tm4.org` subdomain at the `tm4.org` domain registrar or DNS provider using values from the Route53 hosted zone above
+
+## Deployment
+Create a new workspace, for example `dev`:
+```shell
+terraform workspace new dev
+```
+Create a CNAME record at the `tm4.org` domain registrar or DNS provider, for example:
+```
+dev-civet-api.tm4.org    CNAME    dev-api.civet.tm4.org
+```
+where `dev` is your Terraform workspace name
+
+Configure the site using `terraform.tfvars` file, for example:
+```terraform
+backend_domain = "dev-civet-api.tm4.org"
+django_superuser_email = "admin@example.org"
+frontend_domain = "dev-civet.tm4.org"
+https_certificate_id = "<UUID>"
+```
+Deploy the site:
+```shell
+terraform apply
+```
+
+## Cleanup
+Delete the site:
+```shell
+terraform destroy
+```

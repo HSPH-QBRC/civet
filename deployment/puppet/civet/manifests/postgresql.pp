@@ -24,7 +24,7 @@ class civet::postgresql () {
     createdb        => true,
   }
   ->
-  postgresql::server::db { 'civetdb':
+  postgresql::server::db { $civet::database_name:
     user     => $civet::database_user,
     password => $civet::database_user_password,
     owner    => $civet::database_user,

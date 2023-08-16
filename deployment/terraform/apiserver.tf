@@ -83,9 +83,23 @@ resource "aws_iam_instance_profile" "api_server_instance_profile" {
   role = aws_iam_role.api_server_role.name
 }
 
+# password used by django for db access.
+# Only used if not explicitly set in tfvars
+resource "random_password" "civet_db" {
+  length  = 8
+  special = false
+}
+
+# superuser password for django.
+# Only used if not explicitly set in tfvars 
+resource "random_password" "django_superuser" {
+  length  = 8
+  special = false
+}
+
 resource "aws_instance" "api" {
   # Ubuntu 22.04 LTS https://cloud-images.ubuntu.com/locator/ec2/
-  ami                    = "ami-024e6efaf93d85776"
+  ami                    = "ami-05d251e0fc338590c"
   instance_type          = "t3.micro"
   monitoring             = true
   subnet_id              = aws_subnet.public.id
@@ -98,7 +112,7 @@ resource "aws_instance" "api" {
   volume_tags = merge(local.common_tags, { Name = "${local.common_tags.Name}-api" })
   root_block_device {
     volume_type = "gp3"
-    volume_size = 100
+    volume_size = 10
     encrypted   = true
   }
   user_data_replace_on_change = true
@@ -127,7 +141,7 @@ resource "aws_instance" "api" {
 
   # install and configure librarian-puppet
   export PUPPET_ROOT="$PROJECT_ROOT/deployment/puppet"
-  /opt/puppetlabs/puppet/bin/gem install librarian-puppet -v 3.0.1 --no-document
+  /opt/puppetlabs/puppet/bin/gem install librarian-puppet -v 5.0.0 --no-document
   # need to set $HOME: https://github.com/rodjek/librarian-puppet/issues/258
   export HOME=/root
   /opt/puppetlabs/puppet/bin/librarian-puppet config path /opt/puppetlabs/puppet/modules --global
@@ -142,13 +156,13 @@ resource "aws_instance" "api" {
   export FACTER_CLOUDWATCH_LOG_GROUP='${aws_cloudwatch_log_group.default.name}'
   export FACTER_DATABASE_HOST='${aws_db_instance.default.address}'
   export FACTER_DATABASE_SUPERUSER='${aws_db_instance.default.username}'
-  export FACTER_DATABASE_SUPERUSER_PASSWORD='${var.database_superuser_password}'
-  export FACTER_DATABASE_USER_PASSWORD='${var.database_password}'
+  export FACTER_DATABASE_SUPERUSER_PASSWORD='${aws_db_instance.default.password}'
+  export FACTER_DATABASE_USER_PASSWORD='${var.database_password == null ? random_password.civet_db.result : var.database_password}'
   export FACTER_DEPLOYMENT_STACK='${local.stack}'
   export FACTER_DJANGO_CORS_ORIGINS='https://${var.frontend_domain},${var.additional_cors_origins}'
   export FACTER_DJANGO_SETTINGS_MODULE='${var.django_settings_module}'
   export FACTER_DJANGO_SUPERUSER_EMAIL='${var.django_superuser_email}'
-  export FACTER_DJANGO_SUPERUSER_PASSWORD='${var.django_superuser_password}'
+  export FACTER_DJANGO_SUPERUSER_PASSWORD='${var.django_superuser_password == null ? random_password.django_superuser.result : var.django_superuser_password}'
   export FACTER_FRONTEND_DOMAIN='${var.frontend_domain}'
   export FACTER_STORAGE_BUCKET_NAME='${aws_s3_bucket.api_storage_bucket.id}'
 
