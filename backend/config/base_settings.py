@@ -156,7 +156,6 @@ SILENCED_SYSTEM_CHECKS = ["rest_framework.W001"]
 
 # settings for the DRF JWT app:
 SIMPLE_JWT = {
-    'USER_ID_FIELD': 'user_uuid',
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15)
 }
 
