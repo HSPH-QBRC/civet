@@ -43,7 +43,6 @@ backend_domain = "dev-civet-api.tm4.org"
 django_superuser_email = "admin@example.org"
 frontend_domain = "dev-civet.tm4.org"
 https_certificate_id = "<UUID>"
-route53_managed_zone="civet.tm4.org"
 ```
 Deploy the site:
 ```shell

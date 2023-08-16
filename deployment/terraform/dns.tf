@@ -1,5 +1,5 @@
 data "aws_route53_zone" "main" {
-  name = var.route53_managed_zone
+  name = var.route53_hosted_zone
 }
 
 locals {

@@ -61,7 +61,8 @@ variable "https_certificate_id" {
   type        = string
 }
 
-variable "route53_managed_zone" {
-  description = "Name of the Route53 managed zone"
+variable "route53_hosted_zone" {
+  description = "Name of the Route53 hosted zone"
   type        = string
+  default     = "civet.tm4.org"
 }
