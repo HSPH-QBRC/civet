@@ -10,7 +10,7 @@ variable "backend_domain" {
 }
 
 variable "database_password" {
-  description = "Password for mev database user"
+  description = "Password for database user"
   type        = string
   sensitive   = true
 }
