@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema name="subject-config" version="1.6">
-  <uniqueKey>id</uniqueKey>
+  <uniqueKey>SUBJID</uniqueKey>
   
   <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
   <fieldType name="booleans" class="solr.BoolField" sortMissingLast="true" multiValued="true"/>

@@ -55,7 +55,7 @@ Delete the site:
 terraform destroy
 ```
 
-## Loading data
+## Loading data to DB
 
 After the application is provisioned, you still need to populate the database from CSV files. To do that, log onto the instance with either `vagrant ssh` (local) or `aws ssm start-session --target <ID>` (AWS).
 
@@ -68,3 +68,13 @@ python3 $DJANGO_ROOT/manage.py load_data -t subject -f /data/clinical_data.csv
 python3 $DJANGO_ROOT/manage.py load_data -t visit -f /data/longitudinal_data.csv
 python3 $DJANGO_ROOT/manage.py load_data -t mtdna -f /data/AS072_MS170_mtDNA_2_230615.csv
 ```
+
+## Loading data into solr (if used)
+
+If you wish to use solr to assist with faceted views, you will need to load files into the solr index after the application is provisioned. To do that, log onto the instance with either `vagrant ssh` (local) or `aws ssm start-session --target <ID>` (AWS).
+
+Then run the following to load the subjects file:
+```
+/opt/solr/bin/post -c subjects /data/clinical_data.csv
+```
+(adjust the path to the clinical/subjects file as necessary)
