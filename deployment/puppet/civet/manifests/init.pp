@@ -55,6 +55,7 @@ class civet (
     'libreadline-dev',
     'libbz2-dev',
     'libffi-dev',
+    'libfuse2',
     'liblzma-dev',
     'libsqlite3-dev',
     'libpq-dev',
