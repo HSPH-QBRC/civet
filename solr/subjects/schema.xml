@@ -7,6 +7,7 @@
   <fieldType name="plong" class="solr.LongPointField" docValues="true"/>
   <fieldType name="plongs" class="solr.LongPointField" docValues="true" multiValued="true"/>
   <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true"/>
+  <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100" multiValued="true">
 
   <field name="ADVAIR_DOSE_V1" type="pdoubles"/>
   <field name="ADVAIR_PUFFSDAY_V1" type="pdoubles"/>
