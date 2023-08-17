@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema name="subject-config" version="1.6">
+  <uniqueKey>id</uniqueKey>
+  
+  <fieldType name="pdouble" class="solr.DoublePointField" docValues="true"/>
+  <fieldType name="pdoubles" class="solr.DoublePointField" docValues="true" multiValued="true"/>
+  <fieldType name="plong" class="solr.LongPointField" docValues="true"/>
+  <fieldType name="plongs" class="solr.LongPointField" docValues="true" multiValued="true"/>
+  <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true"/>
+
+  <field name="ADVAIR_DOSE_V1" type="pdoubles"/>
+  <field name="ADVAIR_PUFFSDAY_V1" type="pdoubles"/>
+  <field name="ADVAIR_V1" type="pdoubles"/>
+  <field name="AGE_DERV_V1" type="plongs"/>
+  <field name="ALBUTEROL_NEB_V1" type="pdoubles"/>
+  <field name="ALBUTEROL_PUFFSDAY_V1" type="pdoubles"/>
+  <field name="ALBUTEROL_V1" type="pdoubles"/>
+  <field name="ASTHMA_CHILD_V1" type="pdoubles"/>
+  <field name="ASTHMA_DX_V1" type="pdoubles"/>
+  <field name="BETA_BLOCKER_V1" type="pdoubles"/>
+  <field name="BMH08B_V1" type="pdoubles"/>
+  <field name="BMH08H_V1" type="pdoubles"/>
+  <field name="BMH08I_V1" type="pdoubles"/>
+  <field name="BMI_CM_V1" type="pdoubles"/>
+  <field name="BMI_CM_V2" type="pdoubles"/>
+  <field name="CBC_EOSINOPHIL_PCT_V1" type="pdoubles"/>
+  <field name="CBC_LYMPHOCYTE_PCT_V1" type="pdoubles"/>
+  <field name="CBC_NEUTROPHIL_PCT_V1" type="pdoubles"/>
+  <field name="CURRENT_SMOKER_V1" type="pdoubles"/>
+  <field name="DATE_V1" type="string"/>
+  <field name="DATE_V2" type="string"/>
+  <field name="DATE_V3" type="string"/>
+  <field name="DATE_V4" type="string"/>
+  <field name="DEM02_V1" type="pdoubles"/>
+  <field name="DEM03_V1" type="pdoubles"/>
+  <field name="DEM04_V1" type="pdoubles"/>
+  <field name="DIABETES_DERV_V1" type="pdoubles"/>
+  <field name="ETHNICITY" type="pdoubles"/>
+  <field name="FACIT_SOCIALWELLBEING_V1" type="pdoubles"/>
+  <field name="GENDER" type="plongs"/>
+  <field name="RACE" type="plongs"/>
+  <field name="SITE" type="string"/>
+  <field name="STRATUM_ENROLLED" type="plongs"/>
+  <field name="SUBJID" type="string"/>
+  <field name="WT_KG_V1" type="pdoubles"/>
+  <field name="_version_" type="plong" indexed="false" stored="false"/>
+  <field name="id" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
+  
+</schema>

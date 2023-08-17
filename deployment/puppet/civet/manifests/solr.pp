@@ -12,8 +12,8 @@ class civet::solr () {
     owner  => $::solr::solr_user,
     group  => $::solr::solr_user,
   }
-  solr::core { 'dummy':
-    schema_src_file     => "${civet::project_root}/solr/dummy/schema.xml",
-    solrconfig_src_file => "${civet::project_root}/solr/dummy/solrconfig.xml",
+  solr::core { 'subjects':
+    schema_src_file     => "${civet::project_root}/solr/subjects/schema.xml",
+    solrconfig_src_file => "${civet::project_root}/solr/subjects/solrconfig.xml",
   }
 }
