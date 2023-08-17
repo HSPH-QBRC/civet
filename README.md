@@ -59,13 +59,12 @@ terraform destroy
 
 After the application is provisioned, you still need to populate the database from CSV files. To do that, log onto the instance with either `vagrant ssh` (local) or `aws ssm start-session --target <ID>` (AWS).
 
-If local, ensure that the VM has access to the data files by placing them in an appropriate location. If on an AWS instance, you can place the files in `s3://<stack>-civet-storage/` and they will be available at `/data/`
+If local, ensure that the VM has access to the data files by placing them in an appropriate location on the host machine. If on an AWS instance, you can place the files in `s3://<stack>-civet-storage/` and they will be available at `/data/`
 
-Then load in the following order:
+Depending on your deployment, you will need to set your "django root" accordingly; this is where the Django `manage.py` lives. If local, this will be at `DJANGO_ROOT=/vagrant/backend/`. If on AWS, `DJANGO_ROOT=/src/civet/backend/`. Then:
 ```
 source ~/venv/bin/activate
-cd /srv/civet/backend
-python3 manage.py load_data -t subject -f /data/clinical_data.csv
-python3 manage.py load_data -t visit -f /data/longitudinal_data.csv
-python3 manage.py load_data -t mtdna -f /data/AS072_MS170_mtDNA_2_230615.csv
+python3 $DJANGO_ROOT/manage.py load_data -t subject -f /data/clinical_data.csv
+python3 $DJANGO_ROOT/manage.py load_data -t visit -f /data/longitudinal_data.csv
+python3 $DJANGO_ROOT/manage.py load_data -t mtdna -f /data/AS072_MS170_mtDNA_2_230615.csv
 ```
