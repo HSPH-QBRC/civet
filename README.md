@@ -61,7 +61,7 @@ After the application is provisioned, you still need to populate the database fr
 
 If local, ensure that the VM has access to the data files by placing them in an appropriate location on the host machine. If on an AWS instance, you can place the files in `s3://<stack>-civet-storage/` and they will be available at `/data/`
 
-Depending on your deployment, you will need to set your "django root" accordingly; this is where the Django `manage.py` lives. If local, this will be at `DJANGO_ROOT=/vagrant/backend/`. If on AWS, `DJANGO_ROOT=/src/civet/backend/`. Then:
+Depending on your deployment, you will need to set your "django root" accordingly; this is where the Django `manage.py` lives. If local, this will be at `DJANGO_ROOT=/vagrant/backend/`. If on AWS, `DJANGO_ROOT=/srv/civet/backend/`. Then:
 ```
 source ~/venv/bin/activate
 python3 $DJANGO_ROOT/manage.py load_data -t subject -f /data/clinical_data.csv
