@@ -1,40 +1,59 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import * as d3 from 'd3';
-// import d3Tip from 'd3-tip';
-// import * as d3Tip from 'd3-tip';
 //@ts-ignore
-import d3Tip from 'd3-tip';
+import d3Tip  from 'd3-tip';
 
 @Component({
   selector: 'app-scatterplot',
   templateUrl: './scatterplot.component.html',
   styleUrls: ['./scatterplot.component.scss']
 })
-export class ScatterplotComponent implements OnInit {
+
+export class ScatterplotComponent implements OnChanges {
+  @Input() receivedData: any;
 
   constructor() { }
 
-  xMin = 0;
-  xMax = 100;
-  yMin = 0;
-  yMax = 100;
-  scatterPlotData = [
-    {
-      xValue: 1,
-      yValue: 1
-    },
-    {
-      xValue: 10,
-      yValue: 10
-    },
-    {
-      xValue: 3,
-      yValue: 1
-    }
-  ];
+  yMin = 1000;
+  yMax = 0;
+  scatterPlotData: { key: string; xValue: string; yValue: any; }[] = [];
+  lineData: { key: string; xValue: string; yValue: any; }[] = [];
 
-  ngOnInit(): void {
-    this.createScatterPlot()
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.receivedData) {
+      this.formatData(this.receivedData)
+      this.createScatterPlot()
+    }
+  }
+
+  formatData(data: { [key: string]: { [key: string]: any }; }) {
+    this.scatterPlotData = [];
+
+    for (let [key, value] of Object.entries(data)) {
+      let xLabel = 'VISIT_1'
+      let temp = {
+        'key': key,
+        'xValue': xLabel,
+        'yValue': value[xLabel]
+      }
+      this.scatterPlotData.push(temp)
+
+      let xLabel2 = 'VISIT_4';
+      if (value[xLabel2]) {
+        let temp2 = {
+          'key': key,
+          'xValue': xLabel2,
+          'yValue': value[xLabel2]
+        }
+        this.scatterPlotData.push(temp2)
+        this.lineData.push(temp)
+        this.lineData.push(temp2)
+      }
+
+      this.yMin = value[xLabel2] ? Math.min(value[xLabel], value[xLabel2], this.yMin) : Math.min(value[xLabel], this.yMin)
+      this.yMax = value[xLabel2] ? Math.max(value[xLabel], value[xLabel2], this.yMax) : Math.max(value[xLabel], this.yMax)
+    }
+    console.log("formated data: ", this.scatterPlotData)
   }
 
   createScatterPlot() {
@@ -43,11 +62,11 @@ export class ScatterplotComponent implements OnInit {
       width = 800 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
-    const pointTip = d3Tip()
+    const pointTip = d3Tip.tip()
       .attr('class', 'd3-tip')
       .offset([-10, 0])
       .html((event, d) => {
-        let tipBox = `<div><div class="category">Name:</div> ${d.name}</div>
+        let tipBox = `<div><div class="category">Name: </div> ${d.key}</div>
     <div><div class="category">X Value: </div> ${d.xValue}</div>
     <div><div class="category">Y Value: </div>${d.yValue}</div>`
         return tipBox
@@ -57,7 +76,7 @@ export class ScatterplotComponent implements OnInit {
       .attr('class', 'd3-tip')
       .offset([-10, 0])
       .html((event) => {
-        let tipBox = `<div><div class="category">Y Axis: Hello</div> </div>`
+        let tipBox = `<div><div class="category">Y Axis: </div> </div>`
         return tipBox
       });
 
@@ -82,22 +101,33 @@ export class ScatterplotComponent implements OnInit {
       .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
 
-    // svg.call(pointTip);
-    // svg.call(yAxisTip);
-    // svg.call(xAxisTip);
+    svg.call(pointTip);
+    svg.call(yAxisTip);
+    svg.call(xAxisTip);
+
+    var categories = ['VISIT_1', 'VISIT_4'];
 
     // Add X axis
-    var x = d3.scaleLinear()
-      .domain([this.xMin, this.xMax])
-      .range([0, width]);
+    // var x = d3.scaleLinear()
+    //   .domain([this.xMin, this.xMax])
+    //   .range([0, width]);
+
+    var x = d3.scaleBand()
+      .domain(categories)
+      .range([0, width])
+    // .padding(0.1);
+
+    const bandWidth = x.bandwidth();
+
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x))
+      .call(d3.axisBottom(x)
+        .tickSize(0) // Remove tick marks
+      )
       .selectAll("text")
-      .style("text-anchor", "end")
-      .attr("dx", "-.8em")
-      .attr("dy", ".15em")
-      .attr("transform", "rotate(-65)");
+      .style("text-anchor", "start") // Align text to the start of the band
+      .attr("dx", (-bandWidth / 2 - 15)) // Adjust the horizontal position of labels
+      .attr("dy", "20px"); // Adjust the vertical position of labels
 
     // Add Y axis
     var y = d3.scaleLinear()
@@ -106,93 +136,44 @@ export class ScatterplotComponent implements OnInit {
     svg.append("g")
       .call(d3.axisLeft(y));
 
+
     // Add dots
     svg.append('g')
       .selectAll("dot")
       .data(this.scatterPlotData)
       .enter()
       .append("circle")
-      .attr("cx", function (d) { return x(d.xValue); })
+      // .attr("cx", function (d) { return x(d.xValue); })
+      .attr("cx", function (d) { return String(x(d.xValue)); })
       .attr("cy", function (d) { return y(d.yValue); })
-      .attr("r", 5)
+      .attr("r", 3)
       .style("fill", "#69b3a2")
-      // .on('mouseover', function (mouseEvent: any, d) {
-      //   pointTip.show(mouseEvent, d, this);
-      //   pointTip.style('left', mouseEvent.x + 10 + 'px');
-      // })
-      // .on('mouseout', pointTip.hide);
+      .on('mouseover', function (mouseEvent: any, d) {
+        pointTip.show(mouseEvent, d, this);
+        pointTip.style('left', mouseEvent.x + 10 + 'px');
+      })
+      .on('mouseout', pointTip.hide);
 
-    //Y-Axis labels
-    // if (this.typeOfLookUp === 'm2m' && this.metadataLookUp[this.metadata2Id].vardesc[0].length > 50) {
-    //   svg.append('text')
-    //     .classed('label', true)
-    //     .attr('transform', 'rotate(-90)')
-    //     .attr("font-weight", "bold")
-    //     .attr('y', -margin.left + 10)
-    //     .attr('x', -height / 2)
-    //     .attr('dy', '.71em')
-    //     .style('fill', 'rgba(0,0,0,.8)')
-    //     .style('text-anchor', 'middle')
-    //     .style('font-size', '8px')
-    //     .text(this.metadataLookUp[this.metadata2Id].vardesc[0].slice(0, 50) + "...")
-    //     .on('mouseover', function (mouseEvent: any) {
-    //       yAxisTip.show(mouseEvent, this);
-    //       yAxisTip.style('left', mouseEvent.x + 10 + 'px');
-    //       d3.select(this).style("cursor", "pointer");
-    //     })
-    //     .on('mouseout', function (mouseEvent: any) {
-    //       d3.select(this).style("cursor", "default");
-    //     })
-    //     .on('mouseout', yAxisTip.hide);
-    // } else {
-    //   svg.append('text')
-    //     .classed('label', true)
-    //     .attr('transform', 'rotate(-90)')
-    //     .attr("font-weight", "bold")
-    //     .attr('y', -margin.left + 10)
-    //     .attr('x', -height / 2)
-    //     .attr('dy', '.71em')
-    //     .style('fill', 'rgba(0,0,0,.8)')
-    //     .style('text-anchor', 'middle')
-    //     .style('font-size', '8px')
-    //     .text('hello');
-    //   // .text(this.getYAxisLabelNames())
-    //   // .text(this.typeOfLookUp === 'm2m' ? this.metadataLookUp[this.metadata2Id].vardesc[0].slice(0, 50) : this.symbolId === undefined ? this.metadata2Id : this.symbolId);
-    // }
+    const groupedData = d3.group(this.scatterPlotData, d => d.key);
 
+    const line = d3.line<{ xValue: string; yValue: number }>()
+      .x(d => {
+        const xValue = x(d.xValue);
+        return xValue !== undefined ? xValue : 0; // Provide a default value or handle missing data appropriately
+      })
+      .y(d => {
+        const yValue = y(d.yValue);
+        return yValue !== undefined ? yValue : 0; // Provide a default value or handle missing data appropriately
+      });
 
-    //x-axis label
-    // if (this.typeOfLookUp != 'g2g' && this.metadataLookUp[this.metadataId].vardesc[0].length > 50) {
-    //   svg
-    //     .append('text')
-    //     .classed('label', true)
-    //     .attr("font-weight", "bold")
-    //     .attr('x', width / 2)
-    //     .attr('y', height + margin.bottom - 10)
-    //     .style('fill', 'rgba(0,0,0,.8)')
-    //     .style('text-anchor', 'middle')
-    //     .style('font-size', '8px')
-    //     .text(this.metadataLookUp[this.metadataId].vardesc[0].slice(0, 50) + "...")
-    //     .on('mouseover', function (mouseEvent: any) {
-    //       xAxisTip.show(mouseEvent, this);
-    //       xAxisTip.style('left', mouseEvent.x + 10 + 'px');
-    //       d3.select(this).style("cursor", "pointer");
-    //     })
-    //     .on('mouseout', function (mouseEvent: any) {
-    //       d3.select(this).style("cursor", "default");
-    //     })
-    //     .on('mouseout', xAxisTip.hide);
-    // } else {
-    //   svg
-    //     .append('text')
-    //     .classed('label', true)
-    //     .attr("font-weight", "bold")
-    //     .attr('x', width / 2)
-    //     .attr('y', height + margin.bottom - 10)
-    //     .style('fill', 'rgba(0,0,0,.8)')
-    //     .style('text-anchor', 'middle')
-    //     .style('font-size', '12px')
-    //     .text(this.getXAxisLabelNames());
-    // }
+    svg.selectAll(".line")
+      .data(groupedData)
+      .enter()
+      .append("path")
+      .attr("class", "line")
+      .attr("d", d => line(d[1])) // "d[1]" contains the grouped data, which is an array of points with matching "key" values
+      .style("stroke", "#69b3a2")
+      .style("stroke-width", 1)
+      .style("fill", "none");
   }
 }

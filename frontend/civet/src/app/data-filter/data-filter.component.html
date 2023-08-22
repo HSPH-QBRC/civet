@@ -1,13 +1,14 @@
-<!-- <app-spinner-overlay *ngIf="isLoading"></app-spinner-overlay> -->
+<app-spinner-overlay *ngIf="isLoading"></app-spinner-overlay>
 <mat-drawer-container class="filter-container" autosize>
     <!-- <mat-drawer #drawer class="filter-sidenav" mode="side" [opened]="currentDataset.length>0"
         *ngIf="currentDataset !== '' "> -->
     <!-- <mat-drawer #drawer class="filter-sidenav" mode="side" opened> -->
-        <div class="sideContainer">
+        <div class="sideContainer" *ngIf="currentDataset !== '' ">
             <div class="filtersTitle">Filters</div>
             <div *ngFor="let item of storageDataSet[currentDataset] | keyvalue">
+                <!-- <h1>{{item}}</h1> -->
                 <div
-                    *ngIf="!advanceFields.includes(item.key) && item.key !== 'project_id' && item.key !== 'tissue_or_organ_of_origin' && item.key !=='tissue'">
+                    *ngIf="!advanceFields.includes(item.key)">
                     <mev-checkbox *ngIf="altStorage[currentDataset][item.key]['altQuery'] === ''; else elseBlock"
                         [info]='item' [alt]='altStorage[currentDataset]' [currentDataset]="currentDataset" version="1"
                         [displayDetails]="true" [showMoreStatus]="showMoreStorage">
@@ -21,7 +22,7 @@
                 </div>
             </div>
 
-            <!-- <div *ngFor="let item of sliderStorage[currentDataset] | keyvalue">
+            <div *ngFor="let item of sliderStorage[currentDataset] | keyvalue">
                 <div *ngIf="!advanceFields.includes(item.key)">
                     <mev-slider [info]='item' [currentDataset]="currentDataset" [category]="item.key"
                         [countNum]="sliderStorage[currentDataset][item.key]['count']"
@@ -30,8 +31,8 @@
                         [sliderdata]="sliderStorage">
                     </mev-slider>
                 </div>
-            </div> -->
-            <div *ngIf="displayAdvance === true">
+            </div>
+            <!-- <div *ngIf="displayAdvance === true">
                 <div *ngFor="let item of storageDataSet[currentDataset] | keyvalue">
                     <div *ngIf="advanceFields.includes(item.key)">
                         <mev-checkbox *ngIf="altStorage[currentDataset][item.key]['altQuery'] === ''; else elseBlock"
@@ -46,7 +47,7 @@
                         </ng-template>
                     </div>
                 </div>
-                <!-- <div *ngFor="let item of sliderStorage[currentDataset] | keyvalue">
+                <div *ngFor="let item of sliderStorage[currentDataset] | keyvalue">
                     <div *ngIf="advanceFields.includes(item.key)">
                         <mev-slider [info]='item' [currentDataset]="currentDataset" [category]="item.key"
                             [countNum]="sliderStorage[currentDataset][item.key]['count']"
@@ -55,8 +56,8 @@
                             [sliderdata]="sliderStorage">
                         </mev-slider>
                     </div>
-                </div> -->
-            </div>
+                </div>
+            </div> -->
             <div class="buttonRow">
                 <button mat-stroked-button color="primary" (click)="onDisplayAdvance()">
                     <mat-icon aria-hidden="false" aria-label="Example home icon">tune</mat-icon> {{displayAdvance ?
@@ -64,6 +65,6 @@
                 </button>
                 <button mat-stroked-button color="black" class="createPlotsBtn" (click)="getSubjectIds()">Create Plots</button>
             </div>
-        </div> -->
+        </div>
     <!-- </mat-drawer> -->
 </mat-drawer-container>
