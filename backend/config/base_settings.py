@@ -241,3 +241,18 @@ SOLR_SERVER = 'http://localhost:8983/solr'
 ###############################################################################
 # END Parameters for solr
 ###############################################################################
+
+
+###############################################################################
+# START Parameters for metadata files
+###############################################################################
+
+# where the data will be located. From a S3 mount
+DATA_DIR = Path('/data')
+
+# describes the fields available in the subject table
+CLINICAL_DATA_DICT = DATA_DIR / 'clinical_data_dictionary.xlsx'
+
+###############################################################################
+# END Parameters for metadata files
+###############################################################################

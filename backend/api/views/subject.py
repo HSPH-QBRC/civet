@@ -1,3 +1,6 @@
+import pandas as pd
+
+from django.conf import settings
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -39,3 +42,13 @@ class SubjectQueryView(APIView):
             # TODO: catch a more specific exception?
             return Response({'message': str(ex)},
                             status=status.HTTP_400_BAD_REQUEST)
+
+
+class SubjectDictionaryView(APIView):
+    """This view provides detailed info about the clinical fields"""
+
+    def get(self, request, *args, **kwargs):
+        f = settings.CLINICAL_DATA_DICT
+        df = pd.read_excel(f, index_col=1)
+        df = df[['LABEL', 'VALUES', 'VALUE TYPE', 'VARIABLE TYPE']]
+        return Response(df.to_dict('index'))

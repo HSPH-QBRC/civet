@@ -8,7 +8,8 @@ from api.views import ApiRoot, \
     SubjectVisitList, \
     MitoDNAList, \
     MitoDNACohortView, \
-    SubjectQueryView
+    SubjectQueryView, \
+    SubjectDictionaryView
 
 urlpatterns = [
 
@@ -27,6 +28,9 @@ urlpatterns = [
     path('subject-query/',
          SubjectQueryView.as_view(),
          name='subject-query'),
+    path('subject-dictionary/',
+         SubjectDictionaryView.as_view(),
+         name='subject-dictionary'),
     # lists all visits for given subject
     path('visits/<str:subjid>/',
          SubjectVisitList.as_view(),
