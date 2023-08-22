@@ -1,11 +1,43 @@
 <div class="row flexContainer">
     <div class="col-md-3 sideBar">
-        <app-data-filter (subjectIdEvent)="passData($event)"></app-data-filter>
+        <!-- <div class="row">
+            <div class="text-center logo">
+                <div class="title-civet">CIVET</div>
+            </div>
+        </div>
+        <hr>
+        <hr>
+        <div class="sideBarContainer">
+            <section class="example-section ">
+                <div class="labelContainer">
+                    <label class="example-margin checkBoxLabel">Label: </label>
+                </div>
+                <div *ngFor=" let subtask of subtasks" class="checkboxContainer">
+                    <mat-checkbox class="checkBoxContent " (change)="updateAllComplete()">
+                        {{subtask.name}}
+                    </mat-checkbox>
+                    <mat-chip class='counter'>99</mat-chip>
+                </div>
+            </section>
+
+            <br>
+            <br>
+            <section class="example-section ">
+                <div class="labelContainer">
+                    <label class="example-margin checkBoxLabel">Label: </label>
+                </div>
+                <div *ngFor=" let subtask of subtasks" class="checkboxContainer">
+                    <mat-checkbox class="checkBoxContent " (change)="updateAllComplete()">
+                        {{subtask.name}}
+                    </mat-checkbox>
+                    <mat-chip class='counter'>99</mat-chip>
+                </div>
+            </section>
+        </div> -->
+        <app-data-filter></app-data-filter>
     </div>
 
     <div class="col-md-9 content">
-        <br>
-        <br>
-        <app-scatterplot [receivedData]="receivedData"></app-scatterplot>
+        <app-scatterplot></app-scatterplot>
     </div>
 </div>
