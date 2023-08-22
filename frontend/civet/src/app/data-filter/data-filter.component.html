@@ -3,11 +3,11 @@
     <!-- <mat-drawer #drawer class="filter-sidenav" mode="side" [opened]="currentDataset.length>0"
         *ngIf="currentDataset !== '' "> -->
     <!-- <mat-drawer #drawer class="filter-sidenav" mode="side" opened> -->
-        <!-- <div class="sideContainer" *ngIf="currentDataset !== '' ">
-            <div class="filtersTitle" >Filters</div>
+        <div class="sideContainer">
+            <div class="filtersTitle">Filters</div>
             <div *ngFor="let item of storageDataSet[currentDataset] | keyvalue">
                 <div
-                    *ngIf="!advanceFields.includes(item.key)">
+                    *ngIf="!advanceFields.includes(item.key) && item.key !== 'project_id' && item.key !== 'tissue_or_organ_of_origin' && item.key !=='tissue'">
                     <mev-checkbox *ngIf="altStorage[currentDataset][item.key]['altQuery'] === ''; else elseBlock"
                         [info]='item' [alt]='altStorage[currentDataset]' [currentDataset]="currentDataset" version="1"
                         [displayDetails]="true" [showMoreStatus]="showMoreStorage">
@@ -21,7 +21,7 @@
                 </div>
             </div>
 
-            <div *ngFor="let item of sliderStorage[currentDataset] | keyvalue">
+            <!-- <div *ngFor="let item of sliderStorage[currentDataset] | keyvalue">
                 <div *ngIf="!advanceFields.includes(item.key)">
                     <mev-slider [info]='item' [currentDataset]="currentDataset" [category]="item.key"
                         [countNum]="sliderStorage[currentDataset][item.key]['count']"
@@ -30,7 +30,7 @@
                         [sliderdata]="sliderStorage">
                     </mev-slider>
                 </div>
-            </div>
+            </div> -->
             <div *ngIf="displayAdvance === true">
                 <div *ngFor="let item of storageDataSet[currentDataset] | keyvalue">
                     <div *ngIf="advanceFields.includes(item.key)">
@@ -46,7 +46,7 @@
                         </ng-template>
                     </div>
                 </div>
-                <div *ngFor="let item of sliderStorage[currentDataset] | keyvalue">
+                <!-- <div *ngFor="let item of sliderStorage[currentDataset] | keyvalue">
                     <div *ngIf="advanceFields.includes(item.key)">
                         <mev-slider [info]='item' [currentDataset]="currentDataset" [category]="item.key"
                             [countNum]="sliderStorage[currentDataset][item.key]['count']"
@@ -55,7 +55,7 @@
                             [sliderdata]="sliderStorage">
                         </mev-slider>
                     </div>
-                </div>
+                </div> -->
             </div>
             <div class="buttonRow">
                 <button mat-stroked-button color="primary" (click)="onDisplayAdvance()">
