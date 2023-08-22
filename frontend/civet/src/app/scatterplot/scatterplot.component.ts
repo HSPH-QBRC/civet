@@ -62,31 +62,31 @@ export class ScatterplotComponent implements OnChanges {
       width = 800 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
-    const pointTip = d3Tip.tip()
-      .attr('class', 'd3-tip')
-      .offset([-10, 0])
-      .html((event, d) => {
-        let tipBox = `<div><div class="category">Name: </div> ${d.key}</div>
-    <div><div class="category">X Value: </div> ${d.xValue}</div>
-    <div><div class="category">Y Value: </div>${d.yValue}</div>`
-        return tipBox
-      });
+    // const pointTip = d3Tip.tip()
+    //   .attr('class', 'd3-tip')
+    //   .offset([-10, 0])
+    //   .html((event, d) => {
+    //     let tipBox = `<div><div class="category">Name: </div> ${d.key}</div>
+    // <div><div class="category">X Value: </div> ${d.xValue}</div>
+    // <div><div class="category">Y Value: </div>${d.yValue}</div>`
+    //     return tipBox
+    //   });
 
-    const yAxisTip = d3Tip()
-      .attr('class', 'd3-tip')
-      .offset([-10, 0])
-      .html((event) => {
-        let tipBox = `<div><div class="category">Y Axis: </div> </div>`
-        return tipBox
-      });
+    // const yAxisTip = d3Tip()
+    //   .attr('class', 'd3-tip')
+    //   .offset([-10, 0])
+    //   .html((event) => {
+    //     let tipBox = `<div><div class="category">Y Axis: </div> </div>`
+    //     return tipBox
+    //   });
 
-    const xAxisTip = d3Tip()
-      .attr('class', 'd3-tip')
-      .offset([-10, 0])
-      .html((event) => {
-        let tipBox = `<div><div class="category">X Axis: World</div> </div>`
-        return tipBox
-      });
+    // const xAxisTip = d3Tip()
+    //   .attr('class', 'd3-tip')
+    //   .offset([-10, 0])
+    //   .html((event) => {
+    //     let tipBox = `<div><div class="category">X Axis: World</div> </div>`
+    //     return tipBox
+    //   });
 
     d3.select("#my_scatterplot")
       .selectAll('svg')
@@ -101,9 +101,9 @@ export class ScatterplotComponent implements OnChanges {
       .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
 
-    svg.call(pointTip);
-    svg.call(yAxisTip);
-    svg.call(xAxisTip);
+    // svg.call(pointTip);
+    // svg.call(yAxisTip);
+    // svg.call(xAxisTip);
 
     var categories = ['VISIT_1', 'VISIT_4'];
 
@@ -148,11 +148,11 @@ export class ScatterplotComponent implements OnChanges {
       .attr("cy", function (d) { return y(d.yValue); })
       .attr("r", 3)
       .style("fill", "#69b3a2")
-      .on('mouseover', function (mouseEvent: any, d) {
-        pointTip.show(mouseEvent, d, this);
-        pointTip.style('left', mouseEvent.x + 10 + 'px');
-      })
-      .on('mouseout', pointTip.hide);
+      // .on('mouseover', function (mouseEvent: any, d) {
+      //   pointTip.show(mouseEvent, d, this);
+      //   pointTip.style('left', mouseEvent.x + 10 + 'px');
+      // })
+      // .on('mouseout', pointTip.hide);
 
     const groupedData = d3.group(this.scatterPlotData, d => d.key);
 
