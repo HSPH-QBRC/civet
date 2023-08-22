@@ -20,7 +20,10 @@ import { CheckboxComponent } from './checkbox/checkbox.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { SpinnerOverlayComponent } from './spinner-overlay/spinner-overlay.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import {MatButtonModule} from '@angular/material/button';
+import { MatButtonModule } from '@angular/material/button';
+import { SliderPDSComponent } from './slider/slider.component';
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
+import { HistogramComponent } from './histogram/histogram.component'
 
 @NgModule({
   declarations: [
@@ -29,7 +32,9 @@ import {MatButtonModule} from '@angular/material/button';
     ScatterplotComponent,
     DataFilterComponent,
     CheckboxComponent,
-    SpinnerOverlayComponent
+    SpinnerOverlayComponent,
+    SliderPDSComponent,
+    HistogramComponent
   ],
   imports: [
     BrowserModule,
@@ -43,7 +48,8 @@ import {MatButtonModule} from '@angular/material/button';
     MatIconModule,
     ReactiveFormsModule,
     MatProgressSpinnerModule,
-    MatButtonModule
+    MatButtonModule,
+    NgxSliderModule
   ],
   providers: [
     {

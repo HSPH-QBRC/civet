@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, Output, EventEmitter, Input } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { catchError } from "rxjs/operators";
@@ -13,7 +13,8 @@ import { AuthenticationService } from '../authentication.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DataFilterComponent implements OnInit {
-  // private readonly API_URL = 'https://dev-mev-api.tm4.org/api';
+  @Output() subjectIdEvent = new EventEmitter<any>();
+
   private readonly API_URL = 'https://dev-civet-api.tm4.org/api';
   currentDataset: string = 'civet';
   queryStringForFilters: string = '';
@@ -25,224 +26,35 @@ export class DataFilterComponent implements OnInit {
   checkBoxItems = [];
   isLoading: boolean = false;
 
-  civetFields = ["GENDER", "AGE_DERV_V1", "ETHNICITY", "RACE", "DEM02_V1", "DEM03_V1", "DEM04_V1", "SITE", "ASTHMA_CHILD_V1", "ASTHMA_DX_V1", "BMI_CM_V1", "BMI_CM_V2", "DIABETES_DERV_V1", "CURRENT_SMOKER_V1", "STRATUM_ENROLLED", "WT_KG_V1", "BETA_BLOCKER_V1", "BMH08I_V1", "BMH08H_V1", "BMH08B_V1", "DATE_V1", "DATE_V2", "DATE_V3", "DATE_V4"]
-  // civetFields = ["GENDER", "AGE_DERV_V1", "ETHNICITY", "RACE", "DEM02_V1"]
-  targetFields = ["ethnicity", "gender", "race", "vital_status", "cog_renal_stage", "morphology", "primary_diagnosis", "site_of_resection_or_biopsy", "dbgap_accession_number", "disease_type", "name", "primary_site", "project_id", "tissue_or_organ_of_origin"];
-  tcgaFields = ["alcohol_history", "ethnicity", "gender", "race", "vital_status", "vital_status", "ajcc_pathologic_m", "ajcc_pathologic_n", "ajcc_pathologic_t", "ajcc_pathologic_stage", "ajcc_staging_system_edition", "icd_10_code", "morphology", "primary_diagnosis", "prior_malignancy", "prior_treatment", "site_of_resection_or_biopsy", "synchronous_malignancy", "disease_type", "name", "primary_site", "project_id", "tissue_or_organ_of_origin"];
-  tcgaMicroRnaseqFields = this.tcgaFields.concat(["Center_QC_failed", "Item_flagged_DNU", "Item_Flagged_Low_Quality"]);
-  gtexFields = ["sex", "age_range", "hardy_scale_death", "nucleic_acid_isolation_batch", "expression_batch", "collection_site_code", "tissue"];
-  tcgaMethylationFields = ["alcohol_history", "ethnicity", "gender", "race", "vital_status", "vital_status", "ajcc_pathologic_m", "ajcc_pathologic_n", "ajcc_pathologic_t", "ajcc_pathologic_stage", "ajcc_staging_system_edition", "icd_10_code", "morphology", "primary_diagnosis", "prior_malignancy", "prior_treatment", "site_of_resection_or_biopsy", "synchronous_malignancy", "disease_type", "name", "primary_site", "project_id", "tissue_or_organ_of_origin"];
+  civetFields = ["GENDER", "ETHNICITY", "RACE", "DEM02_V1", "DEM03_V1", "DEM04_V1", "SITE", "ASTHMA_CHILD_V1", "ASTHMA_DX_V1", "BMI_CM_V1", "BMI_CM_V2", "DIABETES_DERV_V1", "CURRENT_SMOKER_V1", "STRATUM_ENROLLED", "WT_KG_V1", "BETA_BLOCKER_V1", "BMH08I_V1", "BMH08H_V1", "BMH08B_V1", "DATE_V1", "DATE_V2", "DATE_V3", "DATE_V4"]
+  // civetFields = ["GENDER", "ETHNICITY", "RACE", "DEM02_V1"]
 
-  targetRangeFields = ["age_at_diagnosis", "days_to_last_follow_up", "year_of_diagnosis"]; //"days_to_death", "days_to_birth"
-  tcgaRangeFields = ["age_at_diagnosis", "age_at_index", "days_to_birth", "days_to_last_follow_up", "year_of_birth", "year_of_diagnosis"];
-  gtexRangeFields = ["rna_rin"];
+  civetRangeFields = ["AGE_DERV_V1"]
   advanceFields = ["cog_renal_stage", "dbgap_accession_number", "morphology", "disease_type", "primary_site", "site_of_resection_or_biopsy", "days_to_last_follow_up", "ajcc_pathologic_m", "ajcc_pathologic_n", "ajcc_pathologic_t", "ajcc_staging_system_edition", "alcohol_history", "icd_10_code", "synchronous_malignancy", "age_at_index", "days_to_birth", "year_of_birth", "year_of_diagnosis", "nucleic_acid_isolation_batch", "expression_batch", "collection_site_code", "rna_rin", "Center_QC_failed", "Item_flagged_DNU", "Item_Flagged_Low_Quality"];
   filterFields = {
-    'target-rnaseq': this.targetFields,
-    'tcga-rnaseq': this.tcgaFields,
-    'tcga-micrornaseq': this.tcgaMicroRnaseqFields,
-    'gtex-rnaseq': this.gtexFields,
-    'tcga-methylation': this.tcgaMethylationFields,
     'civet': this.civetFields
   }
   filterRangeFields = {
-    'target-rnaseq': this.targetRangeFields,
-    'tcga-rnaseq': this.tcgaRangeFields,
-    'tcga-micrornaseq': this.tcgaRangeFields,
-    'tcga-methylation': this.tcgaRangeFields,
-    'gtex-rnaseq': this.gtexRangeFields,
-    'civet': []
+    'civet': this.civetRangeFields
   };
   sliderStorage = {
-    'target-rnaseq': {
-      "age_at_diagnosis": {
-        "count": 0,
-        "floor": 3,
-        "ceil": 11828,
-        "low": 3,
-        "high": 11828,
+    'civet': {
+      "AGE_DERV_V1": {
+        "count": 2973,
+        "floor": 40,
+        "ceil": 80,
+        "low": 40,
+        "high": 80,
         "not_reported": true
       },
-      "days_to_last_follow_up": {
-        "count": 0,
-        "floor": 0,
-        "ceil": 5938,
-        "low": 0,
-        "high": 5938,
-        "not_reported": true
-      },
-      "year_of_diagnosis": {
-        "count": 0,
-        "floor": 1900,
-        "ceil": 2015,
-        "low": 1900,
-        "high": 2015,
-        "not_reported": true
-      }
-    },
-    'tcga-rnaseq': {
-      "age_at_diagnosis": {
-        "count": 0,
-        "floor": 5267,
-        "ceil": 32872,
-        "low": 5267,
-        "high": 32872,
-        "not_reported": true
-      },
-      "age_at_index": {
-        "count": 0,
-        "floor": 14,
-        "ceil": 90,
-        "low": 14,
-        "high": 90,
-        "not_reported": true
-      },
-      "days_to_birth": {
-        "count": 0,
-        "floor": -32872,
-        "ceil": -5267,
-        "low": -32872,
-        "high": -5267,
-        "not_reported": true
-      },
-      "days_to_last_follow_up": {
-        "count": 0,
-        "floor": -64,
-        "ceil": 11252,
-        "low": -64,
-        "high": 11252,
-        "not_reported": true
-      },
-      "year_of_birth": {
-        "count": 0,
-        "floor": 1902,
-        "ceil": 1997,
-        "low": 1902,
-        "high": 1997,
-        "not_reported": true
-      },
-      "year_of_diagnosis": {
-        "count": 0,
-        "floor": 1978,
-        "ceil": 2013,
-        "low": 1978,
-        "high": 2013,
-        "not_reported": true
-      }
-    },
-    "gtex-rnaseq": {
-      "rna_rin": {
-        "count": 0,
-        "floor": 3,
-        "ceil": 10,
-        "low": 3,
-        "high": 10,
-        "not_reported": true
-      },
-    },
-    'tcga-micrornaseq': {
-      "age_at_diagnosis": {
-        "count": 0,
-        "floor": 5267,
-        "ceil": 32872,
-        "low": 5267,
-        "high": 32872,
-        "not_reported": true
-      },
-      "age_at_index": {
-        "count": 0,
-        "floor": 14,
-        "ceil": 90,
-        "low": 14,
-        "high": 90,
-        "not_reported": true
-      },
-      "days_to_birth": {
-        "count": 0,
-        "floor": -32872,
-        "ceil": -5267,
-        "low": -32872,
-        "high": -5267,
-        "not_reported": true
-      },
-      "days_to_last_follow_up": {
-        "count": 0,
-        "floor": -64,
-        "ceil": 11252,
-        "low": -64,
-        "high": 11252,
-        "not_reported": true
-      },
-      "year_of_birth": {
-        "count": 0,
-        "floor": 1902,
-        "ceil": 1997,
-        "low": 1902,
-        "high": 1997,
-        "not_reported": true
-      },
-      "year_of_diagnosis": {
-        "count": 0,
-        "floor": 1978,
-        "ceil": 2013,
-        "low": 1978,
-        "high": 2013,
-        "not_reported": true
-      }
-    },
-    'tcga-methylation': {
-      "age_at_diagnosis": {
-        "count": 0,
-        "floor": 5267,
-        "ceil": 32872,
-        "low": 5267,
-        "high": 32872,
-        "not_reported": true
-      },
-      "age_at_index": {
-        "count": 0,
-        "floor": 14,
-        "ceil": 90,
-        "low": 14,
-        "high": 90,
-        "not_reported": true
-      },
-      "days_to_birth": {
-        "count": 0,
-        "floor": -32872,
-        "ceil": -5267,
-        "low": -32872,
-        "high": -5267,
-        "not_reported": true
-      },
-      "days_to_last_follow_up": {
-        "count": 0,
-        "floor": -64,
-        "ceil": 11252,
-        "low": -64,
-        "high": 11252,
-        "not_reported": true
-      },
-      "year_of_birth": {
-        "count": 0,
-        "floor": 1902,
-        "ceil": 1997,
-        "low": 1902,
-        "high": 1997,
-        "not_reported": true
-      },
-      "year_of_diagnosis": {
-        "count": 0,
-        "floor": 1978,
-        "ceil": 2013,
-        "low": 1978,
-        "high": 2013,
-        "not_reported": true
-      }
     },
   }
 
-  storageDataSet = {};
+  storageDataSet = {
+    // "civet": {
+    //   "GENDER": [0,1]
+    // }
+  };
   //checkbox object keeps track of which items are checked
   checkBoxObj = {};
   //checkbox status keeps track of every checkbox for true/false values
@@ -271,8 +83,7 @@ export class DataFilterComponent implements OnInit {
   // subjectList = ["SF183729", "LA193709"];
 
   ngOnInit(): void {
-    this.isLoading = true
-    console.log("is initialized")
+    // this.isLoading = true
     this.authenticationService
       .login(this.username, this.password)
       .subscribe(
@@ -280,11 +91,10 @@ export class DataFilterComponent implements OnInit {
           // const url = 'https://dev-civet-api.tm4.org/api/subjects/';
           const url = 'https://dev-civet-api.tm4.org/api/subject-query/?q=GENDER:2&q.op=AND&facet=true&facet.field=ETHNICITY'
           this.apiService.getSecureData(url).subscribe(res => {
-            console.log("secure data: ", res)
             this.initializeFilterData(['civet']);
-            this.isLoading = false;
+            // this.isLoading = false;
 
-            this.cdRef.detectChanges();
+            // this.cdRef.detectChanges();
 
           })
 
@@ -296,7 +106,6 @@ export class DataFilterComponent implements OnInit {
   }
 
   initializeFilterData(activeSets: string[]) {
-    console.log("got into the initalize")
     for (let dataset of activeSets) {
       this.createRangeDataStorage(dataset);
       //builds the initial query string
@@ -312,7 +121,6 @@ export class DataFilterComponent implements OnInit {
       //gets the numbers for each category
       this.updateFilterValues(this.queryStringForFilters, this.checkboxStatus[dataset], dataset, true);
     }
-    console.log("storage dataset: ", this.storageDataSet)
 
   }
 
@@ -326,9 +134,10 @@ export class DataFilterComponent implements OnInit {
       query += `&stats.field={!tag=piv1,piv2 min=true max=true}${categoryArray[i]}`
     }
     console.log("range query: ", query)
+    // this.isLoading = true;
     this.getQueryResults(query)
       .subscribe(res => {
-        console.log("long range res: ", res)
+        // this.isLoading = false;
         let stats_field = res["stats"]["stats_fields"];
         for (let cat in stats_field) {
           if (!this.sliderStorage[dataset]) {
@@ -362,7 +171,6 @@ export class DataFilterComponent implements OnInit {
       rangeQuery += `&facet.query={!tag=q1}${category}:[${low} TO ${high}]`
     }
     query += rangeQuery;
-    console.log("from getFacet: ", query)
     return query;
   }
 
@@ -456,9 +264,8 @@ export class DataFilterComponent implements OnInit {
           let count = res["facet_counts"]['facet_queries'][item];
           this.sliderStorage[dataset][category]['count'] = count;
         }
-
       })
-
+      console.log("storage: ", this.storageDataSet)
   }
 
   onChecked(isChecked, category, subcategory, dataset) {
@@ -640,6 +447,8 @@ export class DataFilterComponent implements OnInit {
   }
 
   resetVariables() {
+    this.filteredSubjectId = []
+
     //reset storage to default
     for (let dataset in this.sliderStorage) {
       for (let cat in this.sliderStorage[dataset]) {
@@ -664,7 +473,7 @@ export class DataFilterComponent implements OnInit {
   getSubjectIds() {
     let searchQuery = this.searchQueryResults !== '' ? `(${this.searchQueryResults})` : '*'
     let query = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID`;
-
+    console.log("search query: ", query)
     this.getQueryResults(query)
       .subscribe(res => {
         let total = res['response']['numFound']
@@ -681,13 +490,12 @@ export class DataFilterComponent implements OnInit {
             this.getPlotPoints(postUrl, this.filteredSubjectId)
           })
       })
-
-    console.log("all that filter: ", this.filteredSubjectId)
   }
 
-  getPlotPoints(url, array){
-    this.apiService.postSecureData(url, array).subscribe(res => {
-      console.log("new plot points: ", res)
+  getPlotPoints(url, array) {
+    this.apiService.postSecureData(url, array).subscribe(data => {
+      console.log("new plot points: ", data)
+      this.subjectIdEvent.emit(data);
     })
   }
 }
