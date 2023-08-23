@@ -61,7 +61,6 @@ export class HistogramComponent implements OnChanges {
     let query = `${this.API_URL}/subject-query/?q=${this.queryParams}&facet=true&facet.field=${category}`;
     this.getQueryResults(query)
       .subscribe(res => {
-        // console.log("histo res: ", res)
         this.facetField = res['facet_counts']['facet_fields'];
         for (let subcat in this.facetField) {
           let arr = this.facetField[subcat]
@@ -86,7 +85,6 @@ export class HistogramComponent implements OnChanges {
         }
         let min = this.sliderdata[dataset][category]["floor"];
         let max = this.sliderdata[dataset][category]["ceil"]
-        // console.log("histo data storage: ", this.histogramDataStorage, this.countArray)
         this.createHistogram(min, max);
         
       })

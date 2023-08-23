@@ -53,7 +53,6 @@ export class ScatterplotComponent implements OnChanges {
       this.yMin = value[xLabel2] ? Math.min(value[xLabel], value[xLabel2], this.yMin) : Math.min(value[xLabel], this.yMin)
       this.yMax = value[xLabel2] ? Math.max(value[xLabel], value[xLabel2], this.yMax) : Math.max(value[xLabel], this.yMax)
     }
-    console.log("formated data: ", this.scatterPlotData)
   }
 
   createScatterPlot() {
@@ -118,9 +117,6 @@ export class ScatterplotComponent implements OnChanges {
     var categories = ['VISIT_1', 'VISIT_4'];
 
     // Add X axis
-    // var x = d3.scaleLinear()
-    //   .domain([this.xMin, this.xMax])
-    //   .range([0, width]);
 
     var x = d3.scaleBand()
       .domain(categories)

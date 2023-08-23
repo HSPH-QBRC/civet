@@ -134,7 +134,6 @@ export class AuthenticationService {
 
   private refreshToken() {
     const token = sessionStorage.getItem(this.REFRESH_TOKEN);
-    console.log("token: ", token)
     return token ? JSON.parse(token) : null
   }
 

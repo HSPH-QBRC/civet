@@ -60,7 +60,6 @@ export class SliderPDSComponent implements OnInit {
       showTicks: true,
       tickStep: (this.maxValue - this.minValue) / 8
     };
-    console.log("slider data: ", this.sliderdata, this.minValue, this.count, this.options)
   }
 
   onUserChangeEnd(changeContext: ChangeContext): void {

@@ -5,17 +5,18 @@ import { catchError } from "rxjs/operators";
 import { Router } from '@angular/router';
 import { ApiServiceService } from '../api-service.service';
 import { AuthenticationService } from '../authentication.service';
+import { environment } from '../../environments/environment'
 
 @Component({
   selector: 'app-data-filter',
   templateUrl: './data-filter.component.html',
   styleUrls: ['./data-filter.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class DataFilterComponent implements OnInit {
   @Output() subjectIdEvent = new EventEmitter<any>();
 
-  private readonly API_URL = 'https://dev-civet-api.tm4.org/api';
+  private readonly API_URL = environment.API_URL;
   currentDataset: string = 'civet';
   queryStringForFilters: string = '';
   queryRangeString: string = '';
@@ -27,8 +28,6 @@ export class DataFilterComponent implements OnInit {
   isLoading: boolean = false;
 
   civetFields = ["GENDER", "ETHNICITY", "RACE", "DEM02_V1", "DEM03_V1", "DEM04_V1", "SITE", "ASTHMA_CHILD_V1", "ASTHMA_DX_V1", "BMI_CM_V1", "BMI_CM_V2", "DIABETES_DERV_V1", "CURRENT_SMOKER_V1", "STRATUM_ENROLLED", "WT_KG_V1", "BETA_BLOCKER_V1", "BMH08I_V1", "BMH08H_V1", "BMH08B_V1", "DATE_V1", "DATE_V2", "DATE_V3", "DATE_V4"]
-  // civetFields = ["GENDER", "ETHNICITY", "RACE", "DEM02_V1"]
-
   civetRangeFields = ["AGE_DERV_V1"]
   advanceFields = ["cog_renal_stage", "dbgap_accession_number", "morphology", "disease_type", "primary_site", "site_of_resection_or_biopsy", "days_to_last_follow_up", "ajcc_pathologic_m", "ajcc_pathologic_n", "ajcc_pathologic_t", "ajcc_staging_system_edition", "alcohol_history", "icd_10_code", "synchronous_malignancy", "age_at_index", "days_to_birth", "year_of_birth", "year_of_diagnosis", "nucleic_acid_isolation_batch", "expression_batch", "collection_site_code", "rna_rin", "Center_QC_failed", "Item_flagged_DNU", "Item_Flagged_Low_Quality"];
   filterFields = {
@@ -49,19 +48,14 @@ export class DataFilterComponent implements OnInit {
       },
     },
   }
-
-  storageDataSet = {
-    // "civet": {
-    //   "GENDER": [0,1]
-    // }
-  };
+  myObject: any = { name: 'John', age: 30 };
+  storageDataSet = {};
   //checkbox object keeps track of which items are checked
   checkBoxObj = {};
   //checkbox status keeps track of every checkbox for true/false values
   checkboxStatus = {}
   altStorage = {}
   displayAdvance: boolean = false;
-  // excludeList = [];
   excludeList: string[] = [];
   mainQuery: string = "*";
   showMoreStorage = {};
@@ -78,26 +72,23 @@ export class DataFilterComponent implements OnInit {
     private cdRef: ChangeDetectorRef,
   ) { }
 
-  username = 'saron';
-  password = 'SaronPass123';
-  // subjectList = ["SF183729", "LA193709"];
+  username = environment.username;
+  password = environment.password;
+
+  dataReady = false
 
   ngOnInit(): void {
-    // this.isLoading = true
+    this.isLoading = true;
     this.authenticationService
       .login(this.username, this.password)
       .subscribe(
         data => {
-          // const url = 'https://dev-civet-api.tm4.org/api/subjects/';
-          const url = 'https://dev-civet-api.tm4.org/api/subject-query/?q=GENDER:2&q.op=AND&facet=true&facet.field=ETHNICITY'
+          const url = `${this.API_URL}/subject-query/?q=GENDER:2&q.op=AND&facet=true&facet.field=ETHNICITY`
           this.apiService.getSecureData(url).subscribe(res => {
+            this.dataReady = true
+            this.isLoading = false
             this.initializeFilterData(['civet']);
-            // this.isLoading = false;
-
-            // this.cdRef.detectChanges();
-
           })
-
         },
         error => {
           console.log("err: ", error)
@@ -121,23 +112,16 @@ export class DataFilterComponent implements OnInit {
       //gets the numbers for each category
       this.updateFilterValues(this.queryStringForFilters, this.checkboxStatus[dataset], dataset, true);
     }
-
   }
 
   createRangeDataStorage(dataset) {
-    //example of the query
-    //https://api-dev.tm4.org/api/public-datasets/query/target-rnaseq/?q=*&stats=true&stats.field={!tag=piv1,piv2%20min=true%20max=true}age_at_diagnosis
     let categoryArray = this.filterRangeFields[dataset];
-    // let query = `${this.API_URL}/public-datasets/query/${dataset}/?q=*&stats=true`;
     let query = `${this.API_URL}/subject-query/?q=*&stats=true`;
     for (let i = 0; i < categoryArray.length; i++) {
       query += `&stats.field={!tag=piv1,piv2 min=true max=true}${categoryArray[i]}`
     }
-    console.log("range query: ", query)
-    // this.isLoading = true;
     this.getQueryResults(query)
       .subscribe(res => {
-        // this.isLoading = false;
         let stats_field = res["stats"]["stats_fields"];
         for (let cat in stats_field) {
           if (!this.sliderStorage[dataset]) {
@@ -265,7 +249,6 @@ export class DataFilterComponent implements OnInit {
           this.sliderStorage[dataset][category]['count'] = count;
         }
       })
-      console.log("storage: ", this.storageDataSet)
   }
 
   onChecked(isChecked, category, subcategory, dataset) {
@@ -440,7 +423,7 @@ export class DataFilterComponent implements OnInit {
     this.isLoading = false;
 
     this.checkBoxObj = {};
-    this.altStorage = {};
+    // this.altStorage = {};
     this.mainQuery = '*';
 
     this.resetVariables()
@@ -473,7 +456,6 @@ export class DataFilterComponent implements OnInit {
   getSubjectIds() {
     let searchQuery = this.searchQueryResults !== '' ? `(${this.searchQueryResults})` : '*'
     let query = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID`;
-    console.log("search query: ", query)
     this.getQueryResults(query)
       .subscribe(res => {
         let total = res['response']['numFound']
@@ -494,7 +476,6 @@ export class DataFilterComponent implements OnInit {
 
   getPlotPoints(url, array) {
     this.apiService.postSecureData(url, array).subscribe(data => {
-      console.log("new plot points: ", data)
       this.subjectIdEvent.emit(data);
     })
   }

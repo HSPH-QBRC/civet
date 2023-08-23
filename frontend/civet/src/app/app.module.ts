@@ -23,7 +23,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
 import { SliderPDSComponent } from './slider/slider.component';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
-import { HistogramComponent } from './histogram/histogram.component'
+import { HistogramComponent } from './histogram/histogram.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +34,7 @@ import { HistogramComponent } from './histogram/histogram.component'
     CheckboxComponent,
     SpinnerOverlayComponent,
     SliderPDSComponent,
-    HistogramComponent
+    HistogramComponent,
   ],
   imports: [
     BrowserModule,
