@@ -100,7 +100,7 @@ resource "random_password" "django_superuser" {
 resource "aws_instance" "api" {
   # Ubuntu 22.04 LTS https://cloud-images.ubuntu.com/locator/ec2/
   ami                    = "ami-05d251e0fc338590c"
-  instance_type          = "t3.micro"
+  instance_type          = "t3.small"
   monitoring             = true
   subnet_id              = aws_subnet.public.id
   vpc_security_group_ids = [aws_security_group.api_server.id]
