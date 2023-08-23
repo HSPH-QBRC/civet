@@ -1,8 +1,8 @@
 <section class="example-section ">
     <div class="labelContainer">
         <label class="example-margin checkBoxLabel">{{info.key.replaceAll("_", " ")}}: </label>
-        <mat-icon class="expandIcon" (click)="expandSection()">{{displayDetails ? "expand_more" :
-            "expand_less"}}</mat-icon>
+        <!-- <mat-icon class="expandIcon" (click)="expandSection()">{{displayDetails ? "expand_more" :
+            "expand_less"}}</mat-icon> -->
     </div>
     <div *ngIf="displayDetails">
         <!-- Initial view with no items checked -->
