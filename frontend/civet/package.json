@@ -21,6 +21,7 @@
     "@angular/platform-browser": "~13.2.0",
     "@angular/platform-browser-dynamic": "~13.2.0",
     "@angular/router": "~13.2.0",
+    "@types/d3-collection": "^1.0.10",
     "d3": "^7.8.5",
     "d3-tip": "^0.9.1",
     "rxjs": "~7.5.0",

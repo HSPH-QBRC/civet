@@ -468,7 +468,8 @@ export class DataFilterComponent implements OnInit {
               this.filteredSubjectId.push(subjId)
             }
 
-            let postUrl = 'https://dev-civet-api.tm4.org/api/mt-dna/pl/cohort/';
+            // let postUrl = 'https://dev-civet-api.tm4.org/api/mt-dna/pl/cohort/';
+            let postUrl = 'https://dev-civet-api.tm4.org/api/mt-dna/ur/cohort/';
             this.getPlotPoints(postUrl, this.filteredSubjectId)
           })
       })
@@ -476,6 +477,7 @@ export class DataFilterComponent implements OnInit {
 
   getPlotPoints(url, array) {
     this.apiService.postSecureData(url, array).subscribe(data => {
+      console.log("data UR: ", data)
       this.subjectIdEvent.emit(data);
     })
   }

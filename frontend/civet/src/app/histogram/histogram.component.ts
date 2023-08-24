@@ -128,7 +128,7 @@ export class HistogramComponent implements OnChanges {
 
     // And apply this function to data to get the bins
     let bins = histogram(this.countArray);
-
+    console.log("bins: ", bins)
     // Y axis: scale and draw:
     let y = d3.scaleLinear()
       .range([height, 0]);

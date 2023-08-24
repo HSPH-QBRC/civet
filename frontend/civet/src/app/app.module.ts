@@ -24,6 +24,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { SliderPDSComponent } from './slider/slider.component';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { HistogramComponent } from './histogram/histogram.component';
+import { ViolinplotComponent } from './violinplot/violinplot.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { HistogramComponent } from './histogram/histogram.component';
     SpinnerOverlayComponent,
     SliderPDSComponent,
     HistogramComponent,
+    ViolinplotComponent,
   ],
   imports: [
     BrowserModule,
