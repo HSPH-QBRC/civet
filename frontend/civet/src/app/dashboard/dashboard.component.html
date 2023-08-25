@@ -1,12 +1,12 @@
 <div class="row flexContainer">
     <div class="col-md-3 sideBar">
-        <app-data-filter (subjectIdEvent)="passData($event)"></app-data-filter>
+        <app-data-filter (subjectIdEventSP)="passDataSP($event)" (subjectIdEventVP)="passDataVP($event)"></app-data-filter>
     </div>
 
     <div class="col-md-9 content">
         <br>
         <br>
         <app-scatterplot [receivedData]="receivedData"></app-scatterplot>
-        <app-violinplot [receivedData]="receivedData"></app-violinplot>
+        <app-violinplot [dataUR]="dataUR"></app-violinplot>
     </div>
 </div>

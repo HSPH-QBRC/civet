@@ -9,10 +9,16 @@
         <div *ngIf="version === '1'">
             <div *ngFor="let cat of info.value | keyvalue | slice:0:filterSize; let i = index">
                 <div *ngFor=" let object of info.value[i] | keyvalue" class="checkboxContainer">
+                    <!-- <mat-checkbox class="checkBoxContent"
+                        [checked]="pds.checkboxStatus[currentDataset][info.key][object.key]"
+                        (change)="pds.onChecked($event.checked, info.key, object.key, currentDataset);">
+                        {{object.key}} 
+                    </mat-checkbox> -->
                     <mat-checkbox class="checkBoxContent"
                         [checked]="pds.checkboxStatus[currentDataset][info.key][object.key]"
                         (change)="pds.onChecked($event.checked, info.key, object.key, currentDataset);">
-                        {{object.key}}
+                        {{(dataDict[info.key] && dataDict[info.key][object.key]) ?
+                        dataDict[info.key][object.key] : object.key}}
                     </mat-checkbox>
                     <mat-chip
                         [ngClass]="pds.checkboxStatus[currentDataset][info.key][object.key] ? 'counter' : 'unselectCounter'">
@@ -28,7 +34,9 @@
                     <mat-checkbox *ngIf="pds.checkboxStatus[currentDataset][info.key][object.key]"
                         class="checkBoxContent" [checked]="pds.checkboxStatus[currentDataset][info.key][object.key]"
                         (change)="pds.onChecked($event.checked, info.key, object.key, currentDataset)">
-                        {{object.key}}
+                        <!-- {{object.key}} -->
+                        {{(dataDict[info.key] && dataDict[info.key][object.key]) ?
+                        dataDict[info.key][object.key] : object.key}}
                     </mat-checkbox>
                     <mat-chip *ngIf="pds.checkboxStatus[currentDataset][info.key][object.key]"
                         [ngClass]="pds.checkboxStatus[currentDataset][info.key][object.key] ? 'counter' : 'unselectCounter'">
@@ -41,7 +49,9 @@
                     <mat-checkbox *ngIf="!pds.checkboxStatus[currentDataset][info.key][object.key]"
                         class="checkBoxContent" [checked]="pds.checkboxStatus[currentDataset][info.key][object.key]"
                         (change)="pds.onChecked($event.checked, info.key, object.key, currentDataset)">
-                        {{object.key}}
+                        <!-- {{object.key}} -->
+                        {{(dataDict[info.key] && dataDict[info.key][object.key]) ?
+                        dataDict[info.key][object.key] : object.key}}
                     </mat-checkbox>
                     <mat-chip *ngIf="!pds.checkboxStatus[currentDataset][info.key][object.key]"
                         [ngClass]="pds.checkboxStatus[currentDataset][info.key][object.key] ? 'counter' : 'unselectCounter'">

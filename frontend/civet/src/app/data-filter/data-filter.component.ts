@@ -5,7 +5,8 @@ import { catchError } from "rxjs/operators";
 import { Router } from '@angular/router';
 import { ApiServiceService } from '../api-service.service';
 import { AuthenticationService } from '../authentication.service';
-import { environment } from '../../environments/environment'
+import { environment } from '../../environments/environment';
+// import * as dataDictionary from './data_dictionary'
 
 @Component({
   selector: 'app-data-filter',
@@ -14,7 +15,8 @@ import { environment } from '../../environments/environment'
   changeDetection: ChangeDetectionStrategy.Default
 })
 export class DataFilterComponent implements OnInit {
-  @Output() subjectIdEvent = new EventEmitter<any>();
+  @Output() subjectIdEventSP = new EventEmitter<any>();
+  @Output() subjectIdEventVP = new EventEmitter<any>();
 
   private readonly API_URL = environment.API_URL;
   currentDataset: string = 'civet';
@@ -76,8 +78,10 @@ export class DataFilterComponent implements OnInit {
   password = environment.password;
 
   dataReady = false
+  dataDictionary = {} //pass this on to checkbox
 
   ngOnInit(): void {
+    // this.dataDictionary = dataDictionary.data_dictionary
     this.isLoading = true;
     this.authenticationService
       .login(this.username, this.password)
@@ -188,7 +192,6 @@ export class DataFilterComponent implements OnInit {
         catchError(error => {
           let message = `Error: ${error.error.error}`
           console.log("err: ", message)
-          // this.notificationService.warn(message)
           throw error;
         }))
   }
@@ -252,6 +255,7 @@ export class DataFilterComponent implements OnInit {
   }
 
   onChecked(isChecked, category, subcategory, dataset) {
+    console.log("on checked: ", isChecked, category, subcategory, dataset)
     if (!this.checkBoxObj[dataset]) {
       this.checkBoxObj[dataset] = {};
     }
@@ -468,17 +472,24 @@ export class DataFilterComponent implements OnInit {
               this.filteredSubjectId.push(subjId)
             }
 
-            // let postUrl = 'https://dev-civet-api.tm4.org/api/mt-dna/pl/cohort/';
-            let postUrl = 'https://dev-civet-api.tm4.org/api/mt-dna/ur/cohort/';
-            this.getPlotPoints(postUrl, this.filteredSubjectId)
+            let postUrlSP = 'https://dev-civet-api.tm4.org/api/mt-dna/pl/cohort/';
+            let postUrlVP = 'https://dev-civet-api.tm4.org/api/mt-dna/ur/cohort/';
+
+            this.getPlotPointsScatterPlot(postUrlSP, this.filteredSubjectId)
+            this.getPlotPointsViolinPlot(postUrlVP, this.filteredSubjectId)
           })
       })
   }
 
-  getPlotPoints(url, array) {
+  getPlotPointsScatterPlot(url, array) {
     this.apiService.postSecureData(url, array).subscribe(data => {
-      console.log("data UR: ", data)
-      this.subjectIdEvent.emit(data);
+      this.subjectIdEventSP.emit(data);
+    })
+  }
+
+  getPlotPointsViolinPlot(url, array) {
+    this.apiService.postSecureData(url, array).subscribe(data => {
+      this.subjectIdEventVP.emit(data);
     })
   }
 }
