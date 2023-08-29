@@ -4,7 +4,6 @@ logfile_maxbytes = 1MB
 logfile_backups = 4
 pidfile = /tmp/supervisord.pid
 nocleanup = true
-environment = PATH="<%= $civet::django::virtualenv %>/bin",DJANGO_SETTINGS_MODULE="<%= $civet::django_settings_module %>"
 
 [unix_http_server]
 file = /tmp/supervisor.sock

@@ -6,7 +6,7 @@ command=<%= $civet::django::virtualenv %>/bin/gunicorn
 ; If supervisord is run as the root user, switch users to this UNIX user account
 ; before doing any processing.
 user=<%= $civet::app_user %>
-environment = HOME="/home/<%= $civet::app_user %>",USER="<%= $civet::app_user %>"
+environment = PATH="<%= $civet::django::virtualenv %>/bin",DJANGO_SETTINGS_MODULE="<%= $civet::django_settings_module %>"
 
 ; Location of Django project
 directory=<%= $civet::django::root %>
