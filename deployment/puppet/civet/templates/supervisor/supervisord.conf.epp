@@ -1,14 +1,13 @@
-; supervisor config file
-
 [unix_http_server]
-file=/tmp/supervisor.sock   ; (the path to the socket file)
-chmod=0770                       ; socket file mode (default 0700)
+file = /tmp/supervisor.sock
 
 [supervisord]
-logfile=/tmp/supervisord.log ; (main log file;default $CWD/supervisord.log)
-pidfile=/tmp/supervisord.pid ; (supervisord pidfile;default supervisord.pid)
-childlogdir=/tmp/supervisor            ; ('AUTO' child log dir, default $TEMP)
-user=<%= $civet::app_user %>
+logfile = <%= $civet::log_dir %>/supervisord.log
+logfile_maxbytes = 1MB
+logfile_backups = 4
+pidfile = /tmp/supervisord.pid
+nocleanup = true
+user = <%= $civet::app_user %>
 environment = PATH="<%= $civet::django::virtualenv %>/bin",DJANGO_SETTINGS_MODULE="<%= $civet::django_settings_module %>"
 
 ; the below section must remain in the config file for RPC
@@ -18,8 +17,7 @@ environment = PATH="<%= $civet::django::virtualenv %>/bin",DJANGO_SETTINGS_MODUL
 supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 
 [supervisorctl]
-serverurl=unix:///tmp/supervisor.sock ; use a unix:// URL  for a unix socket
-username=<%= $civet::app_user %>
+serverurl = unix:///tmp/supervisor.sock ; use a unix:// URL  for a unix socket
 
 ; The [include] section can just contain the "files" setting.  This
 ; setting can list multiple files (separated by whitespace or

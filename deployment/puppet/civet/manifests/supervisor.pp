@@ -11,12 +11,6 @@ class civet::supervisor () {
     "${conf_dir}/conf.d/gunicorn.conf":
       content => epp('civet/supervisor/gunicorn.conf.epp'),;
   }
-  ->
-  file { '/tmp/supervisor':
-    ensure => directory,
-    owner  => $civet::app_user,
-    group  => $civet::app_group,
-  }
   ~>
   service { 'supervisor':
     ensure => running,

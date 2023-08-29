@@ -1,5 +1,4 @@
 [program:gunicorn]
-
 command=<%= $civet::django::virtualenv %>/bin/gunicorn
     config.wsgi:application
     --bind=unix:///tmp/gunicorn.sock --workers 3 --timeout 120
@@ -14,10 +13,8 @@ directory=<%= $civet::django::root %>
 
 ; Put process stdout output in this file
 stdout_logfile = <%= $civet::log_dir %>/%(program_name)s.log
+logfile_maxbytes = 1MB
+logfile_backups = 4
 
 ; Put process stderr output in stdout file
 redirect_stderr = true
-
-autostart=true
-autorestart=true
-stopsignal=QUIT
