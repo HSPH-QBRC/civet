@@ -13,11 +13,12 @@
     min-height: 100vh;
     flex: 1;
     border-right: 1px solid rgba(40, 40, 40, 0.1);
+    // height: 100vh;
+    overflow: auto;
 }
 
 .sideBarContainer {
     width: 100%;
-
 }
 
 .title-civet {
@@ -88,7 +89,7 @@ ul {
         outline: none;
         margin: 0px 0;
     }
-    .mat-chip{
+    .mat-chip {
         vertical-align: middle !important;
     }
 }
@@ -130,6 +131,17 @@ ul {
 //     cursor: pointer;
 // }
 
-.example-section{
+.example-section {
     margin: 0 25px;
+}
+
+.plots-container {
+    display: flex; /* Use Flexbox to horizontally align items */
+    flex-wrap: wrap; /* Allow items to wrap to the next line if needed */
+    gap: 10px; /* Adjust the gap between plots as needed */
+}
+
+app-violinplot {
+    flex: 1; /* Distribute available space evenly among plots */
+    max-width: calc(40% - 10px); /* Set the maximum width of each plot */
 }

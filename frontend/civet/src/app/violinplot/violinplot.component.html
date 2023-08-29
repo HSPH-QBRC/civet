@@ -1,2 +1,9 @@
-
-<div id="my_violinplot"></div>
+<!-- <div *ngIf="!dataUR; else notEmpty">
+    plot number {{plotNum}} is empty
+</div>
+<ng-template #notEmpty> -->
+<app-spinner-overlay *ngIf="isLoading"></app-spinner-overlay>
+<!-- <div>Plot Number: {{plotNum}} </div> -->
+<div [id]="'my_violinplot' + plotNum"></div>
+<div class="centered-container">{{message}}</div>
+<!-- </ng-template> -->

@@ -25,6 +25,8 @@ import { SliderPDSComponent } from './slider/slider.component';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { HistogramComponent } from './histogram/histogram.component';
 import { ViolinplotComponent } from './violinplot/violinplot.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatSelectModule } from '@angular/material/select';
 
 @NgModule({
   declarations: [
@@ -51,7 +53,9 @@ import { ViolinplotComponent } from './violinplot/violinplot.component';
     ReactiveFormsModule,
     MatProgressSpinnerModule,
     MatButtonModule,
-    NgxSliderModule
+    NgxSliderModule,
+    MatFormFieldModule,
+    MatSelectModule
   ],
   providers: [
     {

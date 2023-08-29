@@ -17,6 +17,8 @@ import { environment } from '../../environments/environment';
 export class DataFilterComponent implements OnInit {
   @Output() subjectIdEventSP = new EventEmitter<any>();
   @Output() subjectIdEventVP = new EventEmitter<any>();
+  @Output() subjectIdEventVP2ndFilter = new EventEmitter<any>();
+  @Output() filterDataset = new EventEmitter<any>();
 
   private readonly API_URL = environment.API_URL;
   currentDataset: string = 'civet';
@@ -251,11 +253,13 @@ export class DataFilterComponent implements OnInit {
           let count = res["facet_counts"]['facet_queries'][item];
           this.sliderStorage[dataset][category]['count'] = count;
         }
+        this.filterDataset.emit(this.storageDataSet);
+        // console.log("storageDataset: ", this.storageDataSet)
       })
   }
 
   onChecked(isChecked, category, subcategory, dataset) {
-    console.log("on checked: ", isChecked, category, subcategory, dataset)
+    // console.log("on checked: ", isChecked, category, subcategory, dataset)
     if (!this.checkBoxObj[dataset]) {
       this.checkBoxObj[dataset] = {};
     }
@@ -457,11 +461,16 @@ export class DataFilterComponent implements OnInit {
 
   filteredSubjectId: string[] = [];
 
+
+
   getSubjectIds() {
+    this.scrollToTop()
+    this.isLoading = true;
     let searchQuery = this.searchQueryResults !== '' ? `(${this.searchQueryResults})` : '*'
     let query = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID`;
     this.getQueryResults(query)
       .subscribe(res => {
+        this.isLoading = false;
         let total = res['response']['numFound']
         let queryToGetAll = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
         this.getQueryResults(queryToGetAll)
@@ -481,16 +490,60 @@ export class DataFilterComponent implements OnInit {
       })
   }
 
+  addSecondFilter(item, value) {
+    // console.log("from data-filer", item, this.searchQueryResults)
+    let tempArr = [];
+    let searchQuery = this.searchQueryResults !== '' ? `${item} AND ${this.searchQueryResults}` : `${item}`
+    let query = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID`;
+    this.getQueryResults(query)
+      .subscribe(res => {
+        this.isLoading = false;
+        let total = res['response']['numFound']
+        let queryToGetAll = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
+        this.getQueryResults(queryToGetAll)
+          .subscribe(res => {
+            let fullArray = res['response']['docs']
+            for (let subject of fullArray) {
+              let subjId = subject['SUBJID'];
+              tempArr.push(subjId)
+            }
+            let postUrlVP = 'https://dev-civet-api.tm4.org/api/mt-dna/ur/cohort/';
+            this.getPlotPointsViolinPlot2ndFilter(postUrlVP, tempArr, value)
+          })
+      })
+  }
+
   getPlotPointsScatterPlot(url, array) {
+    this.isLoading = true;
     this.apiService.postSecureData(url, array).subscribe(data => {
+      this.isLoading = false;
       this.subjectIdEventSP.emit(data);
     })
   }
 
   getPlotPointsViolinPlot(url, array) {
+    this.isLoading = true;
     this.apiService.postSecureData(url, array).subscribe(data => {
+      this.isLoading = false;
       this.subjectIdEventVP.emit(data);
     })
+  }
+
+  getPlotPointsViolinPlot2ndFilter(url, array, val) {
+    this.isLoading = true;
+
+    this.apiService.postSecureData(url, array).subscribe(data => {
+      this.isLoading = false;
+      let temp = {
+        data: data,
+        value: val
+      }
+      this.subjectIdEventVP2ndFilter.emit(temp);
+    })
+  }
+
+  scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 }
 

@@ -1,12 +1,44 @@
 <div class="row flexContainer">
     <div class="col-md-3 sideBar">
-        <app-data-filter (subjectIdEventSP)="passDataSP($event)" (subjectIdEventVP)="passDataVP($event)"></app-data-filter>
+        <app-data-filter (subjectIdEventSP)="passDataSP($event)" (subjectIdEventVP)="passDataVP($event)"
+            (filterDataset)="passDataFilterDataset($event)" (subjectIdEventVP2ndFilter)="passDataVP2ndFilter($event)">
+        </app-data-filter>
     </div>
 
     <div class="col-md-9 content">
         <br>
         <br>
         <app-scatterplot [receivedData]="receivedData"></app-scatterplot>
-        <app-violinplot [dataUR]="dataUR"></app-violinplot>
+        <app-violinplot [dataUR]="dataUR" [plotNum]="'Violin'"></app-violinplot>
+
+        <mat-form-field>
+            <mat-label>Add Another FIlter</mat-label>
+            <mat-select (selectionChange)="onFilterSelected($event.value)">
+                <mat-option *ngFor="let category of filterCategory" [value]="category">
+                    {{category}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <!-- <div *ngIf="dataVP2ndFilter" class="plots-container">
+            <app-violinplot [dataUR]="dataVP2ndFilter[0]" [plotNum]="0"></app-violinplot>
+            <app-violinplot [dataUR]="dataVP2ndFilter[1]" [plotNum]="1"></app-violinplot>
+            <app-violinplot [dataUR]="dataVP2ndFilter[2]" [plotNum]="2"></app-violinplot>
+            <app-violinplot [dataUR]="dataVP2ndFilter[3]" [plotNum]="3"></app-violinplot>
+            <app-violinplot [dataUR]="dataVP2ndFilter[4]" [plotNum]="4"></app-violinplot>
+            <app-violinplot [dataUR]="dataVP2ndFilter[5]" [plotNum]="5"></app-violinplot>
+            <app-violinplot [dataUR]="dataVP2ndFilter[6]" [plotNum]="6"></app-violinplot>
+        </div> -->
+        
+        <div *ngIf="dataVP2ndFilter" class="plots-container">
+            <ng-container *ngFor="let data of getObjectValues(dataVP2ndFilter); let i = index">
+              <app-violinplot [dataUR]="data" [plotNum]="i"></app-violinplot>
+            </ng-container>
+          </div>
+          
+
+
+
+
     </div>
 </div>
