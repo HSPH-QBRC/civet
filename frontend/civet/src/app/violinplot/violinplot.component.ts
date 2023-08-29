@@ -1,42 +1,43 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef} from '@angular/core';
 import * as d3 from 'd3';
-import * as d3Collection from 'd3-collection';
+// import * as d3Collection from 'd3-collection';
 
 
 @Component({
   selector: 'app-violinplot',
   templateUrl: './violinplot.component.html',
   styleUrls: ['./violinplot.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  // changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.Default
 })
-export class ViolinplotComponent implements OnChanges, OnInit {
+export class ViolinplotComponent implements OnChanges {
   @Input() dataUR = []
   @Input() plotNum = ''
   isLoading = false;
 
   dataViolinPlot = []
 
-  constructor() { }
+  constructor(
+    private cdRef: ChangeDetectorRef,
+  ) { }
 
   vpMin = 10000000000;
   vpMax = -100000000000;
   categoryArr = [];
   bins = []
   idValue = 'my_violinplot';
-  message = ''
-
-  ngOnInit(): void {
-    this.idValue = 'my_violinplot' + this.plotNum
-  }
+  message = '';
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.idValue = 'my_violinplot_' + this.plotNum;
     if (this.dataUR) {
+      
+      // console.log("on change: ", this.plotNum, this.dataUR, this.idValue)
       this.formatData()
     }
   }
 
   formatData() {
-
     for (let key in this.dataUR) {
       let obj = this.dataUR[key]
       let category = Object.keys(obj)[0];
@@ -55,19 +56,19 @@ export class ViolinplotComponent implements OnChanges, OnInit {
       }
       this.dataViolinPlot.push(temp)
     }
-    // console.log("data vio: ", this.dataViolinPlot)
     if (this.dataViolinPlot.length === 0) {
-      console.log("no plot to show")
       this.message = 'no plot to show';
     } else {
-      console.log("another check: ", this.categoryArr, this.dataUR)
+      // console.log("data VP:", this.dataViolinPlot, this.plotNum)
+      this.cdRef.detectChanges();
       this.createSvg();
     }
 
   }
 
   createSvg() {
-    d3.select(`#${this.idValue}`)
+    // d3.select(`#${this.idValue}`)
+    d3.select(`#my_violinplot_${this.plotNum}`)
       .selectAll('svg')
       .remove()
       .exit()
@@ -78,7 +79,8 @@ export class ViolinplotComponent implements OnChanges, OnInit {
       height = 400 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
-    var svg = d3.select(`#${this.idValue}`)
+    // var svg = d3.select(`#${this.idValue}`)
+    var svg = d3.select(`#my_violinplot_${this.plotNum}`)
       .append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -92,6 +94,7 @@ export class ViolinplotComponent implements OnChanges, OnInit {
       .range([height, 0])
     svg.append("g").call(d3.axisLeft(y))
 
+
     // Build and Show the X scale. It is a band scale like for a boxplot: each group has an dedicated RANGE on the axis. This range has a length of x.bandwidth
     var x = d3.scaleBand()
       .range([0, width])
@@ -104,6 +107,7 @@ export class ViolinplotComponent implements OnChanges, OnInit {
     // Features of the histogram
     var histogram = d3.histogram()
       .domain([this.vpMin, this.vpMax])
+      // .domain(y.domain())
       .thresholds(y.ticks(20))    // Important: how many bins approx are going to be made? It is the 'resolution' of the violin plot
       .value(d => d)
 
@@ -113,8 +117,6 @@ export class ViolinplotComponent implements OnChanges, OnInit {
       key: group.key,
       value: histogram(group.value.map((d) => d['value'])), // Modify this line to suit your data
     }));
-
-    console.log("min/max: ", this.plotNum, this.vpMin, this.vpMax)
 
     // What is the biggest number of value in a bin? We need it cause this value will have a width of 100% of the bandwidth.
     var maxNum = 0;
@@ -128,11 +130,11 @@ export class ViolinplotComponent implements OnChanges, OnInit {
     // The maximum width of a violin must be x.bandwidth = the width dedicated to a group
     var xNum = d3.scaleLinear()
       .range([0, x.bandwidth()])
-      .domain([-maxNum * 2, maxNum * 2])
+      .domain([-maxNum, maxNum])
 
     // Add the shape to this svg!
     svg
-      .selectAll(`#${this.idValue}`)
+      .selectAll(`#my_violinplot_${this.plotNum}`)
       .data(sumstat)
       .enter()        // So now we are working group per group
       .append("g")

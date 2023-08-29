@@ -2,8 +2,25 @@
     plot number {{plotNum}} is empty
 </div>
 <ng-template #notEmpty> -->
-<app-spinner-overlay *ngIf="isLoading"></app-spinner-overlay>
-<!-- <div>Plot Number: {{plotNum}} </div> -->
-<div [id]="'my_violinplot' + plotNum"></div>
-<div class="centered-container">{{message}}</div>
+<!-- <app-spinner-overlay *ngIf="isLoading"></app-spinner-overlay> -->
+<div>Plot Number: {{plotNum}} </div>
+<div *ngIf="message.length === 0" class="plot-container">
+    <div [id]="idValue"></div>
+    <!-- <div  id="my_violinplot_0"></div>
+    <div  id="my_violinplot_1"></div> -->
+</div>
+
+<!-- <div *ngIf="plotNum == '0'">
+    <div  id="my_violinplot_0"></div>
+</div> -->
+<!-- <div *ngIf="plotNum == '1'"> -->
+    <!-- <div  id="my_violinplot_1"></div> -->
+<!-- </div> -->
+<!-- <div  id="my_violinplot_2"></div>
+<div  id="my_violinplot_3"></div>
+<div  id="my_violinplot_4"></div>
+<div  id="my_violinplot_5"></div> -->
+
+<!-- <div id="my_violinplot_1"></div> -->
+<div *ngIf="message.length > 0" class="centered-container">{{message}}</div>
 <!-- </ng-template> -->

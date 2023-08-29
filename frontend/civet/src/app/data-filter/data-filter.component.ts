@@ -67,7 +67,7 @@ export class DataFilterComponent implements OnInit {
   constructor(
     fb: FormBuilder,
     private httpClient: HttpClient,
-    private ref: ChangeDetectorRef,
+    // private ref: ChangeDetectorRef,
     // private readonly notificationService: NotificationService,
     private router: Router,
     // private httpClient: HttpClient,
@@ -80,7 +80,10 @@ export class DataFilterComponent implements OnInit {
   password = environment.password;
 
   dataReady = false
-  dataDictionary = {} //pass this on to checkbox
+  // dataDictionary = {} //pass this on to checkbox
+
+  dataDict = {} //this will be the real dictionary
+  dataDictExclude = ['GENDER', 'RACE', 'STRATUM_ENROLLED']
 
   ngOnInit(): void {
     // this.dataDictionary = dataDictionary.data_dictionary
@@ -94,6 +97,25 @@ export class DataFilterComponent implements OnInit {
             this.dataReady = true
             this.isLoading = false
             this.initializeFilterData(['civet']);
+          })
+
+          let dd_url = 'https://dev-civet-api.tm4.org/api/subject-dictionary/';
+          this.apiService.getSecureData(dd_url).subscribe(res => {
+            console.log("dd: ", res)
+            for(let item in res){
+              const unformattedString = res[item]['VALUES']
+              const lines = unformattedString.split('\n');
+              let dictObj = {}
+              for (const line of lines) {
+                const [key, value] = line.split('=');
+                // console.log("number? ", key, !isNaN(key))
+                let newKey = !isNaN(key) && !this.dataDictExclude.includes(item) ? key + '.0' : key
+                dictObj[newKey] = value;
+              }
+              // console.log("data_dict: ", dictObj, item)
+              this.dataDict[item] = dictObj
+            }
+            console.log("data dictionary: ", this.dataDict, this.dataDict['ASTHMA_CHILD_V1']['0.0'])
           })
         },
         error => {
@@ -201,6 +223,7 @@ export class DataFilterComponent implements OnInit {
   updateFilterValues(query, checkboxStatus, dataset, initializeCheckbox) {
     this.getQueryResults(query)
       .subscribe(res => {
+        console.log("update filter val: ", res['facet_counts']['facet_fields'], query)
         this.facetField = res['facet_counts']['facet_fields'];
         for (let category in this.facetField) {
           let arr = this.facetField[category]
@@ -278,6 +301,7 @@ export class DataFilterComponent implements OnInit {
       }
       this.checkboxStatus[dataset][category][subcategory] = false
     }
+    console.log("ischecked: ", this.altStorage)
     this.createAltQuery(dataset);
     this.filterData(dataset);
     this.cdRef.detectChanges();
@@ -491,7 +515,6 @@ export class DataFilterComponent implements OnInit {
   }
 
   addSecondFilter(item, value) {
-    // console.log("from data-filer", item, this.searchQueryResults)
     let tempArr = [];
     let searchQuery = this.searchQueryResults !== '' ? `${item} AND ${this.searchQueryResults}` : `${item}`
     let query = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID`;
@@ -509,8 +532,31 @@ export class DataFilterComponent implements OnInit {
             }
             let postUrlVP = 'https://dev-civet-api.tm4.org/api/mt-dna/ur/cohort/';
             this.getPlotPointsViolinPlot2ndFilter(postUrlVP, tempArr, value)
+            // this.getPlotPointsViolinPlot(postUrlVP, this.filteredSubjectId)
           })
       })
+
+    // let tempArr = [];
+    // let searchQuery = this.searchQueryResults !== '' ? `${item} AND ${this.searchQueryResults}` : `${item}`
+    // let query = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID`;
+    // this.getQueryResults(query)
+    //   .subscribe(res => {
+    //     this.isLoading = false;
+    //     let total = res['response']['numFound']
+    //     let queryToGetAll = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
+    //     this.getQueryResults(queryToGetAll)
+    //       .subscribe(res => {
+    //         let fullArray = res['response']['docs']
+    //         for (let subject of fullArray) {
+    //           let subjId = subject['SUBJID'];
+    //           tempArr.push(subjId)
+    //         }
+    //         let postUrlVP = 'https://dev-civet-api.tm4.org/api/mt-dna/ur/cohort/';
+    //         // this.getPlotPointsViolinPlot2ndFilter(postUrlVP, tempArr, value)
+    //         this.getPlotPointsViolinPlot(postUrlVP, tempArr)
+    //         // console.log("tempArr: ", tempArr, value)
+    //       })
+    //   })
   }
 
   getPlotPointsScatterPlot(url, array) {

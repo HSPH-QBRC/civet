@@ -1,6 +1,14 @@
 .centered-container {
+    background-color: rgb(248, 239, 222);
+    width: 460px;
+    height: 400px;
     display: flex;
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically */
     // height: 400px; /* Set the container's height to 100% of the viewport height */
-  }
+}
+
+.plot-container {
+    width: 460px;
+    height: 400px;
+}

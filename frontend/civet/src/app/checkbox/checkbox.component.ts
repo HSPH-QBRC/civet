@@ -1,13 +1,12 @@
 import { Component, ChangeDetectionStrategy, Input, OnInit } from '@angular/core';
-// import { PublicDatasetsComponent } from '../public-datasets.component';
 import { DataFilterComponent } from '../data-filter/data-filter.component';
-import * as dataDictionary from '../data-filter/data_dictionary';
+// import * as dataDictionary from '../data-filter/data_dictionary';
 
 @Component({
   selector: 'mev-checkbox',
   templateUrl: './checkbox.component.html',
   styleUrls: ['./checkbox.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.Default
 })
 export class CheckboxComponent implements OnInit {
   @Input() info;
@@ -17,7 +16,7 @@ export class CheckboxComponent implements OnInit {
   @Input() version
   @Input() displayDetails
   @Input() showMoreStatus
-  // @Input() dataDictionary
+  @Input() test_dictionary
 
   showDescription: boolean = false;
   minimum = 5
@@ -28,8 +27,14 @@ export class CheckboxComponent implements OnInit {
   constructor(public pds: DataFilterComponent) { }
   dataDict = {}
 
+  
+
   ngOnInit(): void {
-    this.dataDict = dataDictionary.data_dictionary
+    console.log("info:" , this.info, this.info.key)
+    console.log("test: ", this.test_dictionary)
+    // console.log("original_dict: ", dataDictionary.data_dictionary)
+    // this.dataDict = dataDictionary.data_dictionary
+    this.dataDict = this.test_dictionary
     this.objectLength = Object.keys(this.info.value).length;
 
     if (this.showMoreStatus[this.currentDataset] !== undefined && this.showMoreStatus[this.currentDataset][this.info.key] !== undefined) {
@@ -58,5 +63,13 @@ export class CheckboxComponent implements OnInit {
 
   expandSection() {
     this.displayDetails = !this.displayDetails;
+  }
+
+  isNotEmpty(obj){
+    if (Object.keys(obj).length > 0) {
+      return true
+    } else {
+      return false
+    }
   }
 }

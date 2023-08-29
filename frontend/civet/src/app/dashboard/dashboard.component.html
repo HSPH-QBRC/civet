@@ -12,13 +12,16 @@
         <app-violinplot [dataUR]="dataUR" [plotNum]="'Violin'"></app-violinplot>
 
         <mat-form-field>
-            <mat-label>Add Another FIlter</mat-label>
+            <mat-label>Add Another Filter</mat-label>
             <mat-select (selectionChange)="onFilterSelected($event.value)">
                 <mat-option *ngFor="let category of filterCategory" [value]="category">
                     {{category}}
                 </mat-option>
             </mat-select>
         </mat-form-field>
+
+        <!-- <app-violinplot [dataUR]="dataUR" [plotNum]="0"></app-violinplot>
+        <app-violinplot [dataUR]="dataUR" [plotNum]="1"></app-violinplot> -->
 
         <!-- <div *ngIf="dataVP2ndFilter" class="plots-container">
             <app-violinplot [dataUR]="dataVP2ndFilter[0]" [plotNum]="0"></app-violinplot>
@@ -29,13 +32,12 @@
             <app-violinplot [dataUR]="dataVP2ndFilter[5]" [plotNum]="5"></app-violinplot>
             <app-violinplot [dataUR]="dataVP2ndFilter[6]" [plotNum]="6"></app-violinplot>
         </div> -->
-        
+
         <div *ngIf="dataVP2ndFilter" class="plots-container">
             <ng-container *ngFor="let data of getObjectValues(dataVP2ndFilter); let i = index">
-              <app-violinplot [dataUR]="data" [plotNum]="i"></app-violinplot>
+                <app-violinplot [dataUR]="data" [plotNum]="i"></app-violinplot>
             </ng-container>
-          </div>
-          
+        </div>
 
 
 

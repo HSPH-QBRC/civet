@@ -28,6 +28,8 @@ export class DashboardComponent implements OnInit {
 
   passDataVP(data: any) {
     this.dataUR = data;
+
+    // console.log("dataUR: ", this.dataUR, data)
   }
 
   passDataVP2ndFilter(data: any){
@@ -37,7 +39,7 @@ export class DashboardComponent implements OnInit {
     }
     
     this.dataVP2ndFilter[data.value] = data.data
-    console.log("new data: ", this.dataVP2ndFilter)
+    // console.log("new data: ", this.dataVP2ndFilter)
   }
 
   passDataFilterDataset(data: any) {
@@ -50,7 +52,6 @@ export class DashboardComponent implements OnInit {
   }
 
   onFilterSelected(selectedValue: string) {
-    // console.log("selected val: ", selectedValue, this.filterDataset['civet'][selectedValue])
     let options = this.filterDataset['civet'][selectedValue]
     for(let option in options){
       let newString = `(${selectedValue}:${option})`;

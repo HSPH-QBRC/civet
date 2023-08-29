@@ -135,13 +135,13 @@ ul {
     margin: 0 25px;
 }
 
-.plots-container {
-    display: flex; /* Use Flexbox to horizontally align items */
-    flex-wrap: wrap; /* Allow items to wrap to the next line if needed */
-    gap: 10px; /* Adjust the gap between plots as needed */
-}
+// .plots-container {
+//     display: flex; /* Use Flexbox to horizontally align items */
+//     flex-wrap: wrap; /* Allow items to wrap to the next line if needed */
+//     gap: 10px; /* Adjust the gap between plots as needed */
+// }
 
-app-violinplot {
-    flex: 1; /* Distribute available space evenly among plots */
-    max-width: calc(40% - 10px); /* Set the maximum width of each plot */
-}
+// app-violinplot {
+//     flex: 1; /* Distribute available space evenly among plots */
+//     max-width: calc(40% - 10px); /* Set the maximum width of each plot */
+// }
