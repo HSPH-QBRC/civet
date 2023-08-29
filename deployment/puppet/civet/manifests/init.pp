@@ -37,13 +37,6 @@ class civet (
   $database_name = 'civet'
   $database_user = $app_user
 
-  $log_dir = '/var/log/civet'
-  file { $log_dir:
-    ensure => directory,
-    owner  => $app_user,
-    group  => $app_group,
-  }
-
   $civet_dependencies = [
     'build-essential',
     'apt-transport-https',

@@ -12,9 +12,9 @@ environment = HOME="/home/<%= $civet::app_user %>",USER="<%= $civet::app_user %>
 directory=<%= $civet::django::root %>
 
 ; Put process stdout output in this file
-stdout_logfile = <%= $civet::log_dir %>/%(program_name)s.log
-logfile_maxbytes = 1MB
-logfile_backups = 4
+stdout_logfile = <%= $civet::supervisor::log_dir %>/%(program_name)s.log
+stdout_logfile_maxbytes = 1MB
+stdout_logfile_backups = 4
 
 ; Put process stderr output in stdout file
 redirect_stderr = true

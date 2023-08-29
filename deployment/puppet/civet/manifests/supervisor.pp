@@ -1,5 +1,6 @@
 class civet::supervisor () {
   $conf_dir = '/etc/supervisor'
+  $log_dir = '/var/log/supervisor'
 
   package { 'supervisor': }
   ->
