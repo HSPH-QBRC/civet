@@ -2,7 +2,6 @@ import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy, Output, 
 import { FormBuilder } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { catchError } from "rxjs/operators";
-import { Router } from '@angular/router';
 import { ApiServiceService } from '../api-service.service';
 import { AuthenticationService } from '../authentication.service';
 import { environment } from '../../environments/environment';
@@ -19,6 +18,10 @@ export class DataFilterComponent implements OnInit {
   @Output() subjectIdEventVP = new EventEmitter<any>();
   @Output() subjectIdEventVP2ndFilter = new EventEmitter<any>();
   @Output() filterDataset = new EventEmitter<any>();
+  // @Output() dataDictionaryShare = new EventEmitter<any>(); 
+
+  @Input() dataDict = {} 
+  @Output() emitStorageDS = new EventEmitter<any>();
 
   private readonly API_URL = environment.API_URL;
   currentDataset: string = 'civet';
@@ -67,10 +70,6 @@ export class DataFilterComponent implements OnInit {
   constructor(
     fb: FormBuilder,
     private httpClient: HttpClient,
-    // private ref: ChangeDetectorRef,
-    // private readonly notificationService: NotificationService,
-    private router: Router,
-    // private httpClient: HttpClient,
     private authenticationService: AuthenticationService,
     private apiService: ApiServiceService,
     private cdRef: ChangeDetectorRef,
@@ -79,53 +78,51 @@ export class DataFilterComponent implements OnInit {
   username = environment.username;
   password = environment.password;
 
-  dataReady = false
+  // dataReady = false
   // dataDictionary = {} //pass this on to checkbox
 
-  dataDict = {} //this will be the real dictionary
+  // dataDict = {} //this will be the real dictionary
   dataDictExclude = ['GENDER', 'RACE', 'STRATUM_ENROLLED']
 
   ngOnInit(): void {
     // this.dataDictionary = dataDictionary.data_dictionary
-    this.isLoading = true;
-    this.authenticationService
-      .login(this.username, this.password)
-      .subscribe(
-        data => {
-          const url = `${this.API_URL}/subject-query/?q=GENDER:2&q.op=AND&facet=true&facet.field=ETHNICITY`
-          this.apiService.getSecureData(url).subscribe(res => {
-            this.dataReady = true
-            this.isLoading = false
-            this.initializeFilterData(['civet']);
-          })
+    // this.isLoading = true;
+    // this.authenticationService
+    //   .login(this.username, this.password)
+    //   .subscribe(
+    //     data => {
+    //       const url = `${this.API_URL}/subject-query/?q=GENDER:2&q.op=AND&facet=true&facet.field=ETHNICITY`
+    //       this.apiService.getSecureData(url).subscribe(res => {
+    //         this.dataReady = true
+    //         this.isLoading = false
+    //         this.initializeFilterData(['civet']);
+    //       })
 
-          let dd_url = 'https://dev-civet-api.tm4.org/api/subject-dictionary/';
-          this.apiService.getSecureData(dd_url).subscribe(res => {
-            console.log("dd: ", res)
-            for(let item in res){
-              const unformattedString = res[item]['VALUES']
-              const lines = unformattedString.split('\n');
-              let dictObj = {}
-              for (const line of lines) {
-                const [key, value] = line.split('=');
-                // console.log("number? ", key, !isNaN(key))
-                let newKey = !isNaN(key) && !this.dataDictExclude.includes(item) ? key + '.0' : key
-                dictObj[newKey] = value;
-              }
-              // console.log("data_dict: ", dictObj, item)
-              this.dataDict[item] = dictObj
-            }
-            console.log("data dictionary: ", this.dataDict, this.dataDict['ASTHMA_CHILD_V1']['0.0'])
-          })
-        },
-        error => {
-          console.log("err: ", error)
-        }
-      );
+    //       let dd_url = 'https://dev-civet-api.tm4.org/api/subject-dictionary/';
+    //       this.apiService.getSecureData(dd_url).subscribe(res => {
+    //         for(let item in res){
+    //           const unformattedString = res[item]['VALUES']
+    //           const lines = unformattedString.split('\n');
+    //           let dictObj = {}
+    //           for (const line of lines) {
+    //             const [key, value] = line.split('=');
+    //             let newKey = !isNaN(key) && !this.dataDictExclude.includes(item) ? key + '.0' : key
+    //             dictObj[newKey] = value;
+    //           }
+    //           this.dataDict[item] = dictObj
+    //         }
+    //         this.dataDictionaryShare.emit(this.dataDict);
+    //       })
+    //     },
+    //     error => {
+    //       console.log("err: ", error)
+    //     }
+    //   );
   }
 
   initializeFilterData(activeSets: string[]) {
-    for (let dataset of activeSets) {
+    let dataset = activeSets[0]
+    // for (let dataset of activeSets) {
       this.createRangeDataStorage(dataset);
       //builds the initial query string
       this.queryStringForFilters = this.getFacetFieldQuery(dataset);
@@ -139,7 +136,7 @@ export class DataFilterComponent implements OnInit {
       }
       //gets the numbers for each category
       this.updateFilterValues(this.queryStringForFilters, this.checkboxStatus[dataset], dataset, true);
-    }
+    // }
   }
 
   createRangeDataStorage(dataset) {
@@ -223,7 +220,6 @@ export class DataFilterComponent implements OnInit {
   updateFilterValues(query, checkboxStatus, dataset, initializeCheckbox) {
     this.getQueryResults(query)
       .subscribe(res => {
-        console.log("update filter val: ", res['facet_counts']['facet_fields'], query)
         this.facetField = res['facet_counts']['facet_fields'];
         for (let category in this.facetField) {
           let arr = this.facetField[category]
@@ -276,13 +272,11 @@ export class DataFilterComponent implements OnInit {
           let count = res["facet_counts"]['facet_queries'][item];
           this.sliderStorage[dataset][category]['count'] = count;
         }
-        this.filterDataset.emit(this.storageDataSet);
-        // console.log("storageDataset: ", this.storageDataSet)
+        this.emitStorageDS.emit(this.storageDataSet);
       })
   }
 
   onChecked(isChecked, category, subcategory, dataset) {
-    // console.log("on checked: ", isChecked, category, subcategory, dataset)
     if (!this.checkBoxObj[dataset]) {
       this.checkBoxObj[dataset] = {};
     }
@@ -301,7 +295,6 @@ export class DataFilterComponent implements OnInit {
       }
       this.checkboxStatus[dataset][category][subcategory] = false
     }
-    console.log("ischecked: ", this.altStorage)
     this.createAltQuery(dataset);
     this.filterData(dataset);
     this.cdRef.detectChanges();

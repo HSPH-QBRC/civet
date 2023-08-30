@@ -1,8 +1,8 @@
 <section class="example-section ">
     <div class="labelContainer">
         <label class="example-margin checkBoxLabel">{{info.key.replaceAll("_", " ")}}: </label>
-        <!-- <mat-icon class="expandIcon" (click)="expandSection()">{{displayDetails ? "expand_more" :
-            "expand_less"}}</mat-icon> -->
+        <mat-icon class="expandIcon" (click)="expandSection()">{{displayDetails ? "expand_more" :
+            "expand_less"}}</mat-icon>
     </div>
     <div *ngIf="displayDetails && isNotEmpty(dataDict)">
         <!-- Initial view with no items checked -->
@@ -33,7 +33,7 @@
                 <div *ngFor=" let object of alt[info.key].data[i] | keyvalue" class="checkboxContainer">
                     <mat-checkbox *ngIf="pds.checkboxStatus[currentDataset][info.key][object.key]"
                         class="checkBoxContent" [checked]="pds.checkboxStatus[currentDataset][info.key][object.key]"
-                        (change)="pds.onChecked($event.checked, info.key, object.key, currentDataset)">
+                        (change)="pds.onChecked($event.checked, info.key, object.key, currentDataset)" color="warn">
                         <!-- {{object.key}} -->
                         {{(dataDict[info.key] && dataDict[info.key][object.key]) ?
                         dataDict[info.key][object.key] : object.key}}

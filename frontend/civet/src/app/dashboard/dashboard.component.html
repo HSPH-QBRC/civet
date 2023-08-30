@@ -1,7 +1,8 @@
 <div class="row flexContainer">
     <div class="col-md-3 sideBar">
         <app-data-filter (subjectIdEventSP)="passDataSP($event)" (subjectIdEventVP)="passDataVP($event)"
-            (filterDataset)="passDataFilterDataset($event)" (subjectIdEventVP2ndFilter)="passDataVP2ndFilter($event)">
+            (subjectIdEventVP2ndFilter)="passDataVP2ndFilter($event)"
+            (dataDictionaryShare)="shareDataDictionary($event)" [dataDict]="dataDict" (emitStorageDS)="passDataFilterDataset($event)" >
         </app-data-filter>
     </div>
 
@@ -9,7 +10,8 @@
         <br>
         <br>
         <app-scatterplot [receivedData]="receivedData"></app-scatterplot>
-        <app-violinplot [dataUR]="dataUR" [plotNum]="'Violin'"></app-violinplot>
+        <app-violinplot [dataUR]="dataUR" [plotNum]="'Violin'" [dataDictionary]="dataDict"
+            [selectedCategory]="selectedCategory"></app-violinplot>
 
         <mat-form-field>
             <mat-label>Add Another Filter</mat-label>
@@ -20,22 +22,10 @@
             </mat-select>
         </mat-form-field>
 
-        <!-- <app-violinplot [dataUR]="dataUR" [plotNum]="0"></app-violinplot>
-        <app-violinplot [dataUR]="dataUR" [plotNum]="1"></app-violinplot> -->
-
-        <!-- <div *ngIf="dataVP2ndFilter" class="plots-container">
-            <app-violinplot [dataUR]="dataVP2ndFilter[0]" [plotNum]="0"></app-violinplot>
-            <app-violinplot [dataUR]="dataVP2ndFilter[1]" [plotNum]="1"></app-violinplot>
-            <app-violinplot [dataUR]="dataVP2ndFilter[2]" [plotNum]="2"></app-violinplot>
-            <app-violinplot [dataUR]="dataVP2ndFilter[3]" [plotNum]="3"></app-violinplot>
-            <app-violinplot [dataUR]="dataVP2ndFilter[4]" [plotNum]="4"></app-violinplot>
-            <app-violinplot [dataUR]="dataVP2ndFilter[5]" [plotNum]="5"></app-violinplot>
-            <app-violinplot [dataUR]="dataVP2ndFilter[6]" [plotNum]="6"></app-violinplot>
-        </div> -->
-
         <div *ngIf="dataVP2ndFilter" class="plots-container">
             <ng-container *ngFor="let data of getObjectValues(dataVP2ndFilter); let i = index">
-                <app-violinplot [dataUR]="data" [plotNum]="i"></app-violinplot>
+                <app-violinplot [dataUR]="data" [plotNum]="i" [dataDictionary]="dataDict"
+                    [selectedCategory]="selectedCategory"></app-violinplot>
             </ng-container>
         </div>
 

@@ -30,9 +30,6 @@ export class CheckboxComponent implements OnInit {
   
 
   ngOnInit(): void {
-    console.log("info:" , this.info, this.info.key)
-    console.log("test: ", this.test_dictionary)
-    // console.log("original_dict: ", dataDictionary.data_dictionary)
     // this.dataDict = dataDictionary.data_dictionary
     this.dataDict = this.test_dictionary
     this.objectLength = Object.keys(this.info.value).length;
