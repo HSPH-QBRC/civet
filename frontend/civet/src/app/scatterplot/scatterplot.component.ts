@@ -57,9 +57,9 @@ export class ScatterplotComponent implements OnChanges {
 
   createScatterPlot() {
     // set the dimensions and margins of the graph
-    var margin = { top: 10, right: 30, bottom: 100, left: 100 },
-      width = 800 - margin.left - margin.right,
-      height = 500 - margin.top - margin.bottom;
+    var margin = { top: 10, right: 30, bottom: 100, left: 70 },
+      width = 460 - margin.left - margin.right,
+      height = 480 - margin.top - margin.bottom;
 
     // const pointTip = d3Tip.tip()
     //   .attr('class', 'd3-tip')
@@ -181,5 +181,14 @@ export class ScatterplotComponent implements OnChanges {
       .style("stroke", "#69b3a2")
       .style("stroke-width", 1)
       .style("fill", "none");
+
+    svg.append("text")
+      .attr("transform", "rotate(-90)") // Rotate the text to make it vertical
+      .attr("y", 0 - margin.left) // Position it to the left of the left margin
+      .attr("x", 0 - (height / 2)) // Position it in the middle of the height
+      .attr("dy", "1em") // Adjust the vertical position
+      .style("font-size", "10px")
+      .style("text-anchor", "middle") // Center-align the text
+      .text("Mitochondrial Counts");
   }
 }

@@ -167,9 +167,9 @@ export class ViolinplotComponent implements OnChanges {
       .attr("y", 0 - margin.left) // Position it to the left of the left margin
       .attr("x", 0 - (height / 2)) // Position it in the middle of the height
       .attr("dy", "1em") // Adjust the vertical position
-      .style("font-size", "8px")
+      .style("font-size", "10px")
       .style("text-anchor", "middle") // Center-align the text
-      .text("Left Axis Label");
+      .text("Mitochondrial Counts");
   }
 
 }

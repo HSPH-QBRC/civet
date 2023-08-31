@@ -2,16 +2,20 @@
     <div class="col-md-3 sideBar">
         <app-data-filter (subjectIdEventSP)="passDataSP($event)" (subjectIdEventVP)="passDataVP($event)"
             (subjectIdEventVP2ndFilter)="passDataVP2ndFilter($event)"
-            (dataDictionaryShare)="shareDataDictionary($event)" [dataDict]="dataDict" (emitStorageDS)="passDataFilterDataset($event)" >
+            (dataDictionaryShare)="shareDataDictionary($event)" [dataDict]="dataDict"
+            (emitStorageDS)="passDataFilterDataset($event)">
         </app-data-filter>
     </div>
 
     <div class="col-md-9 content">
         <br>
         <br>
-        <app-scatterplot [receivedData]="receivedData"></app-scatterplot>
-        <app-violinplot [dataUR]="dataUR" [plotNum]="'Violin'" [dataDictionary]="dataDict"
-            [selectedCategory]="selectedCategory"></app-violinplot>
+        <div class="plots-container">
+            <app-scatterplot [receivedData]="receivedData"></app-scatterplot>
+            <app-violinplot [dataUR]="dataUR" [plotNum]="'Violin'" [dataDictionary]="dataDict"
+                [selectedCategory]="selectedCategory"></app-violinplot>
+        </div>
+
 
         <mat-form-field>
             <mat-label>Add Another Filter</mat-label>

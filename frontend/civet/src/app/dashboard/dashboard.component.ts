@@ -93,10 +93,13 @@ export class DashboardComponent implements OnInit {
     }
   }
   createFilterDataset(data) {
+    console.log("data: ", data)
     for (let cat in data) {
       let valueType = data[cat]['VALUE TYPE'];
       if (valueType === 'Categorical' && this.currentCategories.includes(cat)) {
         this.filterCategory.push(cat)
+      }else if(valueType === 'Continuous' && this.currentCategories.includes(cat)){
+        console.log("num: ", cat)
       }
     }
   }

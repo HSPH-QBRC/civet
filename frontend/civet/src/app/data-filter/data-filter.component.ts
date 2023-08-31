@@ -34,8 +34,8 @@ export class DataFilterComponent implements OnInit {
   checkBoxItems = [];
   isLoading: boolean = false;
 
-  civetFields = ["GENDER", "ETHNICITY", "RACE", "DEM02_V1", "DEM03_V1", "DEM04_V1", "SITE", "ASTHMA_CHILD_V1", "ASTHMA_DX_V1", "BMI_CM_V1", "BMI_CM_V2", "DIABETES_DERV_V1", "CURRENT_SMOKER_V1", "STRATUM_ENROLLED", "WT_KG_V1", "BETA_BLOCKER_V1", "BMH08I_V1", "BMH08H_V1", "BMH08B_V1", "DATE_V1", "DATE_V2", "DATE_V3", "DATE_V4"]
-  civetRangeFields = ["AGE_DERV_V1"]
+  civetFields = ["GENDER", "ETHNICITY", "RACE", "DEM02_V1", "DEM03_V1", "DEM04_V1", "SITE", "ASTHMA_CHILD_V1", "ASTHMA_DX_V1", "DIABETES_DERV_V1", "CURRENT_SMOKER_V1", "STRATUM_ENROLLED", "WT_KG_V1", "BETA_BLOCKER_V1", "BMH08I_V1", "BMH08H_V1", "BMH08B_V1", "DATE_V1", "DATE_V2", "DATE_V3", "DATE_V4"]
+  civetRangeFields = ["AGE_DERV_V1", "BMI_CM_V1", "BMI_CM_V2", "WT_KG_V1"]
   advanceFields = ["cog_renal_stage", "dbgap_accession_number", "morphology", "disease_type", "primary_site", "site_of_resection_or_biopsy", "days_to_last_follow_up", "ajcc_pathologic_m", "ajcc_pathologic_n", "ajcc_pathologic_t", "ajcc_staging_system_edition", "alcohol_history", "icd_10_code", "synchronous_malignancy", "age_at_index", "days_to_birth", "year_of_birth", "year_of_diagnosis", "nucleic_acid_isolation_batch", "expression_batch", "collection_site_code", "rna_rin", "Center_QC_failed", "Item_flagged_DNU", "Item_Flagged_Low_Quality"];
   filterFields = {
     'civet': this.civetFields
@@ -51,6 +51,30 @@ export class DataFilterComponent implements OnInit {
         "ceil": 80,
         "low": 40,
         "high": 80,
+        "not_reported": true
+      },
+      "BMI_CM_V1": {
+        "count": 5,
+        "floor": 41,
+        "ceil": 80,
+        "low": 13,
+        "high": 41,
+        "not_reported": true
+      },
+      "BMI_CM_V2": {
+        "count": 31,
+        "floor": 13,
+        "ceil": 48,
+        "low": 13,
+        "high": 48,
+        "not_reported": true
+      },
+      "WT_KG_V1": {
+        "count": 1490,
+        "floor": 37,
+        "ceil": 144,
+        "low": 37,
+        "high": 144,
         "not_reported": true
       },
     },
