@@ -66,12 +66,12 @@ class civet (
   package { $helper_utilities: }
 
   contain civet::mountpoint_s3
-  contain civet::cloudwatch_agent
   contain civet::django
   contain civet::nginx
   contain civet::postgresql
   contain civet::solr
   contain civet::supervisor
+  contain civet::cloudwatch_agent
 
   Class['civet::postgresql']
   ->
