@@ -1,14 +1,10 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import * as d3 from 'd3';
-import { max } from 'd3';
-// import * as d3Collection from 'd3-collection';
-
 
 @Component({
   selector: 'app-violinplot',
   templateUrl: './violinplot.component.html',
   styleUrls: ['./violinplot.component.scss'],
-  // changeDetection: ChangeDetectionStrategy.OnPush
   changeDetection: ChangeDetectionStrategy.Default
 })
 export class ViolinplotComponent implements OnChanges, OnInit {
@@ -94,7 +90,6 @@ export class ViolinplotComponent implements OnChanges, OnInit {
       height = 400 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
-    // var svg = d3.select(`#${this.idValue}`)
     var svg = d3.select(`#my_violinplot_${this.plotNum}`)
       .append("svg")
       .attr("width", width + margin.left + margin.right)
@@ -181,7 +176,7 @@ export class ViolinplotComponent implements OnChanges, OnInit {
       .attr("y", 0 - (margin.top / 2) + 15) // Position it above the top margin
       .attr("text-anchor", "middle") // Center-align the text horizontally
       .style("font-size", "12px") // Set the font size
-      .text(this.dataDictionary[this.selectedCategory] ? (this.dataDictionary[this.selectedCategory][category] === undefined ? category : this.dataDictionary[this.selectedCategory][category]) : 'title');
+      .text(this.dataDictionary[this.selectedCategory] ? (this.dataDictionary[this.selectedCategory][category] === undefined ? category : this.dataDictionary[this.selectedCategory][category]) : 'Violin Plot');
 
     svg.append("text")
       .attr("transform", "rotate(-90)") // Rotate the text to make it vertical
@@ -192,5 +187,4 @@ export class ViolinplotComponent implements OnChanges, OnInit {
       .style("text-anchor", "middle") // Center-align the text
       .text("Mitochondrial Counts");
   }
-
 }

@@ -46,13 +46,11 @@ export class DashboardComponent implements OnInit {
     this.authenticationService
       .login(this.username, this.password)
       .subscribe(
-        data => {
+        response => {
           const url = `${this.API_URL}/subject-query/?q=GENDER:2&q.op=AND&facet=true&facet.field=ETHNICITY`
           this.apiService.getSecureData(url).subscribe(res => {
-            // this.dataReady = true
             this.isLoading = false
             this.childComponent.initializeFilterData(['civet'])
-            // this.initializeFilterData(['civet']);
           })
 
           let dd_url = 'https://dev-civet-api.tm4.org/api/subject-dictionary/';
@@ -68,7 +66,6 @@ export class DashboardComponent implements OnInit {
               }
               this.dataDict[item] = dictObj
             }
-            // this.dataDictionaryShare.emit(this.dataDict);
             this.createFilterDataset(res)
           })
         },

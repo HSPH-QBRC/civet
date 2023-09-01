@@ -3,9 +3,7 @@ import { FormBuilder } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { catchError } from "rxjs/operators";
 import { ApiServiceService } from '../api-service.service';
-import { AuthenticationService } from '../authentication.service';
 import { environment } from '../../environments/environment';
-// import * as dataDictionary from './data_dictionary'
 
 @Component({
   selector: 'app-data-filter',
@@ -19,7 +17,6 @@ export class DataFilterComponent implements OnInit {
   @Output() subjectIdEventVP2ndFilter = new EventEmitter<any>();
   @Output() subjectIdEventSP2ndFilter = new EventEmitter<any>();
   @Output() filterDataset = new EventEmitter<any>();
-  // @Output() dataDictionaryShare = new EventEmitter<any>(); 
 
   @Input() dataDict = {}
   @Output() emitStorageDS = new EventEmitter<any>();
@@ -95,7 +92,6 @@ export class DataFilterComponent implements OnInit {
   constructor(
     fb: FormBuilder,
     private httpClient: HttpClient,
-    private authenticationService: AuthenticationService,
     private apiService: ApiServiceService,
     private cdRef: ChangeDetectorRef,
   ) { }
@@ -103,47 +99,10 @@ export class DataFilterComponent implements OnInit {
   username = environment.username;
   password = environment.password;
 
-  // dataReady = false
-  // dataDictionary = {} //pass this on to checkbox
-
-  // dataDict = {} //this will be the real dictionary
   dataDictExclude = ['GENDER', 'RACE', 'STRATUM_ENROLLED']
+  filteredSubjectId: string[] = [];
 
-  ngOnInit(): void {
-    // this.dataDictionary = dataDictionary.data_dictionary
-    // this.isLoading = true;
-    // this.authenticationService
-    //   .login(this.username, this.password)
-    //   .subscribe(
-    //     data => {
-    //       const url = `${this.API_URL}/subject-query/?q=GENDER:2&q.op=AND&facet=true&facet.field=ETHNICITY`
-    //       this.apiService.getSecureData(url).subscribe(res => {
-    //         this.dataReady = true
-    //         this.isLoading = false
-    //         this.initializeFilterData(['civet']);
-    //       })
-
-    //       let dd_url = 'https://dev-civet-api.tm4.org/api/subject-dictionary/';
-    //       this.apiService.getSecureData(dd_url).subscribe(res => {
-    //         for(let item in res){
-    //           const unformattedString = res[item]['VALUES']
-    //           const lines = unformattedString.split('\n');
-    //           let dictObj = {}
-    //           for (const line of lines) {
-    //             const [key, value] = line.split('=');
-    //             let newKey = !isNaN(key) && !this.dataDictExclude.includes(item) ? key + '.0' : key
-    //             dictObj[newKey] = value;
-    //           }
-    //           this.dataDict[item] = dictObj
-    //         }
-    //         this.dataDictionaryShare.emit(this.dataDict);
-    //       })
-    //     },
-    //     error => {
-    //       console.log("err: ", error)
-    //     }
-    //   );
-  }
+  ngOnInit(): void { }
 
   initializeFilterData(activeSets: string[]) {
     let dataset = activeSets[0]
@@ -501,10 +460,6 @@ export class DataFilterComponent implements OnInit {
     }
   }
 
-  filteredSubjectId: string[] = [];
-
-
-
   getSubjectIds() {
     this.scrollToTop()
     this.isLoading = true;
@@ -575,10 +530,7 @@ export class DataFilterComponent implements OnInit {
 
   getPlotPointsViolinPlot2ndFilter(url, array, val) {
     this.isLoading = true;
-
     this.apiService.postSecureData(url, array).subscribe(data => {
-      // console.log("data: ", data)
-      // this.getMaxNum(data, 0)
       this.isLoading = false;
       let temp = {
         data: data,
@@ -590,53 +542,18 @@ export class DataFilterComponent implements OnInit {
 
   getPlotPointsScatterPlot2ndFilter(url, array, val) {
     this.isLoading = true;
-
     this.apiService.postSecureData(url, array).subscribe(data => {
       this.isLoading = false;
       let temp = {
         data: data,
         value: val
       }
-      
       this.subjectIdEventSP2ndFilter.emit(temp);
     })
-
   }
 
   scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
-
-  // maxNum = 0;
-  // getMaxNum(data, plotNum) {
-  //   let tempMin = Number.MAX_SAFE_INTEGER
-  //   let tempMax = Number.MIN_SAFE_INTEGER
-  //   let number_of_bins = 20
-  //   let tempArr = [];
-  //   for (let i in data[plotNum]) {
-  //     for (let j in data[plotNum][i]) {
-  //       let value = data[plotNum][i][j];
-  //       tempMin = Math.min(tempMin, value)
-  //       tempMax = Math.max(tempMax, value)
-  //       tempArr.push(value)
-  //     }
-  //   }
-
-  //   const bins = Array(20).fill(0);
-  //   const binSize = (tempMax - tempMin) / number_of_bins;
-  //   let largestBin = 0;
-
-  //   for (const number of tempArr) {
-  //     const binIndex = Math.floor(number / binSize);
-  //     bins[binIndex]++;
-  //     if (bins[binIndex] > bins[largestBin]) {
-  //       largestBin = binIndex;
-  //     }
-  //   }
-
-  //   this.maxNum = Math.max(this.maxNum, bins[largestBin])
-
-  //   console.log("largest bin: ", this.maxNum)
-  // }
 }
 

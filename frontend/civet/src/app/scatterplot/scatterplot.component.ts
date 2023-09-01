@@ -135,7 +135,6 @@ export class ScatterplotComponent implements OnChanges {
     var categories = ['VISIT_1', 'VISIT_4'];
 
     // Add X axis
-
     var x = d3.scaleBand()
       .domain(categories)
       .range([0, width])
@@ -216,6 +215,6 @@ export class ScatterplotComponent implements OnChanges {
       .attr("y", 0 - (margin.top / 2) + 15) // Position it above the top margin
       .attr("text-anchor", "middle") // Center-align the text horizontally
       .style("font-size", "12px") // Set the font size
-      .text(this.dataDictionary[this.selectedCategory] ? (this.dataDictionary[this.selectedCategory][category] === undefined ? category : this.dataDictionary[this.selectedCategory][category]) : 'title');
+      .text(this.dataDictionary[this.selectedCategory] ? (this.dataDictionary[this.selectedCategory][category] === undefined ? category : this.dataDictionary[this.selectedCategory][category]) : 'Scatter Plot');
   }
 }
