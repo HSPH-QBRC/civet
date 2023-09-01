@@ -17,10 +17,11 @@ export class DataFilterComponent implements OnInit {
   @Output() subjectIdEventSP = new EventEmitter<any>();
   @Output() subjectIdEventVP = new EventEmitter<any>();
   @Output() subjectIdEventVP2ndFilter = new EventEmitter<any>();
+  @Output() subjectIdEventSP2ndFilter = new EventEmitter<any>();
   @Output() filterDataset = new EventEmitter<any>();
   // @Output() dataDictionaryShare = new EventEmitter<any>(); 
 
-  @Input() dataDict = {} 
+  @Input() dataDict = {}
   @Output() emitStorageDS = new EventEmitter<any>();
 
   private readonly API_URL = environment.API_URL;
@@ -147,19 +148,19 @@ export class DataFilterComponent implements OnInit {
   initializeFilterData(activeSets: string[]) {
     let dataset = activeSets[0]
     // for (let dataset of activeSets) {
-      this.createRangeDataStorage(dataset);
-      //builds the initial query string
-      this.queryStringForFilters = this.getFacetFieldQuery(dataset);
-      this.createAltQuery(dataset)
+    this.createRangeDataStorage(dataset);
+    //builds the initial query string
+    this.queryStringForFilters = this.getFacetFieldQuery(dataset);
+    this.createAltQuery(dataset)
 
-      if (!this.storageDataSet[dataset]) {
-        this.storageDataSet[dataset] = {}
-      }
-      if (!this.checkboxStatus[dataset]) {
-        this.checkboxStatus[dataset] = {}
-      }
-      //gets the numbers for each category
-      this.updateFilterValues(this.queryStringForFilters, this.checkboxStatus[dataset], dataset, true);
+    if (!this.storageDataSet[dataset]) {
+      this.storageDataSet[dataset] = {}
+    }
+    if (!this.checkboxStatus[dataset]) {
+      this.checkboxStatus[dataset] = {}
+    }
+    //gets the numbers for each category
+    this.updateFilterValues(this.queryStringForFilters, this.checkboxStatus[dataset], dataset, true);
     // }
   }
 
@@ -549,31 +550,11 @@ export class DataFilterComponent implements OnInit {
             }
             let postUrlVP = 'https://dev-civet-api.tm4.org/api/mt-dna/ur/cohort/';
             this.getPlotPointsViolinPlot2ndFilter(postUrlVP, tempArr, value)
-            // this.getPlotPointsViolinPlot(postUrlVP, this.filteredSubjectId)
+
+            let postUrlSP = 'https://dev-civet-api.tm4.org/api/mt-dna/pl/cohort/'
+            this.getPlotPointsScatterPlot2ndFilter(postUrlSP, tempArr, value)
           })
       })
-
-    // let tempArr = [];
-    // let searchQuery = this.searchQueryResults !== '' ? `${item} AND ${this.searchQueryResults}` : `${item}`
-    // let query = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID`;
-    // this.getQueryResults(query)
-    //   .subscribe(res => {
-    //     this.isLoading = false;
-    //     let total = res['response']['numFound']
-    //     let queryToGetAll = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
-    //     this.getQueryResults(queryToGetAll)
-    //       .subscribe(res => {
-    //         let fullArray = res['response']['docs']
-    //         for (let subject of fullArray) {
-    //           let subjId = subject['SUBJID'];
-    //           tempArr.push(subjId)
-    //         }
-    //         let postUrlVP = 'https://dev-civet-api.tm4.org/api/mt-dna/ur/cohort/';
-    //         // this.getPlotPointsViolinPlot2ndFilter(postUrlVP, tempArr, value)
-    //         this.getPlotPointsViolinPlot(postUrlVP, tempArr)
-    //         // console.log("tempArr: ", tempArr, value)
-    //       })
-    //   })
   }
 
   getPlotPointsScatterPlot(url, array) {
@@ -596,6 +577,8 @@ export class DataFilterComponent implements OnInit {
     this.isLoading = true;
 
     this.apiService.postSecureData(url, array).subscribe(data => {
+      // console.log("data: ", data)
+      // this.getMaxNum(data, 0)
       this.isLoading = false;
       let temp = {
         data: data,
@@ -605,8 +588,55 @@ export class DataFilterComponent implements OnInit {
     })
   }
 
+  getPlotPointsScatterPlot2ndFilter(url, array, val) {
+    this.isLoading = true;
+
+    this.apiService.postSecureData(url, array).subscribe(data => {
+      this.isLoading = false;
+      let temp = {
+        data: data,
+        value: val
+      }
+      
+      this.subjectIdEventSP2ndFilter.emit(temp);
+    })
+
+  }
+
   scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
+
+  // maxNum = 0;
+  // getMaxNum(data, plotNum) {
+  //   let tempMin = Number.MAX_SAFE_INTEGER
+  //   let tempMax = Number.MIN_SAFE_INTEGER
+  //   let number_of_bins = 20
+  //   let tempArr = [];
+  //   for (let i in data[plotNum]) {
+  //     for (let j in data[plotNum][i]) {
+  //       let value = data[plotNum][i][j];
+  //       tempMin = Math.min(tempMin, value)
+  //       tempMax = Math.max(tempMax, value)
+  //       tempArr.push(value)
+  //     }
+  //   }
+
+  //   const bins = Array(20).fill(0);
+  //   const binSize = (tempMax - tempMin) / number_of_bins;
+  //   let largestBin = 0;
+
+  //   for (const number of tempArr) {
+  //     const binIndex = Math.floor(number / binSize);
+  //     bins[binIndex]++;
+  //     if (bins[binIndex] > bins[largestBin]) {
+  //       largestBin = binIndex;
+  //     }
+  //   }
+
+  //   this.maxNum = Math.max(this.maxNum, bins[largestBin])
+
+  //   console.log("largest bin: ", this.maxNum)
+  // }
 }
 

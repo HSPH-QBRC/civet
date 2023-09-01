@@ -16,6 +16,7 @@ export class DashboardComponent implements OnInit {
   storageDS: any;
   dataUR: any;
   dataVP2ndFilter: any;
+  dataSP2ndFilter: any;
   filterDataset: any;
   filterCategory = [];
   dataDictionary = {};
@@ -33,6 +34,12 @@ export class DashboardComponent implements OnInit {
   dataDict = {} //this will be the real dictionary
   dataDictExclude = ['GENDER', 'RACE', 'STRATUM_ENROLLED']
   currentCategories = []; //Won't need this in the future when we load all categories
+
+  minViolinplot = Number.MAX_SAFE_INTEGER;
+  maxViolinplot = Number.MIN_SAFE_INTEGER;
+  minScatterplot = Number.MAX_SAFE_INTEGER;
+  maxScatterplot = Number.MIN_SAFE_INTEGER;
+  maxNum = 0;
 
   ngOnInit(): void {
     this.isLoading = true;
@@ -83,7 +90,34 @@ export class DashboardComponent implements OnInit {
     if (this.dataVP2ndFilter === undefined) {
       this.dataVP2ndFilter = []
     }
+
+    for (let i in data.data) {
+      for (let j in data.data[i]) {
+        let currentValue = data.data[i][j]
+        this.minViolinplot = Math.min(this.minViolinplot, currentValue)
+        this.maxViolinplot = Math.max(this.maxViolinplot, currentValue)
+      }
+    }
+
     this.dataVP2ndFilter[data.value] = data.data
+    this.getMaxNum(data.value) 
+   
+  }
+
+  passDataSP2ndFilter(data: any) {
+    if (this.dataSP2ndFilter === undefined) {
+      this.dataSP2ndFilter = []
+    }
+
+    for (let i in data.data) {
+      for (let j in data.data[i]) {
+        let currentValue = data.data[i][j]
+        this.minScatterplot = Math.min(this.minScatterplot, currentValue)
+        this.maxScatterplot = Math.max(this.maxScatterplot, currentValue)
+      }
+    }
+
+    this.dataSP2ndFilter[data.value] = data.data
   }
 
   passDataFilterDataset(data: any) {
@@ -93,13 +127,10 @@ export class DashboardComponent implements OnInit {
     }
   }
   createFilterDataset(data) {
-    console.log("data: ", data)
     for (let cat in data) {
       let valueType = data[cat]['VALUE TYPE'];
       if (valueType === 'Categorical' && this.currentCategories.includes(cat)) {
         this.filterCategory.push(cat)
-      }else if(valueType === 'Continuous' && this.currentCategories.includes(cat)){
-        console.log("num: ", cat)
       }
     }
   }
@@ -119,5 +150,34 @@ export class DashboardComponent implements OnInit {
 
   shareDataDictionary(data) {
     this.dataDictionary = data
+  }
+
+  getMaxNum(plotNum) {
+    let tempMin = Number.MAX_SAFE_INTEGER
+    let tempMax = Number.MIN_SAFE_INTEGER
+    let number_of_bins = 60
+    let tempArr = [];
+    for (let i in this.dataVP2ndFilter[plotNum]) {
+      for (let j in this.dataVP2ndFilter[plotNum][i]) {
+        let value = this.dataVP2ndFilter[plotNum][i][j];
+        tempMin = Math.min(tempMin, value)
+        tempMax = Math.max(tempMax, value)
+        tempArr.push(value)
+      }
+    }
+
+    const bins = Array(20).fill(0);
+    const binSize = (tempMax - tempMin) / number_of_bins;
+    let largestBin = 0;
+
+    for (const number of tempArr) {
+      const binIndex = Math.floor(number / binSize);
+      bins[binIndex]++;
+      if (bins[binIndex] > bins[largestBin]) {
+        largestBin = binIndex;
+      }
+    }
+
+    this.maxNum = Math.max(this.maxNum, bins[largestBin])
   }
 }

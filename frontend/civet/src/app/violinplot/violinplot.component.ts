@@ -1,5 +1,6 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import * as d3 from 'd3';
+import { max } from 'd3';
 // import * as d3Collection from 'd3-collection';
 
 
@@ -10,11 +11,14 @@ import * as d3 from 'd3';
   // changeDetection: ChangeDetectionStrategy.OnPush
   changeDetection: ChangeDetectionStrategy.Default
 })
-export class ViolinplotComponent implements OnChanges {
+export class ViolinplotComponent implements OnChanges, OnInit {
   @Input() dataUR = []
   @Input() plotNum = ''
   @Input() dataDictionary = {}
-  @Input() selectedCategory = ''
+  @Input() selectedCategory = '';
+  @Input() minYViolinplot: number;
+  @Input() maxYViolinplot: number;
+  @Input() maxValue: number;
   isLoading = false;
 
   dataViolinPlot = []
@@ -33,6 +37,14 @@ export class ViolinplotComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.idValue = 'my_violinplot_' + this.plotNum;
+    if ((changes.maxValue && !changes.maxValue.firstChange) || !this.maxValue) {
+      if (this.dataUR) {
+        this.formatData()
+      }
+    }
+  }
+
+  ngOnInit(): void {
     if (this.dataUR) {
       this.formatData()
     }
@@ -48,8 +60,13 @@ export class ViolinplotComponent implements OnChanges {
         this.categoryArr.push(category)
       }
 
-      this.vpMin = Math.min(this.vpMin, value);
-      this.vpMax = Math.max(this.vpMax, value);
+      if (this.minYViolinplot !== undefined) {
+        this.vpMin = this.minYViolinplot;
+        this.vpMax = this.maxYViolinplot;
+      } else {
+        this.vpMin = Math.min(this.vpMin, value);
+        this.vpMax = Math.max(this.vpMax, value);
+      }
 
       let temp = {
         category: category,
@@ -106,7 +123,7 @@ export class ViolinplotComponent implements OnChanges {
     var histogram = d3.histogram()
       .domain([this.vpMin, this.vpMax])
       // .domain(y.domain())
-      .thresholds(y.ticks(20))    // Important: how many bins approx are going to be made? It is the 'resolution' of the violin plot
+      .thresholds(y.ticks(60))    // Important: how many bins approx are going to be made? It is the 'resolution' of the violin plot
       .value(d => d)
 
     var groupedData = Array.from(d3.group(this.dataViolinPlot, (d) => d['category']), ([key, value]) => ({ key, value }));
@@ -115,7 +132,6 @@ export class ViolinplotComponent implements OnChanges {
       key: group.key,
       value: histogram(group.value.map((d) => d['value'])), // Modify this line to suit your data
     }));
-
     // What is the biggest number of value in a bin? We need it cause this value will have a width of 100% of the bandwidth.
     var maxNum = 0;
     for (let i in sumstat) {
@@ -125,10 +141,15 @@ export class ViolinplotComponent implements OnChanges {
       if (longuest > maxNum) { maxNum = longuest }
     }
 
+    if (!this.maxValue) { //MAYBE CHANGE THIS CONDITION FOR THE FIRST VIOLIN PLOT
+      this.maxValue = maxNum
+    }
+
     // The maximum width of a violin must be x.bandwidth = the width dedicated to a group
     var xNum = d3.scaleLinear()
       .range([0, x.bandwidth()])
-      .domain([-maxNum, maxNum])
+      // .domain([-maxNum, maxNum])
+      .domain([-this.maxValue * 1.4, this.maxValue * 1.4])
 
     // Add the shape to this svg!
     svg
@@ -160,7 +181,7 @@ export class ViolinplotComponent implements OnChanges {
       .attr("y", 0 - (margin.top / 2) + 15) // Position it above the top margin
       .attr("text-anchor", "middle") // Center-align the text horizontally
       .style("font-size", "12px") // Set the font size
-      .text(this.dataDictionary[this.selectedCategory] ? this.dataDictionary[this.selectedCategory][category] : 'title');
+      .text(this.dataDictionary[this.selectedCategory] ? (this.dataDictionary[this.selectedCategory][category] === undefined ? category : this.dataDictionary[this.selectedCategory][category]) : 'title');
 
     svg.append("text")
       .attr("transform", "rotate(-90)") // Rotate the text to make it vertical

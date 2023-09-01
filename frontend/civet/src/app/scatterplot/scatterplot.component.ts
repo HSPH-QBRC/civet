@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import * as d3 from 'd3';
 //@ts-ignore
 import d3Tip from 'd3-tip';
@@ -6,13 +6,26 @@ import d3Tip from 'd3-tip';
 @Component({
   selector: 'app-scatterplot',
   templateUrl: './scatterplot.component.html',
-  styleUrls: ['./scatterplot.component.scss']
+  styleUrls: ['./scatterplot.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Default
 })
 
 export class ScatterplotComponent implements OnChanges {
   @Input() receivedData: any;
+  @Input() plotNum: any;
+  @Input() dataDictionary = {}
+  @Input() selectedCategory = ''
+  @Input() minYScatterplot: number;
+  @Input() maxYScatterplot: number;
 
-  constructor() { }
+  idValue = 'my_scatterplot';
+
+  dataDictExclude = ['GENDER', 'RACE', 'STRATUM_ENROLLED']
+  message = '';
+
+  constructor(
+    private cdRef: ChangeDetectorRef,
+  ) { }
 
   yMin = 1000;
   yMax = 0;
@@ -20,9 +33,9 @@ export class ScatterplotComponent implements OnChanges {
   lineData: { key: string; xValue: string; yValue: any; }[] = [];
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.idValue = 'my_scatterplot_' + this.plotNum;
     if (this.receivedData) {
-      this.formatData(this.receivedData)
-      this.createScatterPlot()
+      this.formatData(this.receivedData);
     }
   }
 
@@ -50,26 +63,31 @@ export class ScatterplotComponent implements OnChanges {
         this.lineData.push(temp2)
       }
 
-      this.yMin = value[xLabel2] ? Math.min(value[xLabel], value[xLabel2], this.yMin) : Math.min(value[xLabel], this.yMin)
-      this.yMax = value[xLabel2] ? Math.max(value[xLabel], value[xLabel2], this.yMax) : Math.max(value[xLabel], this.yMax)
+      if (this.minYScatterplot !== undefined) {
+        this.yMin = this.minYScatterplot;
+        this.yMax = this.maxYScatterplot;
+      } else {
+        this.yMin = value[xLabel2] ? Math.min(value[xLabel], value[xLabel2], this.yMin) : Math.min(value[xLabel], this.yMin)
+        this.yMax = value[xLabel2] ? Math.max(value[xLabel], value[xLabel2], this.yMax) : Math.max(value[xLabel], this.yMax)
+
+      }
+
+
+    }
+
+    if (this.lineData.length === 0) {
+      this.message = 'no plot to show';
+    } else {
+      this.cdRef.detectChanges();
+      this.createScatterPlot()
     }
   }
 
   createScatterPlot() {
     // set the dimensions and margins of the graph
-    var margin = { top: 10, right: 30, bottom: 100, left: 70 },
+    var margin = { top: 60, right: 30, bottom: 100, left: 70 },
       width = 460 - margin.left - margin.right,
       height = 480 - margin.top - margin.bottom;
-
-    // const pointTip = d3Tip.tip()
-    //   .attr('class', 'd3-tip')
-    //   .offset([-10, 0])
-    //   .html((event, d) => {
-    //     let tipBox = `<div><div class="category">Name: </div> ${d.key}</div>
-    // <div><div class="category">X Value: </div> ${d.xValue}</div>
-    // <div><div class="category">Y Value: </div>${d.yValue}</div>`
-    //     return tipBox
-    //   });
 
     const pointTip = d3Tip()
       .attr('class', 'd3-tip')
@@ -97,12 +115,12 @@ export class ScatterplotComponent implements OnChanges {
         return tipBox
       });
 
-    d3.select("#my_scatterplot")
+    d3.select(`#my_scatterplot_${this.plotNum}`)
       .selectAll('svg')
       .remove();
 
     // append the svg object to the body of the page
-    var svg = d3.select("#my_scatterplot")
+    var svg = d3.select(`#my_scatterplot_${this.plotNum}`)
       .append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -190,5 +208,14 @@ export class ScatterplotComponent implements OnChanges {
       .style("font-size", "10px")
       .style("text-anchor", "middle") // Center-align the text
       .text("Mitochondrial Counts");
+
+    let category = !isNaN(Number(this.plotNum)) && !this.dataDictExclude.includes(this.selectedCategory) ? this.plotNum + '.0' : this.plotNum
+
+    svg.append("text")
+      .attr("x", (width / 2)) // Center the text horizontally
+      .attr("y", 0 - (margin.top / 2) + 15) // Position it above the top margin
+      .attr("text-anchor", "middle") // Center-align the text horizontally
+      .style("font-size", "12px") // Set the font size
+      .text(this.dataDictionary[this.selectedCategory] ? (this.dataDictionary[this.selectedCategory][category] === undefined ? category : this.dataDictionary[this.selectedCategory][category]) : 'title');
   }
 }

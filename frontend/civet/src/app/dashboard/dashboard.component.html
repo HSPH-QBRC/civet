@@ -2,6 +2,7 @@
     <div class="col-md-3 sideBar">
         <app-data-filter (subjectIdEventSP)="passDataSP($event)" (subjectIdEventVP)="passDataVP($event)"
             (subjectIdEventVP2ndFilter)="passDataVP2ndFilter($event)"
+            (subjectIdEventSP2ndFilter)="passDataSP2ndFilter($event)"
             (dataDictionaryShare)="shareDataDictionary($event)" [dataDict]="dataDict"
             (emitStorageDS)="passDataFilterDataset($event)">
         </app-data-filter>
@@ -11,11 +12,11 @@
         <br>
         <br>
         <div class="plots-container">
-            <app-scatterplot [receivedData]="receivedData"></app-scatterplot>
+            <app-scatterplot [receivedData]="receivedData" [plotNum]="'scatterplot'" [dataDictionary]="dataDict"
+                [selectedCategory]="selectedCategory"></app-scatterplot>
             <app-violinplot [dataUR]="dataUR" [plotNum]="'Violin'" [dataDictionary]="dataDict"
                 [selectedCategory]="selectedCategory"></app-violinplot>
         </div>
-
 
         <mat-form-field>
             <mat-label>Add Another Filter</mat-label>
@@ -29,9 +30,20 @@
         <div *ngIf="dataVP2ndFilter" class="plots-container">
             <ng-container *ngFor="let data of getObjectValues(dataVP2ndFilter); let i = index">
                 <app-violinplot [dataUR]="data" [plotNum]="i" [dataDictionary]="dataDict"
-                    [selectedCategory]="selectedCategory"></app-violinplot>
+                    [selectedCategory]="selectedCategory" [minYViolinplot]="minViolinplot"
+                    [maxYViolinplot]="maxViolinplot" [maxValue]="maxNum">
+                </app-violinplot>
             </ng-container>
         </div>
+
+        <div *ngIf="dataSP2ndFilter" class="plots-container">
+            <ng-container *ngFor="let data of getObjectValues(dataSP2ndFilter); let i = index">
+                <app-scatterplot [receivedData]="data" [plotNum]="i" [dataDictionary]="dataDict"
+                    [selectedCategory]="selectedCategory" [minYScatterplot]="minScatterplot"
+                    [maxYScatterplot]="maxScatterplot"></app-scatterplot>
+            </ng-container>
+        </div>
+
 
 
 

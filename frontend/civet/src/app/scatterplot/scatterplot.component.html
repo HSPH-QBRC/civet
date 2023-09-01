@@ -1,2 +1,4 @@
-<div id="my_dataviz"></div>
-<div #my_scatterplot id="my_scatterplot" class="chart"></div>
+<!-- <div id="my_dataviz"></div> -->
+<div #my_scatterplot [id]="idValue" class="chart"></div>
+
+<div *ngIf="message.length > 0" class="centered-container">{{message}}</div>
