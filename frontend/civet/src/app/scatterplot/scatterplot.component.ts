@@ -138,7 +138,9 @@ export class ScatterplotComponent implements OnChanges {
     var x = d3.scaleBand()
       .domain(categories)
       .range([0, width])
-    // .padding(0.1);
+      .paddingInner(1)
+
+    // x.domain([...categories, '']);
 
     const bandWidth = x.bandwidth();
 
