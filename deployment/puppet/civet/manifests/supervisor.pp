@@ -1,5 +1,6 @@
 class civet::supervisor () {
   $conf_dir = '/etc/supervisor'
+  $log_dir = '/var/log/supervisor'
 
   package { 'supervisor': }
   ->
@@ -10,12 +11,6 @@ class civet::supervisor () {
       content => epp('civet/supervisor/supervisord.conf.epp'),;
     "${conf_dir}/conf.d/gunicorn.conf":
       content => epp('civet/supervisor/gunicorn.conf.epp'),;
-  }
-  ->
-  file { '/tmp/supervisor':
-    ensure => directory,
-    owner  => $civet::app_user,
-    group  => $civet::app_group,
   }
   ~>
   service { 'supervisor':

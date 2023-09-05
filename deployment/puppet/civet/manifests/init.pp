@@ -37,13 +37,6 @@ class civet (
   $database_name = 'civet'
   $database_user = $app_user
 
-  $log_dir = '/var/log/civet'
-  file { $log_dir:
-    ensure => directory,
-    owner  => $app_user,
-    group  => $app_group,
-  }
-
   $civet_dependencies = [
     'build-essential',
     'apt-transport-https',
@@ -73,12 +66,12 @@ class civet (
   package { $helper_utilities: }
 
   contain civet::mountpoint_s3
-  contain civet::cloudwatch_agent
   contain civet::django
   contain civet::nginx
   contain civet::postgresql
   contain civet::solr
   contain civet::supervisor
+  contain civet::cloudwatch_agent
 
   Class['civet::postgresql']
   ->
