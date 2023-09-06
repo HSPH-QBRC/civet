@@ -22,6 +22,7 @@ export class DashboardComponent implements OnInit {
   dataDictionary = {};
   selectedCategory = ''
   isLoading = false;
+  numberOfBins = '60';
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -55,6 +56,7 @@ export class DashboardComponent implements OnInit {
 
           let dd_url = 'https://dev-civet-api.tm4.org/api/subject-dictionary/';
           this.apiService.getSecureData(dd_url).subscribe(res => {
+            this.isLoading = false;
             for (let item in res) {
               const unformattedString = res[item]['VALUES']
               const lines = unformattedString.split('\n');
@@ -81,6 +83,7 @@ export class DashboardComponent implements OnInit {
 
   passDataVP(data: any) {
     this.dataUR = data;
+    this.getMaxNum('main')
   }
 
   passDataVP2ndFilter(data: any) {
@@ -97,8 +100,7 @@ export class DashboardComponent implements OnInit {
     }
 
     this.dataVP2ndFilter[data.value] = data.data
-    this.getMaxNum(data.value) 
-   
+    this.getMaxNum(data.value)
   }
 
   passDataSP2ndFilter(data: any) {
@@ -152,16 +154,29 @@ export class DashboardComponent implements OnInit {
   getMaxNum(plotNum) {
     let tempMin = Number.MAX_SAFE_INTEGER
     let tempMax = Number.MIN_SAFE_INTEGER
-    let number_of_bins = 60
+    let number_of_bins = parseInt(this.numberOfBins)
     let tempArr = [];
-    for (let i in this.dataVP2ndFilter[plotNum]) {
-      for (let j in this.dataVP2ndFilter[plotNum][i]) {
-        let value = this.dataVP2ndFilter[plotNum][i][j];
-        tempMin = Math.min(tempMin, value)
-        tempMax = Math.max(tempMax, value)
-        tempArr.push(value)
+
+    if (plotNum === 'main') {
+      for (let i in this.dataUR) {
+        for (let j in this.dataUR[i]) {
+          let value = this.dataUR[i][j];
+          tempMin = Math.min(tempMin, value)
+          tempMax = Math.max(tempMax, value)
+          tempArr.push(value)
+        }
+      }
+    } else {
+      for (let i in this.dataVP2ndFilter[plotNum]) {
+        for (let j in this.dataVP2ndFilter[plotNum][i]) {
+          let value = this.dataVP2ndFilter[plotNum][i][j];
+          tempMin = Math.min(tempMin, value)
+          tempMax = Math.max(tempMax, value)
+          tempArr.push(value)
+        }
       }
     }
+
 
     const bins = Array(20).fill(0);
     const binSize = (tempMax - tempMin) / number_of_bins;
@@ -176,5 +191,19 @@ export class DashboardComponent implements OnInit {
     }
 
     this.maxNum = Math.max(this.maxNum, bins[largestBin])
+  }
+
+  onNumberBinsSelected(event) {
+    this.maxNum = -10000;
+    this.numberOfBins = event
+
+    //Checks for largest bin size from the main plot and the secondary violin plots
+    this.getMaxNum('main')
+    if (this.dataVP2ndFilter) {
+      for (let index in this.dataVP2ndFilter) {
+        this.getMaxNum(index)
+      }
+    }
+
   }
 }

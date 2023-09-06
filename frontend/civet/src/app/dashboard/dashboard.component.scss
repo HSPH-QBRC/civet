@@ -145,3 +145,16 @@ app-violinplot, app-scatterplot {
     flex: 1; /* Distribute available space evenly among plots */
     max-width: calc(40% - 10px); /* Set the maximum width of each plot */
 }
+
+.binsDropdown{
+    width: 120px;
+}
+
+.loading-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 300px;
+    height: 200px;
+}

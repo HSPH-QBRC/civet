@@ -1,3 +1,4 @@
+<app-spinner-overlay class="loading-container" *ngIf="isLoading"></app-spinner-overlay>
 <div class="row flexContainer">
     <div class="col-md-3 sideBar">
         <app-data-filter (subjectIdEventSP)="passDataSP($event)" (subjectIdEventVP)="passDataVP($event)"
@@ -10,15 +11,24 @@
 
     <div class="col-md-9 content">
         <br>
+        <mat-form-field class="binsDropdown">
+            <mat-label>Number of Bins</mat-label>
+            <mat-select [(ngModel)]="numberOfBins" (selectionChange)="onNumberBinsSelected($event.value)">
+                <mat-option *ngFor="let category of ['20','30','40','50','60','70','80']" [value]="category">
+                    {{category}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
         <br>
         <div class="plots-container">
             <app-scatterplot [receivedData]="receivedData" [plotNum]="'scatterplot'" [dataDictionary]="dataDict"
                 [selectedCategory]="selectedCategory"></app-scatterplot>
-            <app-violinplot [dataUR]="dataUR" [plotNum]="'Violin'" [dataDictionary]="dataDict"
-                [selectedCategory]="selectedCategory"></app-violinplot>
+            <app-violinplot [dataUR]="dataUR" [plotNum]="'some_test'" [dataDictionary]="dataDict"
+                [selectedCategory]="selectedCategory" [maxValue]="maxNum" [numberOfBins]="numberOfBins">
+            </app-violinplot>
         </div>
 
-        <mat-form-field>
+        <mat-form-field *ngIf="dataUR">
             <mat-label>Add Another Filter</mat-label>
             <mat-select (selectionChange)="onFilterSelected($event.value)">
                 <mat-option *ngFor="let category of filterCategory" [value]="category">
@@ -31,7 +41,7 @@
             <ng-container *ngFor="let data of getObjectValues(dataVP2ndFilter); let i = index">
                 <app-violinplot [dataUR]="data" [plotNum]="i" [dataDictionary]="dataDict"
                     [selectedCategory]="selectedCategory" [minYViolinplot]="minViolinplot"
-                    [maxYViolinplot]="maxViolinplot" [maxValue]="maxNum">
+                    [maxYViolinplot]="maxViolinplot" [maxValue]="maxNum" [numberOfBins]="numberOfBins">
                 </app-violinplot>
             </ng-container>
         </div>
@@ -43,10 +53,5 @@
                     [maxYScatterplot]="maxScatterplot"></app-scatterplot>
             </ng-container>
         </div>
-
-
-
-
-
     </div>
 </div>

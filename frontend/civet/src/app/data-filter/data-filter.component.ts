@@ -467,11 +467,11 @@ export class DataFilterComponent implements OnInit {
     let query = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID`;
     this.getQueryResults(query)
       .subscribe(res => {
-        this.isLoading = false;
         let total = res['response']['numFound']
         let queryToGetAll = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
         this.getQueryResults(queryToGetAll)
           .subscribe(res => {
+            this.isLoading = false;
             let fullArray = res['response']['docs']
             for (let subject of fullArray) {
               let subjId = subject['SUBJID']
@@ -488,16 +488,17 @@ export class DataFilterComponent implements OnInit {
   }
 
   addSecondFilter(item, value) {
+    this.isLoading = true
     let tempArr = [];
     let searchQuery = this.searchQueryResults !== '' ? `${item} AND ${this.searchQueryResults}` : `${item}`
     let query = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID`;
     this.getQueryResults(query)
       .subscribe(res => {
-        this.isLoading = false;
         let total = res['response']['numFound']
         let queryToGetAll = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
         this.getQueryResults(queryToGetAll)
           .subscribe(res => {
+            this.isLoading = false
             let fullArray = res['response']['docs']
             for (let subject of fullArray) {
               let subjId = subject['SUBJID'];

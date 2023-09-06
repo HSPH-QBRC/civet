@@ -1,5 +1,9 @@
+
+
+<app-spinner-overlay class="loading-container" *ngIf="isLoading"></app-spinner-overlay>
+
 <div *ngIf="message.length === 0" class="plot-container">
-    <div [id]="idValue"></div>
+    <div [id]="idValue" ></div>
 </div>
 
 <div *ngIf="message.length > 0" class="centered-container">{{message}}</div>

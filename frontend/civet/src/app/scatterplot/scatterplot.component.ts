@@ -140,8 +140,6 @@ export class ScatterplotComponent implements OnChanges {
       .range([0, width])
       .paddingInner(1)
 
-    // x.domain([...categories, '']);
-
     const bandWidth = x.bandwidth();
 
     svg.append("g")

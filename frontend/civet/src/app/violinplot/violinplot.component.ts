@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, SimpleChanges, ChangeDetectionStrategy, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import * as d3 from 'd3';
 
 @Component({
@@ -7,7 +7,7 @@ import * as d3 from 'd3';
   styleUrls: ['./violinplot.component.scss'],
   changeDetection: ChangeDetectionStrategy.Default
 })
-export class ViolinplotComponent implements OnChanges, OnInit {
+export class ViolinplotComponent implements OnChanges {
   @Input() dataUR = []
   @Input() plotNum = ''
   @Input() dataDictionary = {}
@@ -15,6 +15,8 @@ export class ViolinplotComponent implements OnChanges, OnInit {
   @Input() minYViolinplot: number;
   @Input() maxYViolinplot: number;
   @Input() maxValue: number;
+  @Input() numberOfBins;
+
   isLoading = false;
 
   dataViolinPlot = []
@@ -33,17 +35,29 @@ export class ViolinplotComponent implements OnChanges, OnInit {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.idValue = 'my_violinplot_' + this.plotNum;
-    if ((changes.maxValue && !changes.maxValue.firstChange) || !this.maxValue) {
+    this.category = !isNaN(Number(this.plotNum)) && !this.dataDictExclude.includes(this.selectedCategory) ? this.plotNum + '.0' : this.plotNum
+    if (changes.numberOfBins && !changes.numberOfBins.firstChange) {
       if (this.dataUR) {
+        this.resetVariables();
         this.formatData()
       }
+    } else if ((changes.maxValue && !changes.maxValue.firstChange) || !this.maxValue) {
+      if (this.dataUR) {
+        this.resetVariables();
+        this.formatData()
+      }
+    }else{
+      this.formatData()
     }
   }
 
-  ngOnInit(): void {
-    if (this.dataUR) {
-      this.formatData()
-    }
+  resetVariables() {
+    this.vpMin = 10000000000;
+    this.vpMax = -100000000000;
+    this.categoryArr = [];
+    this.bins = []
+    this.message = '';
+    this.dataViolinPlot = [];
   }
 
   formatData() {
@@ -77,7 +91,7 @@ export class ViolinplotComponent implements OnChanges, OnInit {
       this.createSvg();
     }
   }
-
+  category = ''
   createSvg() {
     d3.select(`#my_violinplot_${this.plotNum}`)
       .selectAll('svg')
@@ -118,7 +132,7 @@ export class ViolinplotComponent implements OnChanges, OnInit {
     var histogram = d3.histogram()
       .domain([this.vpMin, this.vpMax])
       // .domain(y.domain())
-      .thresholds(y.ticks(60))    // Important: how many bins approx are going to be made? It is the 'resolution' of the violin plot
+      .thresholds(y.ticks(parseInt(this.numberOfBins)))    // Important: how many bins approx are going to be made? It is the 'resolution' of the violin plot
       .value(d => d)
 
     var groupedData = Array.from(d3.group(this.dataViolinPlot, (d) => d['category']), ([key, value]) => ({ key, value }));
@@ -143,8 +157,7 @@ export class ViolinplotComponent implements OnChanges, OnInit {
     // The maximum width of a violin must be x.bandwidth = the width dedicated to a group
     var xNum = d3.scaleLinear()
       .range([0, x.bandwidth()])
-      // .domain([-maxNum, maxNum])
-      .domain([-this.maxValue * 1.4, this.maxValue * 1.4])
+      .domain([-this.maxValue * 2.5, this.maxValue * 2.5])
 
     // Add the shape to this svg!
     svg
@@ -168,15 +181,13 @@ export class ViolinplotComponent implements OnChanges, OnInit {
         .y(function (d) { return (y(d['x0'])) })
         .curve(d3.curveCatmullRom)    // This makes the line smoother to give the violin appearance. Try d3.curveStep to see the difference
       )
-
-    let category = !isNaN(Number(this.plotNum)) && !this.dataDictExclude.includes(this.selectedCategory) ? this.plotNum + '.0' : this.plotNum
-
-    svg.append("text")
+      
+      svg.append("text")
       .attr("x", (width / 2)) // Center the text horizontally
       .attr("y", 0 - (margin.top / 2) + 15) // Position it above the top margin
       .attr("text-anchor", "middle") // Center-align the text horizontally
       .style("font-size", "12px") // Set the font size
-      .text(this.dataDictionary[this.selectedCategory] ? (this.dataDictionary[this.selectedCategory][category] === undefined ? category : this.dataDictionary[this.selectedCategory][category]) : 'Violin Plot');
+      .text(this.dataDictionary[this.selectedCategory] !== undefined ? (this.dataDictionary[this.selectedCategory][this.category] === undefined ? this.category : this.dataDictionary[this.selectedCategory][this.category]) : 'Violin Plot');
 
     svg.append("text")
       .attr("transform", "rotate(-90)") // Rotate the text to make it vertical
