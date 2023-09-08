@@ -516,6 +516,7 @@ export class DataFilterComponent implements OnInit {
   getPlotPointsScatterPlot(url, array) {
     this.isLoading = true;
     this.apiService.postSecureData(url, array).subscribe(data => {
+      console.log("post from scatter: ", url, data)
       this.isLoading = false;
       this.subjectIdEventSP.emit(data);
     })

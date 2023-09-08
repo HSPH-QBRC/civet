@@ -10,6 +10,8 @@
     </div>
 
     <div class="col-md-9 content">
+        <app-barchart [dataBarchart]="dataPl" [id]="'test_barchart'"></app-barchart>
+        <app-histogram [dataHistogram]="dataUR" [id]="'test_histogram'"></app-histogram>
         <br>
         <mat-form-field class="binsDropdown">
             <mat-label>Number of Bins</mat-label>
@@ -21,7 +23,7 @@
         </mat-form-field>
         <br>
         <div class="plots-container">
-            <app-scatterplot [receivedData]="receivedData" [plotNum]="'scatterplot'" [dataDictionary]="dataDict"
+            <app-scatterplot [dataPl]="dataPl" [plotNum]="'scatterplot'" [dataDictionary]="dataDict"
                 [selectedCategory]="selectedCategory"></app-scatterplot>
             <app-violinplot [dataUR]="dataUR" [plotNum]="'some_test'" [dataDictionary]="dataDict"
                 [selectedCategory]="selectedCategory" [maxValue]="maxNum" [numberOfBins]="numberOfBins">

@@ -11,7 +11,7 @@ import d3Tip from 'd3-tip';
 })
 
 export class ScatterplotComponent implements OnChanges {
-  @Input() receivedData: any;
+  @Input() dataPl: any;
   @Input() plotNum: any;
   @Input() dataDictionary = {}
   @Input() selectedCategory = ''
@@ -34,8 +34,8 @@ export class ScatterplotComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     this.idValue = 'my_scatterplot_' + this.plotNum;
-    if (this.receivedData) {
-      this.formatData(this.receivedData);
+    if (this.dataPl) {
+      this.formatData(this.dataPl);
     }
   }
 

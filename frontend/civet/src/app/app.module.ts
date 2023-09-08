@@ -21,13 +21,15 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { SpinnerOverlayComponent } from './spinner-overlay/spinner-overlay.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatButtonModule } from '@angular/material/button';
-import { SliderPDSComponent } from './slider/slider.component';
+import { SliderPDSComponent } from './data-filter/slider/slider.component';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
-import { HistogramComponent } from './histogram/histogram.component';
+import { HistogramMiniComponent } from './data-filter/histogram/histogram.component';
 import { ViolinplotComponent } from './violinplot/violinplot.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
+import { BarchartComponent } from './barchart/barchart.component';
+import { HistogramComponent } from './histogram/histogram.component'
 
 @NgModule({
   declarations: [
@@ -40,6 +42,8 @@ import { FormsModule } from '@angular/forms';
     SliderPDSComponent,
     HistogramComponent,
     ViolinplotComponent,
+    BarchartComponent,
+    HistogramMiniComponent
   ],
   imports: [
     BrowserModule,

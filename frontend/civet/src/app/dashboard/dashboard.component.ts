@@ -12,7 +12,7 @@ import { environment } from '../../environments/environment';
 export class DashboardComponent implements OnInit {
   @ViewChild(DataFilterComponent) childComponent: DataFilterComponent;
   private readonly API_URL = environment.API_URL;
-  receivedData: any;
+  dataPl: any;
   storageDS: any;
   dataUR: any;
   dataVP2ndFilter: any;
@@ -68,6 +68,7 @@ export class DashboardComponent implements OnInit {
               }
               this.dataDict[item] = dictObj
             }
+            console.log("data dict: ", this.dataDict)
             this.createFilterDataset(res)
           })
         },
@@ -78,10 +79,11 @@ export class DashboardComponent implements OnInit {
   }
 
   passDataSP(data: any) {
-    this.receivedData = data;
+    this.dataPl = data;
   }
 
   passDataVP(data: any) {
+    console.log("vp data: ", data)
     this.dataUR = data;
     this.getMaxNum('main')
   }
