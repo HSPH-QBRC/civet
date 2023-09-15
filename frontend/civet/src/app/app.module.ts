@@ -10,7 +10,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { ScatterplotComponent } from './scatterplot/scatterplot.component';
+import { ConnectedScatterplotComponent } from './connected-scatterplot/connected-scatterplot.component';
 import { TokenInterceptorInterceptor } from './token-interceptor.interceptor';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { DataFilterComponent } from './data-filter/data-filter.component';
@@ -29,13 +29,15 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { BarchartComponent } from './barchart/barchart.component';
-import { HistogramComponent } from './histogram/histogram.component'
+import { HistogramComponent } from './histogram/histogram.component';
+import { ScatterplotComponent } from './scatterplot/scatterplot.component';
+import { HeatmapComponent } from './heatmap/heatmap.component'
 
 @NgModule({
   declarations: [
     AppComponent,
     DashboardComponent,
-    ScatterplotComponent,
+    ConnectedScatterplotComponent,
     DataFilterComponent,
     CheckboxComponent,
     SpinnerOverlayComponent,
@@ -43,7 +45,9 @@ import { HistogramComponent } from './histogram/histogram.component'
     HistogramComponent,
     ViolinplotComponent,
     BarchartComponent,
-    HistogramMiniComponent
+    HistogramMiniComponent,
+    ScatterplotComponent,
+    HeatmapComponent
   ],
   imports: [
     BrowserModule,

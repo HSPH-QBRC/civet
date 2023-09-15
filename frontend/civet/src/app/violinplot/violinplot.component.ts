@@ -16,6 +16,8 @@ export class ViolinplotComponent implements OnChanges {
   @Input() maxYViolinplot: number;
   @Input() maxValue: number;
   @Input() numberOfBins;
+  @Input() yAxisLabel
+  @Input() xAxisLabel
 
   isLoading = false;
 
@@ -46,7 +48,8 @@ export class ViolinplotComponent implements OnChanges {
         this.resetVariables();
         this.formatData()
       }
-    }else{
+    } else {
+      this.resetVariables();
       this.formatData()
     }
   }
@@ -61,6 +64,7 @@ export class ViolinplotComponent implements OnChanges {
   }
 
   formatData() {
+    // this.categoryArr.push("test1")
     for (let key in this.dataUR) {
       let obj = this.dataUR[key]
       let category = Object.keys(obj)[0];
@@ -99,7 +103,7 @@ export class ViolinplotComponent implements OnChanges {
       .exit()
 
     // set the dimensions and margins of the graph
-    var margin = { top: 50, right: 30, bottom: 30, left: 120 },
+    var margin = { top: 50, right: 30, bottom: 50, left: 120 },
       width = 460 - margin.left - margin.right,
       height = 400 - margin.top - margin.bottom;
 
@@ -181,8 +185,8 @@ export class ViolinplotComponent implements OnChanges {
         .y(function (d) { return (y(d['x0'])) })
         .curve(d3.curveCatmullRom)    // This makes the line smoother to give the violin appearance. Try d3.curveStep to see the difference
       )
-      
-      svg.append("text")
+
+    svg.append("text")
       .attr("x", (width / 2)) // Center the text horizontally
       .attr("y", 0 - (margin.top / 2) + 15) // Position it above the top margin
       .attr("text-anchor", "middle") // Center-align the text horizontally
@@ -196,6 +200,17 @@ export class ViolinplotComponent implements OnChanges {
       .attr("dy", "1em") // Adjust the vertical position
       .style("font-size", "10px")
       .style("text-anchor", "middle") // Center-align the text
-      .text("Mitochondrial Counts");
+      .text(this.yAxisLabel === undefined ? "Mitochondrial Counts" : this.yAxisLabel);
+
+      svg
+      .append('text')
+      .classed('label', true)
+      .attr("font-weight", "bold")
+      .attr('x', width / 2)
+      .attr('y', height + margin.bottom)
+      .style('fill', 'rgba(0,0,0,.8)')
+      .style('text-anchor', 'middle')
+      .style('font-size', '10px')
+      .text(this.xAxisLabel === undefined ? '' : this.xAxisLabel);
   }
 }

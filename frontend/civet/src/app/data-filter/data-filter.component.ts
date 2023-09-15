@@ -20,6 +20,8 @@ export class DataFilterComponent implements OnInit {
 
   @Input() dataDict = {}
   @Output() emitStorageDS = new EventEmitter<any>();
+  @Output() emitSliderDS = new EventEmitter<any>();
+  @Output() emitCustomPlotData = new EventEmitter<any>();
 
   private readonly API_URL = environment.API_URL;
   currentDataset: string = 'civet';
@@ -257,6 +259,7 @@ export class DataFilterComponent implements OnInit {
           this.sliderStorage[dataset][category]['count'] = count;
         }
         this.emitStorageDS.emit(this.storageDataSet);
+        this.emitSliderDS.emit(this.sliderStorage)
       })
   }
 
@@ -460,6 +463,8 @@ export class DataFilterComponent implements OnInit {
     }
   }
 
+  dataCustomPlots = []
+
   getSubjectIds() {
     this.scrollToTop()
     this.isLoading = true;
@@ -471,6 +476,10 @@ export class DataFilterComponent implements OnInit {
         let queryToGetAll = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
         this.getQueryResults(queryToGetAll)
           .subscribe(res => {
+            this.dataCustomPlots = res['response']['docs']
+
+            this.emitCustomPlotData.emit(this.dataCustomPlots)
+            
             this.isLoading = false;
             let fullArray = res['response']['docs']
             for (let subject of fullArray) {
@@ -516,7 +525,6 @@ export class DataFilterComponent implements OnInit {
   getPlotPointsScatterPlot(url, array) {
     this.isLoading = true;
     this.apiService.postSecureData(url, array).subscribe(data => {
-      console.log("post from scatter: ", url, data)
       this.isLoading = false;
       this.subjectIdEventSP.emit(data);
     })

@@ -22,7 +22,8 @@ export class DashboardComponent implements OnInit {
   dataDictionary = {};
   selectedCategory = ''
   isLoading = false;
-  numberOfBins = '60';
+  numberOfBins = '40';
+  dataType = {}
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -41,6 +42,16 @@ export class DashboardComponent implements OnInit {
   minScatterplot = Number.MAX_SAFE_INTEGER;
   maxScatterplot = Number.MIN_SAFE_INTEGER;
   maxNum = 0;
+
+  sliderValue = 40;
+  sliderOptions = {
+    floor: 20,
+    ceil: 100,
+    step: 10,
+    showTicks: true,
+  };
+  selected1stCategory = 'AGE_DERV_V1';
+  selected2ndCategory = 'BMI_CM_V1';
 
   ngOnInit(): void {
     this.isLoading = true;
@@ -66,9 +77,11 @@ export class DashboardComponent implements OnInit {
                 let newKey = !isNaN(key) && !this.dataDictExclude.includes(item) ? key + '.0' : key
                 dictObj[newKey] = value;
               }
-              this.dataDict[item] = dictObj
+              this.dataDict[item] = dictObj;
+              this.dataType[item] = res[item]['VALUE TYPE']
             }
-            console.log("data dict: ", this.dataDict)
+            console.log("data dictionary: ", this.dataDict)
+            console.log("data type: ", this.dataType, this.dataType[this.selected1stCategory], this.dataType[this.selected2ndCategory])
             this.createFilterDataset(res)
           })
         },
@@ -83,7 +96,6 @@ export class DashboardComponent implements OnInit {
   }
 
   passDataVP(data: any) {
-    console.log("vp data: ", data)
     this.dataUR = data;
     this.getMaxNum('main')
   }
@@ -118,7 +130,7 @@ export class DashboardComponent implements OnInit {
       }
     }
 
-    this.dataSP2ndFilter[data.value] = data.data
+    this.dataSP2ndFilter[data.value] = data.data;
   }
 
   passDataFilterDataset(data: any) {
@@ -127,10 +139,84 @@ export class DashboardComponent implements OnInit {
       this.currentCategories.push(cat)
     }
   }
+
+  customPlotData = {}
+  filteredDataForCustomPlot = {}
+
+  passCustomPlotData(data: any) {
+    this.customPlotData = {};
+    this.filteredDataForCustomPlot = data;
+    if (this.dataType[this.selected1stCategory] === 'Continuous' && this.dataType[this.selected2ndCategory] === 'Continuous') {
+      // use scatter plot
+      for (let index in data) {
+        if (data[index][this.selected1stCategory] && data[index][this.selected2ndCategory]) {
+          let key = data[index]['SUBJID']
+          let temp = {
+            xValue: data[index][this.selected1stCategory][0],
+            yValue: data[index][this.selected2ndCategory][0]
+          }
+          this.customPlotData[key] = temp
+        }
+      }
+    } else if ((this.dataType[this.selected1stCategory] === 'Categorical' && this.dataType[this.selected2ndCategory] === 'Continuous') || (this.dataType[this.selected1stCategory] === 'Continuous' && this.dataType[this.selected2ndCategory] === 'Categorical')) {
+      // use violin plot
+      this.customPlotData = {};
+      for (let index in data) {
+        if (data[index][this.selected1stCategory] && data[index][this.selected2ndCategory]) {
+          let categoryName = '';
+          let numericName = '';
+          if (this.dataType[this.selected1stCategory] === 'Categorical') {
+            categoryName = this.selected1stCategory;
+            numericName = this.selected2ndCategory;
+          } else {
+            categoryName = this.selected2ndCategory;
+            numericName = this.selected1stCategory;
+          }
+
+          let key = data[index]['SUBJID']
+          let cat = data[index][categoryName]
+          let num = data[index][numericName]
+
+          let temp = {}
+          temp[cat] = num;
+
+          this.customPlotData[key] = temp
+
+        }
+      }
+
+    } else if (this.dataType[this.selected1stCategory] === 'Categorical' && this.dataType[this.selected2ndCategory] === 'Categorical') {
+      //use heat map
+      for (let index in data) {
+        if (data[index][this.selected1stCategory] && data[index][this.selected2ndCategory]) {
+          let key = data[index]['SUBJID'];
+          let temp = {
+            xValue: data[index][this.selected1stCategory][0],
+            yValue: data[index][this.selected2ndCategory][0]
+          }
+          this.customPlotData[key] = temp
+        }
+      }
+
+    } else {
+      console.log("Data type didn't match. Please check logs.")
+    }
+  }
+
+  currentSliderCategories = []
+  passSliderDataset(data) {
+    for (let numeric in data['civet']) {
+      this.currentSliderCategories.push(numeric)
+    }
+  }
+
   createFilterDataset(data) {
     for (let cat in data) {
-      let valueType = data[cat]['VALUE TYPE'];
-      if (valueType === 'Categorical' && this.currentCategories.includes(cat)) {
+      // let valueType = data[cat]['VALUE TYPE'];
+      // if (valueType === 'Categorical' && this.currentCategories.includes(cat)) {
+      //   this.filterCategory.push(cat)
+      // }
+      if (this.currentCategories.includes(cat) || this.currentSliderCategories.includes(cat)) {
         this.filterCategory.push(cat)
       }
     }
@@ -207,5 +293,54 @@ export class DashboardComponent implements OnInit {
       }
     }
 
+  }
+
+  showCustomPlots = false
+  updatePlots() {
+    this.showCustomPlots = true
+    this.passCustomPlotData(this.filteredDataForCustomPlot)
+  }
+
+  isNotEmpty(obj) {
+    if (Object.keys(obj).length > 0) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  onCategoryChange() {
+    this.customPlotData = {}
+    console.log("custom plot data is now empty.")
+  }
+
+  showSummaryPlot = false;
+  dataBarChart = {}
+  dataHistogram = {} 
+  displaySummaryPlots(category) {
+    this.showSummaryPlot = true;
+
+    if (this.dataType[category] === 'Categorical') {
+      for (let index in this.filteredDataForCustomPlot) {
+        if (this.filteredDataForCustomPlot[index][category]) {
+          let subjectID = this.filteredDataForCustomPlot[index]['SUBJID']
+          let key = this.filteredDataForCustomPlot[index][category][0]
+          let temp = {}
+          temp[key] = 1
+          this.dataBarChart[subjectID] = temp
+        }
+
+      }
+    } else {
+      for (let index in this.filteredDataForCustomPlot) {
+        if (this.filteredDataForCustomPlot[index][category]) {
+          let subjectID = this.filteredDataForCustomPlot[index]['SUBJID']
+          let key = this.filteredDataForCustomPlot[index][category][0]
+          let temp = {}
+          temp['test'] = key
+          this.dataHistogram[subjectID] = temp
+        }
+      }
+    }
   }
 }

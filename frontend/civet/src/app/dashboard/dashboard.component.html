@@ -5,30 +5,109 @@
             (subjectIdEventVP2ndFilter)="passDataVP2ndFilter($event)"
             (subjectIdEventSP2ndFilter)="passDataSP2ndFilter($event)"
             (dataDictionaryShare)="shareDataDictionary($event)" [dataDict]="dataDict"
-            (emitStorageDS)="passDataFilterDataset($event)">
+            (emitStorageDS)="passDataFilterDataset($event)" (emitSliderDS)="passSliderDataset($event)"
+            (emitCustomPlotData)="passCustomPlotData($event)">
         </app-data-filter>
     </div>
 
     <div class="col-md-9 content">
-        <app-barchart [dataBarchart]="dataPl" [id]="'test_barchart'"></app-barchart>
-        <app-histogram [dataHistogram]="dataUR" [id]="'test_histogram'"></app-histogram>
+        <!-- <app-scatterplot [dataPl]="dataPl" [plotNum]="'scatterplot123'"></app-scatterplot> -->
+
+        <!-- <app-heatmap></app-heatmap> -->
         <br>
-        <mat-form-field class="binsDropdown">
+        <!-- <mat-form-field class="binsDropdown">
             <mat-label>Number of Bins</mat-label>
             <mat-select [(ngModel)]="numberOfBins" (selectionChange)="onNumberBinsSelected($event.value)">
                 <mat-option *ngFor="let category of ['20','30','40','50','60','70','80']" [value]="category">
                     {{category}}
                 </mat-option>
             </mat-select>
-        </mat-form-field>
+        </mat-form-field> -->
+
+        <div class="sliderLabel">Number of Bins: </div>
+        <div class="custom-slider-bins">
+            <ngx-slider [(value)]="sliderValue" [options]="sliderOptions"
+                (userChangeEnd)="onNumberBinsSelected($event.value)">
+            </ngx-slider>
+        </div>
         <br>
+
+
         <div class="plots-container">
-            <app-scatterplot [dataPl]="dataPl" [plotNum]="'scatterplot'" [dataDictionary]="dataDict"
-                [selectedCategory]="selectedCategory"></app-scatterplot>
-            <app-violinplot [dataUR]="dataUR" [plotNum]="'some_test'" [dataDictionary]="dataDict"
+            <app-connected-scatterplot [dataPl]="dataPl" [plotNum]="'Scatter_Plot'" [dataDictionary]="dataDict"
+                [selectedCategory]="selectedCategory"></app-connected-scatterplot>
+            <app-violinplot [dataUR]="dataUR" [plotNum]="'Violin_Plot'" [dataDictionary]="dataDict"
                 [selectedCategory]="selectedCategory" [maxValue]="maxNum" [numberOfBins]="numberOfBins">
             </app-violinplot>
         </div>
+        <br>
+        <div *ngIf="showSummaryPlot" class="plots-container">
+            <div *ngIf="dataType[selected1stCategory] === 'Continuous'">
+                <app-histogram [dataHistogram]="dataHistogram" [id]="'test_histogram123'"
+                    [category]="selected1stCategory"></app-histogram>
+            </div>
+            <div *ngIf="dataType[selected1stCategory] === 'Categorical'">
+                <app-barchart [dataBarchart]="dataBarChart" [id]="'test_barchart'" [category]="selected1stCategory"
+                    [dataDictionary]="dataDict"></app-barchart>
+            </div>
+        </div>
+
+        <br>
+        <div *ngIf="dataUR">
+            <span class="spanDropdownButton">
+                <mat-form-field>
+                    <mat-label>Select 1st Category</mat-label>
+                    <mat-select [(ngModel)]="selected1stCategory" (selectionChange)="onCategoryChange()">
+                        <mat-option *ngFor="let category of filterCategory" [value]="category">
+                            {{category}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <div class="summaryPlotButton">
+                    <button mat-stroked-button color="black" class="createPlotsBtn"
+                        (click)="displaySummaryPlots(selected1stCategory)">Display Summary
+                        Plots</button>
+                </div>
+            </span>
+
+            <br>
+            <mat-form-field>
+                <mat-label>Select 2nd Category</mat-label>
+                <mat-select [(ngModel)]="selected2ndCategory" (selectionChange)="onCategoryChange()">
+                    <mat-option *ngFor="let category of filterCategory" [value]="category">
+                        {{category}}
+                    </mat-option>
+                </mat-select>
+            </mat-form-field>
+
+            <br>
+            <button mat-stroked-button color="black" class="createPlotsBtn" (click)="updatePlots()">Update
+                Plots</button>
+            <br>
+        </div>
+
+        <div *ngIf="isNotEmpty(customPlotData) && showCustomPlots">
+            <div
+                *ngIf="dataType[selected1stCategory] === 'Continuous' && dataType[selected2ndCategory] === 'Continuous'">
+                <app-scatterplot [dataPl]="customPlotData" [plotNum]="'scatterplot_custom'"
+                    [xAxisLabel]="selected1stCategory" [yAxisLabel]="selected2ndCategory"></app-scatterplot>
+            </div>
+            <div
+                *ngIf="(dataType[selected1stCategory] === 'Continuous' && dataType[selected2ndCategory] === 'Categorical') || (dataType[selected1stCategory] === 'Categorical' && dataType[selected2ndCategory] === 'Continuous')">
+                <app-violinplot [dataUR]="customPlotData" [plotNum]="'voilinplot_custom'" [dataDictionary]="dataDict"
+                    [selectedCategory]="selectedCategory" [maxValue]="maxNum" [numberOfBins]="numberOfBins"
+                    [yAxisLabel]="dataType[selected1stCategory] === 'Continuous' ? selected1stCategory: selected2ndCategory"
+                    [xAxisLabel]="dataType[selected1stCategory] === 'Categorical' ? selected1stCategory: selected2ndCategory">
+                </app-violinplot>
+            </div>
+            <div
+                *ngIf="dataType[selected1stCategory] === 'Categorical' && dataType[selected2ndCategory] === 'Categorical'">
+                <app-heatmap [dataHM]="customPlotData" [xAxisLabel]="selected1stCategory"
+                    [yAxisLabel]="selected2ndCategory"></app-heatmap>
+            </div>
+
+        </div>
+        <br>
 
         <mat-form-field *ngIf="dataUR">
             <mat-label>Add Another Filter</mat-label>
@@ -50,9 +129,9 @@
 
         <div *ngIf="dataSP2ndFilter" class="plots-container">
             <ng-container *ngFor="let data of getObjectValues(dataSP2ndFilter); let i = index">
-                <app-scatterplot [receivedData]="data" [plotNum]="i" [dataDictionary]="dataDict"
+                <app-connected-scatterplot [dataPl]="data" [plotNum]="i" [dataDictionary]="dataDict"
                     [selectedCategory]="selectedCategory" [minYScatterplot]="minScatterplot"
-                    [maxYScatterplot]="maxScatterplot"></app-scatterplot>
+                    [maxYScatterplot]="maxScatterplot"></app-connected-scatterplot>
             </ng-container>
         </div>
     </div>

@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, ChangeDetectionStrategy, Input, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
 import * as d3 from 'd3';
 //@ts-ignore
 import d3Tip from 'd3-tip';
@@ -13,6 +13,7 @@ import d3Tip from 'd3-tip';
 export class HistogramComponent implements OnChanges {
   @Input() dataHistogram
   @Input() id = ''
+  @Input() category = ''
   dataSize = 0;
   isLoading = false;
   min = 0;
@@ -21,11 +22,13 @@ export class HistogramComponent implements OnChanges {
 
   countArr = [];
 
-  constructor() { }
+  constructor(
+    private cdRef: ChangeDetectorRef,
+  ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.min = 0;
-    this.max = -Infinity;
+    this.min = 1000;
+    this.max = 0;
 
     for (let i in this.dataHistogram) {
       for (let key in this.dataHistogram[i]) {
@@ -39,6 +42,7 @@ export class HistogramComponent implements OnChanges {
       }
     }
     this.hideHistogram = false;
+    this.cdRef.detectChanges();
     this.createHistogram()
   }
 
@@ -86,13 +90,11 @@ export class HistogramComponent implements OnChanges {
     // set the parameters for the histogram
     var histogram = d3.histogram()
       .value(function (d) { return d['value']; })   // I need to give the vector of value
-      .domain([this.min, this.max])  // then the domain of the graphic
+      .domain([0, this.max])  // then the domain of the graphic
       .thresholds(x.ticks(20)); // then the numbers of bins
 
     // And apply this function to data to get the bins
     var bins = histogram(this.countArr);
-
-    console.log("bins: ", bins)
 
     let y = d3.scaleLinear()
       .range([height, 0]);
@@ -137,7 +139,7 @@ export class HistogramComponent implements OnChanges {
       .style('fill', 'rgba(0,0,0,.8)')
       .style('text-anchor', 'middle')
       .style('font-size', '12px')
-      .text('X-Axis Label');
+      .text(this.category);
   }
 }
 

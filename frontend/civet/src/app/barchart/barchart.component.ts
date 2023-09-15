@@ -13,6 +13,8 @@ import d3Tip from 'd3-tip';
 export class BarchartComponent implements OnInit, OnChanges {
   @Input() dataBarchart
   @Input() id: string = '';
+  @Input() category: string = '';
+  @Input() dataDictionary = {}
   dataSize = 0;
   isLoading = false;
 
@@ -27,6 +29,7 @@ export class BarchartComponent implements OnInit, OnChanges {
 
   maxXaxisLabelLength = 0;
   hideBarchart = false;
+
 
   constructor(
     // private httpClient: HttpClient,
@@ -47,9 +50,6 @@ export class BarchartComponent implements OnInit, OnChanges {
     this.sumstat = [];
     this.maxXaxisLabelLength = 0;
 
-    // let categorical = this.metadataId
-    // this.isLoading = true;
-    // this.getData(categorical);
     if (this.dataBarchart) {
       this.formatData()
     }
@@ -82,35 +82,6 @@ export class BarchartComponent implements OnInit, OnChanges {
     this.cdRef.detectChanges();
     this.createBarChart()
   }
-
-  // getData(categoric) {
-  //   this.hideBarchart = false;
-  //   let apiUrl = "https://api.seahorse.tm4.org";
-  //   let annotationUrl = `/metadata2/metadata-summary-plot?category_a=${categoric}&meta=${this.meta}&tissue=${this.tissue}`;
-  //   let queryURL = `${apiUrl}${annotationUrl}`;
-  //   this.httpClient.get(queryURL).pipe(
-  //     catchError(error => {
-  //       this.isLoading = false;
-  //       console.log("Error: ", error);
-  //       let message = `Error: ${error.error.error}`;
-  //       throw message
-  //     }))
-  //     .subscribe(res => {
-  //       this.isLoading = false;
-
-  //       for (let index in res) {
-  //         this.countArr.push(res[index])
-  //         this.maxCount = Math.max(res[index]["count"], this.maxCount);
-  //       }
-  //       if (this.countArr.length === 0) {
-  //         this.hideBarchart = true
-  //       } else {
-  //         this.hideBarchart = false;
-  //         this.createBarChart()
-  //       }
-
-  //     })
-  // }
 
   createBarChart() {
     // set the dimensions and margins of the graph
@@ -150,6 +121,7 @@ export class BarchartComponent implements OnInit, OnChanges {
 
     let rotateText = (this.countArr.length > 5) ? "translate(-10,0)rotate(-45)" : "translate(-10,0)";
     let xAxisLabels = (this.countArr.length > 55) ? d3.axisBottom(x).tickFormat((d) => '').tickSize(0) : d3.axisBottom(x);
+    
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxisLabels)
@@ -202,7 +174,7 @@ export class BarchartComponent implements OnInit, OnChanges {
       .style('fill', 'rgba(0,0,0,.8)')
       .style('text-anchor', 'middle')
       .style('font-size', '12px')
-      .text(this.id);
+      .text(this.category);
 
     function wrap(text, width) {
       text.each(function () {

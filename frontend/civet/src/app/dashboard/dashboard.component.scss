@@ -92,6 +92,10 @@ ul {
     .mat-chip {
         vertical-align: middle !important;
     }
+
+    .custom-slider-bins .ngx-slider .ngx-slider-bubble {
+        margin-left: 0px !important;
+    }
 }
 .checkboxSection {
     height: 40px;
@@ -141,12 +145,13 @@ ul {
     gap: 10px; /* Adjust the gap between plots as needed */
 }
 
-app-violinplot, app-scatterplot {
+app-violinplot,
+app-scatterplot {
     flex: 1; /* Distribute available space evenly among plots */
     max-width: calc(40% - 10px); /* Set the maximum width of each plot */
 }
 
-.binsDropdown{
+.binsDropdown {
     width: 120px;
 }
 
@@ -157,4 +162,16 @@ app-violinplot, app-scatterplot {
     position: relative;
     width: 300px;
     height: 200px;
+}
+
+.custom-slider-bins {
+    width: 300px;
+    margin-top: 12px;
+}
+.spanDropdownButton {
+    display: flex;
+    align-items: center;
+}
+.summaryPlotButton {
+    margin-left: 10px;
 }
