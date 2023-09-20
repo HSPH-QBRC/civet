@@ -6,14 +6,12 @@
             (subjectIdEventSP2ndFilter)="passDataSP2ndFilter($event)"
             (dataDictionaryShare)="shareDataDictionary($event)" [dataDict]="dataDict"
             (emitStorageDS)="passDataFilterDataset($event)" (emitSliderDS)="passSliderDataset($event)"
-            (emitCustomPlotData)="passCustomPlotData($event)">
+            (emitCustomPlotData)="passCustomPlotData($event)"
+            (emitCustomPlotData2ndFilter)="passCustomPlotData2ndFilter($event)">
         </app-data-filter>
     </div>
 
     <div class="col-md-9 content">
-        <!-- <app-scatterplot [dataPl]="dataPl" [plotNum]="'scatterplot123'"></app-scatterplot> -->
-
-        <!-- <app-heatmap></app-heatmap> -->
         <br>
         <!-- <mat-form-field class="binsDropdown">
             <mat-label>Number of Bins</mat-label>
@@ -132,6 +130,29 @@
                 <app-connected-scatterplot [dataPl]="data" [plotNum]="i" [dataDictionary]="dataDict"
                     [selectedCategory]="selectedCategory" [minYScatterplot]="minScatterplot"
                     [maxYScatterplot]="maxScatterplot"></app-connected-scatterplot>
+            </ng-container>
+        </div>
+
+        <div *ngIf="dataCP2ndFilter" class="plots-container">
+            <ng-container *ngFor="let data of getObjectValues(dataCP2ndFilter); let i = index">
+                <div
+                    *ngIf="dataType[selected1stCategory] === 'Continuous' && dataType[selected2ndFilterCategory] === 'Continuous'">
+                    <app-scatterplot [dataPl]="data" [plotNum]="'scatterplot_custom2_'+i"
+                        [xAxisLabel]="selected1stCategory" [yAxisLabel]="selected2ndFilterCategory"></app-scatterplot>
+                </div>
+                <div
+                    *ngIf="(dataType[selected1stCategory] === 'Continuous' && dataType[selected2ndFilterCategory] === 'Categorical') || (dataType[selected1stCategory] === 'Categorical' && dataType[selected2ndFilterCategory] === 'Continuous')">
+                    <app-violinplot [dataUR]="data" [plotNum]="'voilinplot_custom2_'+i" [dataDictionary]="dataDict"
+                        [selectedCategory]="selectedCategory" [maxValue]="maxNum" [numberOfBins]="numberOfBins"
+                        [yAxisLabel]="dataType[selected1stCategory] === 'Continuous' ? selected1stCategory: selected2ndFilterCategory"
+                        [xAxisLabel]="dataType[selected1stCategory] === 'Categorical' ? selected1stCategory: selected2ndFilterCategory">
+                    </app-violinplot>
+                </div>
+                <div
+                    *ngIf="dataType[selected1stCategory] === 'Categorical' && dataType[selected2ndFilterCategory] === 'Categorical'">
+                    <app-heatmap [dataHM]="data" [xAxisLabel]="selected1stCategory"
+                        [yAxisLabel]="selected2ndFilterCategory"></app-heatmap>
+                </div>
             </ng-container>
         </div>
     </div>

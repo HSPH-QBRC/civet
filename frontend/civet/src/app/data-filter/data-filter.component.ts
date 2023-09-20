@@ -22,6 +22,8 @@ export class DataFilterComponent implements OnInit {
   @Output() emitStorageDS = new EventEmitter<any>();
   @Output() emitSliderDS = new EventEmitter<any>();
   @Output() emitCustomPlotData = new EventEmitter<any>();
+  @Output() emitCustomPlotData2ndFilter = new EventEmitter<any>();
+  
 
   private readonly API_URL = environment.API_URL;
   currentDataset: string = 'civet';
@@ -477,9 +479,8 @@ export class DataFilterComponent implements OnInit {
         this.getQueryResults(queryToGetAll)
           .subscribe(res => {
             this.dataCustomPlots = res['response']['docs']
-
             this.emitCustomPlotData.emit(this.dataCustomPlots)
-            
+
             this.isLoading = false;
             let fullArray = res['response']['docs']
             for (let subject of fullArray) {
@@ -499,7 +500,14 @@ export class DataFilterComponent implements OnInit {
   addSecondFilter(item, value) {
     this.isLoading = true
     let tempArr = [];
-    let searchQuery = this.searchQueryResults !== '' ? `${item} AND ${this.searchQueryResults}` : `${item}`
+    
+    let searchQuery = ''
+    if(value === 'numeric'){
+      searchQuery = this.searchQueryResults !== '' ? `${this.searchQueryResults}` : `${item}`
+    }else{
+      searchQuery = this.searchQueryResults !== '' ? `${item} AND ${this.searchQueryResults}` : `${item}`
+    }
+    
     let query = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID`;
     this.getQueryResults(query)
       .subscribe(res => {
@@ -507,6 +515,10 @@ export class DataFilterComponent implements OnInit {
         let queryToGetAll = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
         this.getQueryResults(queryToGetAll)
           .subscribe(res => {
+            console.log("val: ", value)
+            this.dataCustomPlots = res['response']['docs']
+            this.emitCustomPlotData2ndFilter.emit([this.dataCustomPlots, value])
+
             this.isLoading = false
             let fullArray = res['response']['docs']
             for (let subject of fullArray) {
@@ -526,6 +538,7 @@ export class DataFilterComponent implements OnInit {
     this.isLoading = true;
     this.apiService.postSecureData(url, array).subscribe(data => {
       this.isLoading = false;
+      console.log("data from SP: ", data)
       this.subjectIdEventSP.emit(data);
     })
   }
