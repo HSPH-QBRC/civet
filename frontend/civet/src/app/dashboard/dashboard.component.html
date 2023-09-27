@@ -13,14 +13,6 @@
 
     <div class="col-md-9 content">
         <br>
-        <!-- <mat-form-field class="binsDropdown">
-            <mat-label>Number of Bins</mat-label>
-            <mat-select [(ngModel)]="numberOfBins" (selectionChange)="onNumberBinsSelected($event.value)">
-                <mat-option *ngFor="let category of ['20','30','40','50','60','70','80']" [value]="category">
-                    {{category}}
-                </mat-option>
-            </mat-select>
-        </mat-form-field> -->
 
         <div class="sliderLabel">Number of Bins: </div>
         <div class="custom-slider-bins">
@@ -115,6 +107,16 @@
                 </mat-option>
             </mat-select>
         </mat-form-field>
+
+        <div *ngIf="showNumericSlider">
+            <div class="sliderLabel">Number of Bins (For Numeric only): </div>
+            <div class="custom-slider-bins">
+                <ngx-slider [(value)]="numericSlidervalue" [options]="numericSliderOptions"
+                    (userChangeEnd)="onNumberBinsSelectedNumeric($event.value)">
+                </ngx-slider>
+            </div>
+        </div>
+
 
         <div *ngIf="dataVP2ndFilter" class="plots-container">
             <ng-container *ngFor="let data of getObjectValues(dataVP2ndFilter); let i = index">

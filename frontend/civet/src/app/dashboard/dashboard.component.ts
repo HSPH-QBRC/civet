@@ -50,6 +50,15 @@ export class DashboardComponent implements OnInit {
     step: 10,
     showTicks: true,
   };
+
+  numericSlidervalue = 3;
+  numericSliderOptions = {
+    floor: 1,
+    ceil: 5,
+    step: 1,
+    showTicks: true,
+  };
+
   selected1stCategory = 'AGE_DERV_V1';
   selected2ndCategory = 'BMI_CM_V1';
 
@@ -209,14 +218,11 @@ export class DashboardComponent implements OnInit {
   dataCP2ndFilter = {}
   passCustomPlotData2ndFilter(event: any){
     let [data, val] = event;
-    // console.log("event: ", event)
-    // console.log("from pass custom 2: ", data, this.selected1stCategory, this.selected2ndFilterCategory, this.dataType) 
-    
     this.customPlotData2ndFilter = {};
     this.filteredDataForCustomPlot2ndFilter = data;
     if (this.dataType[this.selected1stCategory] === 'Continuous' && this.dataType[this.selected2ndFilterCategory] === 'Continuous') {
       // use scatter plot
-      // console.log("custom2 scatter: ", data)
+      console.log("custom2 scatter: ", data)
       for (let index in data) {
         if (data[index][this.selected1stCategory] && data[index][this.selected2ndFilterCategory]) {
           let key = data[index]['SUBJID']
@@ -273,7 +279,7 @@ export class DashboardComponent implements OnInit {
     }
     // console.log("custom plot data 2: ", this.customPlotData2ndFilter, val)
     this.dataCP2ndFilter[val] = this.customPlotData2ndFilter
-    // console.log("dataCP2ndFilter: ", this.dataCP2ndFilter)
+    console.log("dataCP2ndFilter: ", this.dataCP2ndFilter)
   }
 
   currentSliderCategories = []
@@ -296,6 +302,7 @@ export class DashboardComponent implements OnInit {
   }
 
   selected2ndFilterCategory = ''
+  showNumericSlider = false;
   onFilterSelected(selectedValue: string) {
     this.selected2ndFilterCategory = selectedValue;
     let options = this.filterDataset['civet'][selectedValue];
@@ -303,11 +310,12 @@ export class DashboardComponent implements OnInit {
     for (let option in options) {
       let newString = `(${selectedValue}:${option})`;
       this.selectedCategory = selectedValue;
-      this.childComponent.addSecondFilter(newString, option);
+      this.childComponent.addSecondFilter(newString, option, this.selected2ndFilterCategory, 1);
     }
     if(options === undefined){ //numerical categories would return undefined here
+      this.showNumericSlider = true;
       let newString = '*'
-      this.childComponent.addSecondFilter(newString, 'numeric');
+      this.childComponent.addSecondFilter(newString, 'numeric', this.selected2ndFilterCategory, this.numericSlidervalue);
     }
   }
 
@@ -372,6 +380,20 @@ export class DashboardComponent implements OnInit {
         this.getMaxNum(index)
       }
     }
+
+  }
+
+  onNumberBinsSelectedNumeric(event) {
+    // this.maxNum = -10000;
+    // this.numberOfBins = event
+
+    // //Checks for largest bin size from the main plot and the secondary violin plots
+    // this.getMaxNum('main')
+    // if (this.dataVP2ndFilter) {
+    //   for (let index in this.dataVP2ndFilter) {
+    //     this.getMaxNum(index)
+    //   }
+    // }
 
   }
 

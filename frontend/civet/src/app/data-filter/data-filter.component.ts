@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { catchError } from "rxjs/operators";
 import { ApiServiceService } from '../api-service.service';
 import { environment } from '../../environments/environment';
+import { range } from 'd3';
 
 @Component({
   selector: 'app-data-filter',
@@ -23,7 +24,7 @@ export class DataFilterComponent implements OnInit {
   @Output() emitSliderDS = new EventEmitter<any>();
   @Output() emitCustomPlotData = new EventEmitter<any>();
   @Output() emitCustomPlotData2ndFilter = new EventEmitter<any>();
-  
+
 
   private readonly API_URL = environment.API_URL;
   currentDataset: string = 'civet';
@@ -497,40 +498,87 @@ export class DataFilterComponent implements OnInit {
       })
   }
 
-  addSecondFilter(item, value) {
+  addSecondFilter(item, value, selectedValue, numBins) {
     this.isLoading = true
     let tempArr = [];
-    
+
     let searchQuery = ''
-    if(value === 'numeric'){
+    if (value === 'numeric') {
       searchQuery = this.searchQueryResults !== '' ? `${this.searchQueryResults}` : `${item}`
-    }else{
+      console.log("numeric search query: ", searchQuery)
+    } else {
       searchQuery = this.searchQueryResults !== '' ? `${item} AND ${this.searchQueryResults}` : `${item}`
     }
-    
+
     let query = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID`;
     this.getQueryResults(query)
       .subscribe(res => {
         let total = res['response']['numFound']
         let queryToGetAll = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
-        this.getQueryResults(queryToGetAll)
-          .subscribe(res => {
-            console.log("val: ", value)
-            this.dataCustomPlots = res['response']['docs']
-            this.emitCustomPlotData2ndFilter.emit([this.dataCustomPlots, value])
+        console.log("query for all: ", queryToGetAll)
+        if (value === 'numeric') {
 
-            this.isLoading = false
-            let fullArray = res['response']['docs']
-            for (let subject of fullArray) {
-              let subjId = subject['SUBJID'];
-              tempArr.push(subjId)
-            }
-            let postUrlVP = 'https://dev-civet-api.tm4.org/api/mt-dna/ur/cohort/';
-            this.getPlotPointsViolinPlot2ndFilter(postUrlVP, tempArr, value)
+          this.getQueryResults(queryToGetAll)
+            .subscribe(res => {
+              this.dataCustomPlots = res['response']['docs']
+              //find min/max for the selected value
+              this.isLoading = false
+              let min = 1000000;
+              let max = 0
+              for (let obj of this.dataCustomPlots) {
+                let dataValue = obj[selectedValue][0];
+                min = Math.min(min, dataValue)
+                max = Math.max(max, dataValue)
+              }
+              let binSize = (max - min) / numBins
+              let bin = []
+              for (let i in range(numBins)) {
+                let temp = {
+                  start: min + parseInt(i) * binSize,
+                  end: min + parseInt(i) * binSize + binSize
+                }
+                bin.push(temp)
+              }
+              console.log("bin: ", bin)
 
-            let postUrlSP = 'https://dev-civet-api.tm4.org/api/mt-dna/pl/cohort/'
-            this.getPlotPointsScatterPlot2ndFilter(postUrlSP, tempArr, value)
-          })
+              let newQuery = ''
+              for (let index in bin) {
+                let currentRange = bin[index]
+                newQuery = (searchQuery === '*') ? `${selectedValue}:[${currentRange.start} TO ${currentRange.end}]` : `${selectedValue}:[${currentRange.start} TO ${currentRange.end}] AND ${this.searchQueryResults}`
+                let queryToGetAll = `${this.API_URL}/subject-query/?q=${newQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
+
+                this.getQueryResults(queryToGetAll)
+                  .subscribe(res => {
+                    console.log("res: ", res, queryToGetAll)
+                    this.dataCustomPlots = res['response']['docs']
+                    //maybe instead of index, use a more descriptive name?????
+                    this.emitCustomPlotData2ndFilter.emit([this.dataCustomPlots, index])
+                  })
+              }
+
+            })
+        } else {
+          this.getQueryResults(queryToGetAll)
+            .subscribe(res => {
+
+              this.dataCustomPlots = res['response']['docs']
+              console.log("2nd query: ", queryToGetAll, this.dataCustomPlots, value, item)
+              this.emitCustomPlotData2ndFilter.emit([this.dataCustomPlots, value])
+
+              this.isLoading = false
+              let fullArray = res['response']['docs']
+              for (let subject of fullArray) {
+                let subjId = subject['SUBJID'];
+                tempArr.push(subjId)
+              }
+              let postUrlVP = 'https://dev-civet-api.tm4.org/api/mt-dna/ur/cohort/';
+              this.getPlotPointsViolinPlot2ndFilter(postUrlVP, tempArr, value)
+
+              let postUrlSP = 'https://dev-civet-api.tm4.org/api/mt-dna/pl/cohort/'
+              this.getPlotPointsScatterPlot2ndFilter(postUrlSP, tempArr, value)
+            })
+        }
+
       })
   }
 
