@@ -2,8 +2,6 @@ import { Component, ChangeDetectionStrategy, OnInit, Input, OnChanges, SimpleCha
 import * as d3 from 'd3';
 //@ts-ignore
 import d3Tip from 'd3-tip';
-import { HttpClient } from '@angular/common/http';
-import { catchError } from "rxjs/operators";
 
 @Component({
   selector: 'app-heatmap',
@@ -16,47 +14,33 @@ export class HeatmapComponent implements OnInit, OnChanges {
   @Input() dataHM
   @Input() xAxisLabel = ''
   @Input() yAxisLabel = ''
+  @Input() dataDictionary = {}
 
-  // xArr = ["A", "B", "C"]
-  // yArr = ["v1", "v2", "v3"]
   xArr = [];
   yArr = [];
-  heatmapData = {
-    // {
-    //   xValue: "A",
-    //   yValue: "v1",
-    //   value: 30
-    // },
-    // {
-    //   xValue: "A",
-    //   yValue: "v2",
-    //   value: 95
-    // },
-    // {
-    //   xValue: "A",
-    //   yValue: "v3",
-    //   value: 22
-    // },
-    // {
-    //   xValue: "B",
-    //   yValue: "v1",
-    //   value: 30
-    // },
-    // {
-    //   xValue: "B",
-    //   yValue: "v3",
-    //   value: 22
-    // },
-  }
-
+  heatmapData = {}
   heatmapDataArr = []
   minCount = 1000;
   maxCount = 0;
+  dataDictExclude = ['GENDER', 'RACE', 'STRATUM_ENROLLED']
 
   ngOnInit(): void {
     for (let index in this.dataHM) {
       let xVal = this.dataHM[index]['xValue']
       let yVal = this.dataHM[index]['yValue']
+
+      if ((parseInt(xVal) || xVal == '0') && !this.dataDictExclude.includes(this.xAxisLabel)) {
+        xVal = this.dataDictionary[this.xAxisLabel][xVal + '.0']
+      } else if ((parseInt(xVal) || xVal == '0') && this.dataDictExclude.includes(this.xAxisLabel)) {
+        xVal = this.dataDictionary[this.xAxisLabel][xVal]
+      }
+
+      if ((parseInt(yVal) || yVal == '0') && !this.dataDictExclude.includes(this.xAxisLabel)) {
+        yVal = this.dataDictionary[this.xAxisLabel][yVal + '.0']
+      } else if ((parseInt(yVal) || yVal == '0') && this.dataDictExclude.includes(this.xAxisLabel)) {
+        yVal = this.dataDictionary[this.xAxisLabel][yVal]
+      }
+
       if (!this.xArr.includes(xVal)) {
         this.xArr.push(xVal)
       }
@@ -75,6 +59,8 @@ export class HeatmapComponent implements OnInit, OnChanges {
       } else {
         this.heatmapData[newKey].value += 1;
       }
+
+
     }
     //add for 0 values on the heatmap
     for (let i in this.xArr) {
@@ -99,6 +85,7 @@ export class HeatmapComponent implements OnInit, OnChanges {
       this.heatmapDataArr.push(this.heatmapData[i])
     }
     this.createHeatMapSimple()
+    console.log("x/y arr: ", this.xArr, this.yArr, this.dataDictionary[this.xAxisLabel])
   }
 
   constructor(
@@ -111,7 +98,7 @@ export class HeatmapComponent implements OnInit, OnChanges {
 
   createHeatMapSimple() {
     // set the dimensions and margins of the graph
-    var margin = { top: 30, right: 145, bottom: 50, left: 50 },
+    var margin = { top: 30, right: 145, bottom: 150, left: 150 },
       width = 800 - margin.left - margin.right,
       height = 500 - margin.top - margin.bottom;
 
@@ -142,17 +129,35 @@ export class HeatmapComponent implements OnInit, OnChanges {
       .range([0, width])
       .domain(this.xArr)
       .padding(0.01);
+    // svg.append("g")
+    //   .attr("transform", "translate(0," + height + ")")
+    //   .call(d3.axisBottom(x))
+
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x))
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .call(wrap, width / (this.xArr.length * 2))
+      .attr("dx", "-.8em")
+      .attr("dy", ".15em")
+      .attr("transform", "translate(-20,0)rotate(-65)");
 
     // Build X scales and axis:
     var y = d3.scaleBand()
       .range([height, 0])
       .domain(this.yArr)
       .padding(0.01);
+    // svg.append("g")
+    //   .call(d3.axisLeft(y));
     svg.append("g")
-      .call(d3.axisLeft(y));
+      .call(d3.axisLeft(y))
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .call(wrap, margin.left - 25)
+      .attr("dx", "-1em")
+    // .attr("dy", ".15em")
+
 
     // Build color scale
     var myColor = d3.scaleLinear()
@@ -220,7 +225,7 @@ export class HeatmapComponent implements OnInit, OnChanges {
       .append("svg")
       .attr("width", widthGradient)
       .attr("height", heightGradient)
-      .attr('x', width + 85)
+      .attr('x', width + margin.left + 20)
       .attr('y', 100);
 
     var defs = countLegend.append("defs");
@@ -254,6 +259,30 @@ export class HeatmapComponent implements OnInit, OnChanges {
     g.append("g")
       .call(xAxisGradient)
       .select(".domain")
+
+    function wrap(text, width) {
+      text.each(function () {
+        var text = d3.select(this),
+          words = text.text().split(/\s+/).reverse(),
+          word,
+          line = [],
+          lineNumber = 0,
+          lineHeight = 1.1, // ems
+          y = text.attr("y"),
+          dy = parseFloat(text.attr("dy")),
+          tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+        while (word = words.pop()) {
+          line.push(word);
+          tspan.text(line.join(" "));
+          if (tspan.node().getComputedTextLength() > width) {
+            line.pop();
+            tspan.text(line.join(" "));
+            line = [word];
+            tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+          }
+        }
+      });
+    }
   }
 
 }

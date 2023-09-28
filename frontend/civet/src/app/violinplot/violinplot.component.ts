@@ -64,11 +64,16 @@ export class ViolinplotComponent implements OnChanges {
   }
 
   formatData() {
-    // this.categoryArr.push("test1")
     for (let key in this.dataUR) {
       let obj = this.dataUR[key]
       let category = Object.keys(obj)[0];
       let value = obj[category];
+
+      if ((parseInt(category) || category === '0') && !this.dataDictExclude.includes(this.xAxisLabel)) {
+        category = this.dataDictionary[this.xAxisLabel][category + '.0']
+      } else if ((parseInt(category) || category === '0') && this.dataDictExclude.includes(this.xAxisLabel)) {
+        category = this.dataDictionary[this.xAxisLabel][category]
+      }
 
       if (!this.categoryArr.includes(category)) {
         this.categoryArr.push(category)
@@ -131,6 +136,8 @@ export class ViolinplotComponent implements OnChanges {
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x))
+
+    console.log("category arr: ", this.categoryArr, this.dataDictionary)
 
     // Features of the histogram
     var histogram = d3.histogram()
@@ -202,7 +209,7 @@ export class ViolinplotComponent implements OnChanges {
       .style("text-anchor", "middle") // Center-align the text
       .text(this.yAxisLabel === undefined ? "Mitochondrial Counts" : this.yAxisLabel);
 
-      svg
+    svg
       .append('text')
       .classed('label', true)
       .attr("font-weight", "bold")
