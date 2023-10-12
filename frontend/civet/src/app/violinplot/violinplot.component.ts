@@ -137,7 +137,7 @@ export class ViolinplotComponent implements OnChanges {
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x))
 
-    console.log("category arr: ", this.categoryArr, this.dataDictionary)
+    // console.log("category arr: ", this.categoryArr, this.dataDictionary)
 
     // Features of the histogram
     var histogram = d3.histogram()

@@ -1,8 +1,8 @@
 <app-spinner-overlay *ngIf="isLoading"></app-spinner-overlay>
 <mat-drawer-container class="filter-container" autosize>
     <div class="sideContainer">
-        <div class = "titleContainer">
-            <div class="filtersTitle" >Filters</div>
+        <div class="titleContainer">
+            <div class="filtersTitle">Filters</div>
             <div class="spacer"></div>
             <button mat-stroked-button color="black" class="createPlotsBtn" (click)="getSubjectIds()">Create
                 Plots</button>
@@ -32,6 +32,36 @@
                 </mev-slider>
             </div>
         </div>
+
+        <div *ngIf="displayAdvance">
+            <div *ngFor="let item of storageDataSet[currentDataset] | keyvalue">
+                <div *ngIf="advanceFields.includes(item.key)">
+                    <mev-checkbox *ngIf="altStorage[currentDataset][item.key]['altQuery'] === ''; else elseBlock"
+                        [info]='item' [alt]='altStorage[currentDataset]' [currentDataset]="currentDataset" version="1"
+                        [displayDetails]="true" [showMoreStatus]="showMoreStorage" [test_dictionary]="dataDict">
+                    </mev-checkbox>
+                    <ng-template #elseBlock>
+                        <mev-checkbox *ngIf="altStorage[currentDataset][item.key]" [info]='item'
+                            [alt]='altStorage[currentDataset]' [currentDataset]="currentDataset" version="2"
+                            [displayDetails]="true" [showMoreStatus]="showMoreStorage" [test_dictionary]="dataDict">
+                        </mev-checkbox>
+                    </ng-template>
+                </div>
+            </div>
+
+            <div *ngFor="let item of sliderStorage[currentDataset] | keyvalue">
+                <div *ngIf="advanceFields.includes(item.key)">
+                    <mev-slider [info]='item' [currentDataset]="currentDataset" [category]="item.key"
+                        [countNum]="sliderStorage[currentDataset][item.key]['count']" (childEvent)="setSliderValue($event)"
+                        [displayDetails]="true" (checkEvent)="onNotReportedChecked($event)" [mainQuery]="mainQuery"
+                        [sliderdata]="sliderStorage">
+                    </mev-slider>
+                </div>
+            </div>
+        </div>
+
+
+
 
         <div class="buttonRow">
             <button mat-stroked-button color="primary" (click)="onDisplayAdvance()">

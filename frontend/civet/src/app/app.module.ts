@@ -31,7 +31,9 @@ import { FormsModule } from '@angular/forms';
 import { BarchartComponent } from './barchart/barchart.component';
 import { HistogramComponent } from './histogram/histogram.component';
 import { ScatterplotComponent } from './scatterplot/scatterplot.component';
-import { HeatmapComponent } from './heatmap/heatmap.component'
+import { HeatmapComponent } from './heatmap/heatmap.component';
+import { MatTabsModule } from '@angular/material/tabs';
+import { MatDividerModule } from '@angular/material/divider';
 
 @NgModule({
   declarations: [
@@ -65,7 +67,9 @@ import { HeatmapComponent } from './heatmap/heatmap.component'
     NgxSliderModule,
     MatFormFieldModule,
     MatSelectModule,
-    FormsModule
+    FormsModule,
+    MatTabsModule,
+    MatDividerModule
   ],
   providers: [
     {

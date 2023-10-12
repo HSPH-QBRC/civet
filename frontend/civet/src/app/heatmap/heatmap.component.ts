@@ -35,10 +35,10 @@ export class HeatmapComponent implements OnInit, OnChanges {
         xVal = this.dataDictionary[this.xAxisLabel][xVal]
       }
 
-      if ((parseInt(yVal) || yVal == '0') && !this.dataDictExclude.includes(this.xAxisLabel)) {
-        yVal = this.dataDictionary[this.xAxisLabel][yVal + '.0']
-      } else if ((parseInt(yVal) || yVal == '0') && this.dataDictExclude.includes(this.xAxisLabel)) {
-        yVal = this.dataDictionary[this.xAxisLabel][yVal]
+      if ((parseInt(yVal) || yVal == '0') && !this.dataDictExclude.includes(this.yAxisLabel)) {
+        yVal = this.dataDictionary[this.yAxisLabel][yVal + '.0']
+      } else if ((parseInt(yVal) || yVal == '0') && this.dataDictExclude.includes(this.yAxisLabel)) {
+        yVal = this.dataDictionary[this.yAxisLabel][yVal]
       }
 
       if (!this.xArr.includes(xVal)) {
@@ -85,7 +85,7 @@ export class HeatmapComponent implements OnInit, OnChanges {
       this.heatmapDataArr.push(this.heatmapData[i])
     }
     this.createHeatMapSimple()
-    console.log("x/y arr: ", this.xArr, this.yArr, this.dataDictionary[this.xAxisLabel])
+    // console.log("x/y arr: ", this.xArr, this.yArr, this.dataDictionary[this.xAxisLabel])
   }
 
   constructor(
@@ -112,6 +112,23 @@ export class HeatmapComponent implements OnInit, OnChanges {
         return tipBox
       });
 
+    const yAxisTip = d3Tip()
+      .attr('class', 'd3-tip')
+      .offset([-10, 0])
+      .html((event) => {
+        // console.log("y axis: ", event)
+        let tipBox = `<div><div class="category">${event.target.__data__}</div> </div>`
+        return tipBox
+      });
+
+    const xAxisTip = d3Tip()
+      .attr('class', 'd3-tip')
+      .offset([-10, 0])
+      .html((event) => {
+        let tipBox = `<div><div class="category">${event.target.__data__}</div> </div>`
+        return tipBox
+      });
+
     // append the svg object to the body of the page
     var svg = d3.select("#my_heatmap")
       .append("svg")
@@ -123,6 +140,8 @@ export class HeatmapComponent implements OnInit, OnChanges {
 
     // Labels of row and columns
     svg.call(pointTip);
+    svg.call(yAxisTip);
+    svg.call(xAxisTip);
 
     // Build X scales and axis:
     var x = d3.scaleBand()
@@ -141,23 +160,41 @@ export class HeatmapComponent implements OnInit, OnChanges {
       .call(wrap, width / (this.xArr.length * 2))
       .attr("dx", "-.8em")
       .attr("dy", ".15em")
-      .attr("transform", "translate(-20,0)rotate(-65)");
+      .attr("transform", "translate(-20,0)rotate(-65)")
+      .on('mouseover', function (mouseEvent: any) {
+        xAxisTip.show(mouseEvent, this);
+        xAxisTip.style('left', mouseEvent.x + 10 + 'px');
+        d3.select(this).style("cursor", "pointer");
+      })
+      .on('mouseout', function (mouseEvent: any) {
+        d3.select(this).style("cursor", "default");
+      })
+      .on('mouseout', xAxisTip.hide);
 
     // Build X scales and axis:
     var y = d3.scaleBand()
       .range([height, 0])
       .domain(this.yArr)
       .padding(0.01);
-    // svg.append("g")
-    //   .call(d3.axisLeft(y));
+
     svg.append("g")
       .call(d3.axisLeft(y))
       .selectAll("text")
       .style("text-anchor", "end")
-      .call(wrap, margin.left - 25)
-      .attr("dx", "-1em")
-    // .attr("dy", ".15em")
-
+      .call(wrap, margin.left - 30)
+      .attr("transform", "translate(-12,0)")
+      .text(function (d: string) {
+        return typeof d === 'string' && d.length > 20 ? d.slice(0, 20) + "..." : d;
+      })
+      .on('mouseover', function (mouseEvent: any) {
+        yAxisTip.show(mouseEvent, this);
+        yAxisTip.style('left', mouseEvent.x + 10 + 'px');
+        d3.select(this).style("cursor", "pointer");
+      })
+      .on('mouseout', function (mouseEvent: any) {
+        d3.select(this).style("cursor", "default");
+      })
+      .on('mouseout', yAxisTip.hide);
 
     // Build color scale
     var myColor = d3.scaleLinear()

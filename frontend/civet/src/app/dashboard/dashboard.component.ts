@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Renderer2, } from '@angular/core';
 import { DataFilterComponent } from '../data-filter/data-filter.component';
 import { ApiServiceService } from '../api-service.service';
 import { AuthenticationService } from '../authentication.service';
@@ -28,6 +28,8 @@ export class DashboardComponent implements OnInit {
   constructor(
     private authenticationService: AuthenticationService,
     private apiService: ApiServiceService,
+    private el: ElementRef,
+    private renderer: Renderer2
   ) { }
 
   username = environment.username;
@@ -51,7 +53,7 @@ export class DashboardComponent implements OnInit {
     showTicks: true,
   };
 
-  numericSlidervalue = 3;
+  numericSlidervalue = 2;
   numericSliderOptions = {
     floor: 1,
     ceil: 5,
@@ -89,8 +91,6 @@ export class DashboardComponent implements OnInit {
               this.dataDict[item] = dictObj;
               this.dataType[item] = res[item]['VALUE TYPE']
             }
-            // console.log("data dictionary: ", this.dataDict)
-            // console.log("data type: ", this.dataType, this.dataType[this.selected1stCategory], this.dataType[this.selected2ndCategory])
             this.createFilterDataset(res)
           })
         },
@@ -140,7 +140,6 @@ export class DashboardComponent implements OnInit {
     }
 
     this.dataSP2ndFilter[data.value] = data.data;
-    // console.log("data SP filter: ", this.dataSP2ndFilter)
   }
 
   passDataFilterDataset(data: any) {
@@ -154,7 +153,6 @@ export class DashboardComponent implements OnInit {
   filteredDataForCustomPlot = {}
 
   passCustomPlotData(data: any) {
-    // console.log("from pass custom plot: ", this.selected1stCategory, this.selected2ndFilterCategory)
     this.customPlotData = {};
     this.filteredDataForCustomPlot = data;
     if (this.dataType[this.selected1stCategory] === 'Continuous' && this.dataType[this.selected2ndCategory] === 'Continuous') {
@@ -216,13 +214,13 @@ export class DashboardComponent implements OnInit {
   customPlotData2ndFilter = {}
   filteredDataForCustomPlot2ndFilter = {}
   dataCP2ndFilter = {}
-  passCustomPlotData2ndFilter(event: any){
+  passCustomPlotData2ndFilter(event: any) {
+
     let [data, val] = event;
     this.customPlotData2ndFilter = {};
     this.filteredDataForCustomPlot2ndFilter = data;
     if (this.dataType[this.selected1stCategory] === 'Continuous' && this.dataType[this.selected2ndFilterCategory] === 'Continuous') {
       // use scatter plot
-      console.log("custom2 scatter: ", data)
       for (let index in data) {
         if (data[index][this.selected1stCategory] && data[index][this.selected2ndFilterCategory]) {
           let key = data[index]['SUBJID']
@@ -235,7 +233,6 @@ export class DashboardComponent implements OnInit {
       }
     } else if ((this.dataType[this.selected1stCategory] === 'Categorical' && this.dataType[this.selected2ndFilterCategory] === 'Continuous') || (this.dataType[this.selected1stCategory] === 'Continuous' && this.dataType[this.selected2ndFilterCategory] === 'Categorical')) {
       // use violin plot
-      // console.log("custom2 violin: ", data)
       this.customPlotData2ndFilter = {};
       for (let index in data) {
         if (data[index][this.selected1stCategory] && data[index][this.selected2ndFilterCategory]) {
@@ -262,7 +259,6 @@ export class DashboardComponent implements OnInit {
 
     } else if (this.dataType[this.selected1stCategory] === 'Categorical' && this.dataType[this.selected2ndFilterCategory] === 'Categorical') {
       //use heat map
-      // console.log("custom2 heatmap: ", data)
       for (let index in data) {
         if (data[index][this.selected1stCategory] && data[index][this.selected2ndFilterCategory]) {
           let key = data[index]['SUBJID'];
@@ -277,9 +273,7 @@ export class DashboardComponent implements OnInit {
     } else {
       console.log("Data type didn't match. Please check logs.")
     }
-    // console.log("custom plot data 2: ", this.customPlotData2ndFilter, val)
     this.dataCP2ndFilter[val] = this.customPlotData2ndFilter
-    console.log("dataCP2ndFilter: ", this.dataCP2ndFilter)
   }
 
   currentSliderCategories = []
@@ -306,17 +300,18 @@ export class DashboardComponent implements OnInit {
   onFilterSelected(selectedValue: string) {
     this.selected2ndFilterCategory = selectedValue;
     let options = this.filterDataset['civet'][selectedValue];
-    // console.log("onfilter select options: ", options, this.selected2ndFilterCategory, this.filterDataset)
     for (let option in options) {
       let newString = `(${selectedValue}:${option})`;
       this.selectedCategory = selectedValue;
       this.childComponent.addSecondFilter(newString, option, this.selected2ndFilterCategory, 1);
     }
-    if(options === undefined){ //numerical categories would return undefined here
+    if (options === undefined) { //numerical categories would return undefined here
       this.showNumericSlider = true;
       let newString = '*'
       this.childComponent.addSecondFilter(newString, 'numeric', this.selected2ndFilterCategory, this.numericSlidervalue);
     }
+
+    this.scrollToID('anotherFilter')
   }
 
   getObjectValues(obj: any): any[] {
@@ -383,17 +378,10 @@ export class DashboardComponent implements OnInit {
 
   }
 
-  onNumberBinsSelectedNumeric(event) {
-    // this.maxNum = -10000;
-    // this.numberOfBins = event
-
-    // //Checks for largest bin size from the main plot and the secondary violin plots
-    // this.getMaxNum('main')
-    // if (this.dataVP2ndFilter) {
-    //   for (let index in this.dataVP2ndFilter) {
-    //     this.getMaxNum(index)
-    //   }
-    // }
+  onNumberBinsSelectedNumeric(bins) {
+    this.dataCP2ndFilter = {};
+    this.numericSlidervalue = bins
+    this.onFilterSelected(this.selected2ndFilterCategory)
 
   }
 
@@ -401,6 +389,7 @@ export class DashboardComponent implements OnInit {
   updatePlots() {
     this.showCustomPlots = true
     this.passCustomPlotData(this.filteredDataForCustomPlot)
+    this.scrollToID('a2ndFilter')
   }
 
   isNotEmpty(obj) {
@@ -413,12 +402,11 @@ export class DashboardComponent implements OnInit {
 
   onCategoryChange() {
     this.customPlotData = {}
-    console.log("custom plot data is now empty.")
   }
 
   showSummaryPlot = false;
   dataBarChart = {}
-  dataHistogram = {} 
+  dataHistogram = {}
   displaySummaryPlots(category) {
     this.showSummaryPlot = true;
 
@@ -431,7 +419,6 @@ export class DashboardComponent implements OnInit {
           temp[key] = 1
           this.dataBarChart[subjectID] = temp
         }
-
       }
     } else {
       for (let index in this.filteredDataForCustomPlot) {
@@ -444,5 +431,17 @@ export class DashboardComponent implements OnInit {
         }
       }
     }
+
+    this.scrollToID('summaryPlots')
+  }
+
+  scrollToID(id) {
+    const element = this.el.nativeElement.querySelector('#' + id);
+
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 }
+
+

@@ -37,9 +37,12 @@ export class DataFilterComponent implements OnInit {
   checkBoxItems = [];
   isLoading: boolean = false;
 
-  civetFields = ["GENDER", "ETHNICITY", "RACE", "DEM02_V1", "DEM03_V1", "DEM04_V1", "SITE", "ASTHMA_CHILD_V1", "ASTHMA_DX_V1", "DIABETES_DERV_V1", "CURRENT_SMOKER_V1", "STRATUM_ENROLLED", "WT_KG_V1", "BETA_BLOCKER_V1", "BMH08I_V1", "BMH08H_V1", "BMH08B_V1", "DATE_V1", "DATE_V2", "DATE_V3", "DATE_V4"]
+  //civetFields holds all categories
+  //advanceFields holds all the fields that are to be hidden
+  civetFields = ["GENDER", "ETHNICITY", "RACE", "SITE", "ASTHMA_CHILD_V1", "ASTHMA_DX_V1", "DIABETES_DERV_V1", "CURRENT_SMOKER_V1", "STRATUM_ENROLLED", "WT_KG_V1", "BETA_BLOCKER_V1", "BMH08I_V1", "BMH08H_V1", "BMH08B_V1", "DEM02_V1", "DEM03_V1", "DEM04_V1", "DATE_V1", "DATE_V2", "DATE_V3", "DATE_V4"]
   civetRangeFields = ["AGE_DERV_V1", "BMI_CM_V1", "BMI_CM_V2", "WT_KG_V1"]
-  advanceFields = ["cog_renal_stage", "dbgap_accession_number", "morphology", "disease_type", "primary_site", "site_of_resection_or_biopsy", "days_to_last_follow_up", "ajcc_pathologic_m", "ajcc_pathologic_n", "ajcc_pathologic_t", "ajcc_staging_system_edition", "alcohol_history", "icd_10_code", "synchronous_malignancy", "age_at_index", "days_to_birth", "year_of_birth", "year_of_diagnosis", "nucleic_acid_isolation_batch", "expression_batch", "collection_site_code", "rna_rin", "Center_QC_failed", "Item_flagged_DNU", "Item_Flagged_Low_Quality"];
+  
+  advanceFields = ["DEM02_V1", "DEM03_V1", "DEM04_V1", "DATE_V1", "DATE_V2", "DATE_V3", "DATE_V4", "WT_KG_V1"]
   filterFields = {
     'civet': this.civetFields
   }
@@ -504,8 +507,7 @@ export class DataFilterComponent implements OnInit {
 
     let searchQuery = ''
     if (value === 'numeric') {
-      searchQuery = this.searchQueryResults !== '' ? `${this.searchQueryResults}` : `${item}`
-      console.log("numeric search query: ", searchQuery)
+      searchQuery = this.searchQueryResults !== '' ? `${this.searchQueryResults}` : `${item}`;
     } else {
       searchQuery = this.searchQueryResults !== '' ? `${item} AND ${this.searchQueryResults}` : `${item}`
     }
@@ -515,20 +517,21 @@ export class DataFilterComponent implements OnInit {
       .subscribe(res => {
         let total = res['response']['numFound']
         let queryToGetAll = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
-        console.log("query for all: ", queryToGetAll)
         if (value === 'numeric') {
 
           this.getQueryResults(queryToGetAll)
             .subscribe(res => {
               this.dataCustomPlots = res['response']['docs']
-              //find min/max for the selected value
               this.isLoading = false
               let min = 1000000;
-              let max = 0
+              let max = 0;
               for (let obj of this.dataCustomPlots) {
-                let dataValue = obj[selectedValue][0];
-                min = Math.min(min, dataValue)
-                max = Math.max(max, dataValue)
+                if (obj[selectedValue]) {
+                  let dataValue = obj[selectedValue][0];
+                  min = Math.min(min, dataValue)
+                  max = Math.max(max, dataValue)
+                }
+
               }
               let binSize = (max - min) / numBins
               let bin = []
@@ -539,7 +542,6 @@ export class DataFilterComponent implements OnInit {
                 }
                 bin.push(temp)
               }
-              console.log("bin: ", bin)
 
               let newQuery = ''
               for (let index in bin) {
@@ -549,7 +551,6 @@ export class DataFilterComponent implements OnInit {
 
                 this.getQueryResults(queryToGetAll)
                   .subscribe(res => {
-                    console.log("res: ", res, queryToGetAll)
                     this.dataCustomPlots = res['response']['docs']
                     //maybe instead of index, use a more descriptive name?????
                     this.emitCustomPlotData2ndFilter.emit([this.dataCustomPlots, index])
@@ -560,9 +561,7 @@ export class DataFilterComponent implements OnInit {
         } else {
           this.getQueryResults(queryToGetAll)
             .subscribe(res => {
-
               this.dataCustomPlots = res['response']['docs']
-              console.log("2nd query: ", queryToGetAll, this.dataCustomPlots, value, item)
               this.emitCustomPlotData2ndFilter.emit([this.dataCustomPlots, value])
 
               this.isLoading = false
@@ -586,7 +585,6 @@ export class DataFilterComponent implements OnInit {
     this.isLoading = true;
     this.apiService.postSecureData(url, array).subscribe(data => {
       this.isLoading = false;
-      console.log("data from SP: ", data)
       this.subjectIdEventSP.emit(data);
     })
   }

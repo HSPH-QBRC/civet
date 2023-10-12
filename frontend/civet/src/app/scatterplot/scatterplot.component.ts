@@ -60,6 +60,8 @@ export class ScatterplotComponent implements OnChanges {
       this.message = 'no plot to show';
     } else {
       this.cdRef.detectChanges();
+      console.log('id val: ', this.idValue)
+      console.log("scatter ranges x/y: ", this.xMin, this.xMax, this.yMin, this.yMax)
       this.createScatterPlot()
     }
   }
@@ -96,12 +98,12 @@ export class ScatterplotComponent implements OnChanges {
         return tipBox
       });
 
-    d3.select(`#my_scatterplot_${this.plotNum}`)
+    d3.select(`#${this.idValue}`)
       .selectAll('svg')
       .remove();
 
     // append the svg object to the body of the page
-    var svg = d3.select(`#my_scatterplot_${this.plotNum}`)
+    var svg = d3.select(`#${this.idValue}`)
       .append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -213,6 +215,6 @@ export class ScatterplotComponent implements OnChanges {
       .attr("y", 0 - (margin.top / 2) + 15) // Position it above the top margin
       .attr("text-anchor", "middle") // Center-align the text horizontally
       .style("font-size", "12px") // Set the font size
-      .text(this.yAxisLabel + " vs " + this.xAxisLabel);
+      .text(`${this.xAxisLabel} vs ${this.yAxisLabel} [${this.yMin} - ${this.yMax}]`);
   }
 }
