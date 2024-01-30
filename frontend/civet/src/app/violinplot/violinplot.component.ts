@@ -33,7 +33,8 @@ export class ViolinplotComponent implements OnChanges {
   bins = []
   idValue = 'my_violinplot';
   message = '';
-  dataDictExclude = ['GENDER', 'RACE', 'STRATUM_ENROLLED']
+  dataDictExclude = ['GENDER', 'RACE', 'STRATUM_ENROLLED'];
+  logCheckbox: boolean = false;
 
   ngOnChanges(changes: SimpleChanges): void {
     this.idValue = 'my_violinplot_' + this.plotNum;
@@ -54,6 +55,12 @@ export class ViolinplotComponent implements OnChanges {
     }
   }
 
+  onCheckboxChange() {
+    this.resetVariables()
+    this.formatData();
+
+  }
+
   resetVariables() {
     this.vpMin = 10000000000;
     this.vpMax = -100000000000;
@@ -67,7 +74,8 @@ export class ViolinplotComponent implements OnChanges {
     for (let key in this.dataUR) {
       let obj = this.dataUR[key]
       let category = Object.keys(obj)[0];
-      let value = obj[category];
+      // let value = obj[category];
+      let value = this.logCheckbox ? Math.log10(obj[category]) : obj[category];
 
       if ((parseInt(category) || category === '0') && !this.dataDictExclude.includes(this.xAxisLabel)) {
         category = this.dataDictionary[this.xAxisLabel][category + '.0']
@@ -110,7 +118,7 @@ export class ViolinplotComponent implements OnChanges {
     // set the dimensions and margins of the graph
     var margin = { top: 50, right: 30, bottom: 50, left: 120 },
       width = 460 - margin.left - margin.right,
-      height = 400 - margin.top - margin.bottom;
+      height = 480 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
     var svg = d3.select(`#my_violinplot_${this.plotNum}`)

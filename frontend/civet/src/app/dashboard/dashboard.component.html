@@ -52,7 +52,36 @@
                                     Plots</button>
                             </div>
                         </span>
+                        <ng-container *ngIf="showSummaryPlot">
+                            <div id="summaryPlots">
+                                <h2 *ngIf="showSummaryPlot">Summary Plots</h2>
+                                <div *ngIf="showSummaryPlot"
+                                    [class]="showSummaryPlot ? 'plots-container' : 'hideSummaryPlots'">
+                                    <div *ngIf="dataType[selected1stCategory] === 'Continuous'">
+                                        <app-histogram [dataHistogram]="dataHistogram" [id]="'test_histogram123'"
+                                            [category]="selected1stCategory"></app-histogram>
+                                    </div>
+                                    <div *ngIf="dataType[selected1stCategory] === 'Categorical'">
+                                        <app-barchart [dataBarchart]="dataBarChart" [id]="'test_barchart'"
+                                            [category]="selected1stCategory" [dataDictionary]="dataDict"></app-barchart>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
 
+                        <br>
+                        <br>
+                        <span *ngIf="showSummaryPlot" class="spanDropdownButton">
+                            <mat-form-field>
+                                <mat-label>Select 1st Category</mat-label>
+                                <mat-select [(ngModel)]="selected1stCategory" (selectionChange)="onCategoryChange()"
+                                    disabled>
+                                    <mat-option *ngFor="let category of filterCategory" [value]="category">
+                                        {{category}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </span>
                         <br>
                         <mat-form-field>
                             <mat-label>Select 2nd Category</mat-label>
@@ -69,19 +98,7 @@
                         <br>
                     </div>
 
-                    <div id="summaryPlots">
-                        <h2 *ngIf="showSummaryPlot">Summary Plots</h2>
-                        <div *ngIf="showSummaryPlot" class="plots-container">
-                            <div *ngIf="dataType[selected1stCategory] === 'Continuous'">
-                                <app-histogram [dataHistogram]="dataHistogram" [id]="'test_histogram123'"
-                                    [category]="selected1stCategory"></app-histogram>
-                            </div>
-                            <div *ngIf="dataType[selected1stCategory] === 'Categorical'">
-                                <app-barchart [dataBarchart]="dataBarChart" [id]="'test_barchart'"
-                                    [category]="selected1stCategory" [dataDictionary]="dataDict"></app-barchart>
-                            </div>
-                        </div>
-                    </div>
+
 
                 </div>
 
@@ -134,7 +151,7 @@
 
                     <h2 *ngIf="selected2ndFilterCategory !== ''">Comparison Plots with Secondary
                         Filter</h2>
-                    <div *ngIf="dataVP2ndFilter" class="plots-container">
+                    <div *ngIf="dataVP2ndFilter" class="plots-container2">
                         <ng-container *ngFor="let data of getObjectValues(dataVP2ndFilter); let i = index">
                             <app-violinplot [dataUR]="data" [plotNum]="i" [dataDictionary]="dataDict"
                                 [selectedCategory]="selectedCategory" [minYViolinplot]="minViolinplot"
@@ -143,7 +160,7 @@
                         </ng-container>
                     </div>
 
-                    <div *ngIf="dataSP2ndFilter" class="plots-container">
+                    <div *ngIf="dataSP2ndFilter" class="plots-container2">
                         <ng-container *ngFor="let data of getObjectValues(dataSP2ndFilter); let i = index">
                             <app-connected-scatterplot [dataPl]="data" [plotNum]="i" [dataDictionary]="dataDict"
                                 [selectedCategory]="selectedCategory" [minYScatterplot]="minScatterplot"
@@ -151,7 +168,7 @@
                         </ng-container>
                     </div>
 
-                    <div *ngIf="dataCP2ndFilter" class="plots-container">
+                    <div *ngIf="dataCP2ndFilter" class="plots-container2">
                         <ng-container *ngFor="let data of getObjectValues(dataCP2ndFilter); let i = index">
                             <div
                                 *ngIf="dataType[selected1stCategory] === 'Continuous' && dataType[selected2ndFilterCategory] === 'Continuous'">

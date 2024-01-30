@@ -25,12 +25,6 @@
     color: #ffbf00;
     font-weight: bold;
   }
-
-  // .selected {
-  //   fill: red;
-  //   stroke: black;
-  //   stroke-width: 2px;
-  // }
 }
 
 .centered-container {
@@ -40,4 +34,15 @@
   display: flex;
   justify-content: center; /* Center horizontally */
   align-items: center; /* Center vertically */
+}
+
+.example-margin{
+  margin-left: 30px;
+  font-size: small;
+}
+
+::ng-deep {
+  .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+      background-color: tomato !important;
+  }
 }

@@ -142,7 +142,14 @@ ul {
 .plots-container {
     display: flex; /* Use Flexbox to horizontally align items */
     flex-wrap: wrap; /* Allow items to wrap to the next line if needed */
-    gap: 10px; /* Adjust the gap between plots as needed */
+    gap: 100px; /* Adjust the gap between plots as needed */
+}
+
+.plots-container2 {
+    display: flex; /* Use Flexbox to horizontally align items */
+    // flex-wrap: wrap; /* Allow items to wrap to the next line if needed */
+    gap: 100px; /* Adjust the gap between plots as needed */
+    height: 550px
 }
 
 app-violinplot,
@@ -177,5 +184,9 @@ app-scatterplot {
 }
 
 .page-container{
-    height: 100vh;
+    // height: 120vh;
+}
+
+.hideSummaryPlots{
+    display: none;
 }

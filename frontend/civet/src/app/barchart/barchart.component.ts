@@ -29,6 +29,7 @@ export class BarchartComponent implements OnInit, OnChanges {
 
   maxXaxisLabelLength = 0;
   hideBarchart = false;
+  logCheckbox: boolean =  false
 
 
   constructor(
@@ -39,6 +40,23 @@ export class BarchartComponent implements OnInit, OnChanges {
   ngOnInit(): void { }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.hideBarchart = true;
+    this.barChartData = [];
+    this.categoryArr = [];
+    this.categoryCount = {}
+    this.countArr = [];
+    this.maxCount = 1;
+    this.min = Infinity;
+    this.max = -Infinity;
+    this.sumstat = [];
+    this.maxXaxisLabelLength = 0;
+
+    if (this.dataBarchart) {
+      this.formatData()
+    }
+  }
+
+  onCheckboxChange() {
     this.hideBarchart = true;
     this.barChartData = [];
     this.categoryArr = [];
@@ -121,7 +139,7 @@ export class BarchartComponent implements OnInit, OnChanges {
 
     let rotateText = (this.countArr.length > 5) ? "translate(-10,0)rotate(-45)" : "translate(-10,0)";
     let xAxisLabels = (this.countArr.length > 55) ? d3.axisBottom(x).tickFormat((d) => '').tickSize(0) : d3.axisBottom(x);
-    
+
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
       .call(xAxisLabels)

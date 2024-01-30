@@ -34,6 +34,7 @@ import { ScatterplotComponent } from './scatterplot/scatterplot.component';
 import { HeatmapComponent } from './heatmap/heatmap.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDividerModule } from '@angular/material/divider';
+import { CheckboxPlotsComponent } from './checkbox-plots/checkbox-plots.component';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { MatDividerModule } from '@angular/material/divider';
     BarchartComponent,
     HistogramMiniComponent,
     ScatterplotComponent,
-    HeatmapComponent
+    HeatmapComponent,
+    CheckboxPlotsComponent
   ],
   imports: [
     BrowserModule,

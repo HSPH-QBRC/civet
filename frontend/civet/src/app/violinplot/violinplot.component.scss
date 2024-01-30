@@ -21,3 +21,14 @@
     // width: 300px;
     height: 200px;
 }
+
+.example-margin {
+    margin-left: 30px;
+    font-size: small;
+}
+
+::ng-deep {
+    .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+        background-color: tomato !important;
+    }
+}

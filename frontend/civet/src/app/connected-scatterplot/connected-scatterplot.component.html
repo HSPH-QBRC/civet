@@ -1,2 +1,3 @@
 <div #my_scatterplot [id]="idValue" class="chart"></div>
+<mat-checkbox *ngIf="message.length === 0" class="example-margin" [(ngModel)]="logCheckbox" (change)="onCheckboxChange()">Log 10</mat-checkbox>
 <div *ngIf="message.length > 0" class="centered-container">{{message}}</div>

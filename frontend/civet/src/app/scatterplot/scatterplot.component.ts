@@ -30,9 +30,21 @@ export class ScatterplotComponent implements OnChanges {
   xMin = 1000;
   xMax = 0;
   scatterPlotData: { key: string; xValue: any; yValue: any; }[] = [];
+  logCheckbox: boolean = false;
 
   ngOnChanges(changes: SimpleChanges): void {
     this.idValue = 'my_scatterplot_' + this.plotNum;
+    if (this.dataPl) {
+      this.formatData(this.dataPl);
+    }
+  }
+
+  onCheckboxChange() {
+    this.yMin = 1000;
+    this.yMax = 0;
+
+    this.xMin = 1000;
+    this.xMax = 0;
     if (this.dataPl) {
       this.formatData(this.dataPl);
     }
@@ -42,8 +54,8 @@ export class ScatterplotComponent implements OnChanges {
     this.scatterPlotData = [];
 
     for (let [key, value] of Object.entries(data)) {
-      let xValue = value['xValue']
-      let yValue = value['yValue']
+      let xValue = this.logCheckbox ? Math.log10(value['xValue']): value['xValue']
+      let yValue = this.logCheckbox ? Math.log10(value['yValue']): value['yValue']
       let temp = {
         'key': key,
         'xValue': xValue,
@@ -60,8 +72,6 @@ export class ScatterplotComponent implements OnChanges {
       this.message = 'no plot to show';
     } else {
       this.cdRef.detectChanges();
-      console.log('id val: ', this.idValue)
-      console.log("scatter ranges x/y: ", this.xMin, this.xMax, this.yMin, this.yMax)
       this.createScatterPlot()
     }
   }
@@ -215,6 +225,6 @@ export class ScatterplotComponent implements OnChanges {
       .attr("y", 0 - (margin.top / 2) + 15) // Position it above the top margin
       .attr("text-anchor", "middle") // Center-align the text horizontally
       .style("font-size", "12px") // Set the font size
-      .text(`${this.xAxisLabel} vs ${this.yAxisLabel} [${this.yMin} - ${this.yMax}]`);
+      .text(`${this.xAxisLabel} vs ${this.yAxisLabel} [${this.yMin.toFixed(2)} - ${this.yMax.toFixed(2)}]`);
   }
 }

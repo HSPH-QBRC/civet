@@ -32,8 +32,18 @@ export class ConnectedScatterplotComponent implements OnChanges {
   scatterPlotData: { key: string; xValue: string; yValue: any; }[] = [];
   lineData: { key: string; xValue: string; yValue: any; }[] = [];
 
+  logCheckbox = false;
+
   ngOnChanges(changes: SimpleChanges): void {
     this.idValue = 'my_scatterplot_' + this.plotNum;
+    if (this.dataPl) {
+      this.formatData(this.dataPl);
+    }
+  }
+
+  onCheckboxChange() {
+    this.yMin = 1000;
+    this.yMax = 0;
     if (this.dataPl) {
       this.formatData(this.dataPl);
     }
@@ -43,20 +53,22 @@ export class ConnectedScatterplotComponent implements OnChanges {
     this.scatterPlotData = [];
 
     for (let [key, value] of Object.entries(data)) {
-      let xLabel = 'VISIT_1'
+      let xLabel = 'VISIT_1';
+      let yVal1 = this.logCheckbox ? Math.log10(value[xLabel]) : value[xLabel]
       let temp = {
         'key': key,
         'xValue': xLabel,
-        'yValue': value[xLabel]
+        'yValue': yVal1
       }
       this.scatterPlotData.push(temp)
 
       let xLabel2 = 'VISIT_4';
+      let yVal2 = this.logCheckbox ? Math.log10(value[xLabel2]) : value[xLabel2]
       if (value[xLabel2]) {
         let temp2 = {
           'key': key,
           'xValue': xLabel2,
-          'yValue': value[xLabel2]
+          'yValue': yVal2
         }
         this.scatterPlotData.push(temp2)
         this.lineData.push(temp)
@@ -67,25 +79,23 @@ export class ConnectedScatterplotComponent implements OnChanges {
         this.yMin = this.minYScatterplot;
         this.yMax = this.maxYScatterplot;
       } else {
-        this.yMin = value[xLabel2] ? Math.min(value[xLabel], value[xLabel2], this.yMin) : Math.min(value[xLabel], this.yMin)
-        this.yMax = value[xLabel2] ? Math.max(value[xLabel], value[xLabel2], this.yMax) : Math.max(value[xLabel], this.yMax)
-
+        this.yMin = yVal2 ? Math.min(yVal1, yVal2, this.yMin) : Math.min(yVal1, this.yMin)
+        this.yMax = yVal2 ? Math.max(yVal1, yVal2, this.yMax) : Math.max(yVal1, this.yMax)
       }
-
-
     }
 
     if (this.lineData.length === 0) {
       this.message = 'no plot to show';
     } else {
       this.cdRef.detectChanges();
+      console.log("min/max: ", this.yMin, this.yMax, this.plotNum)
       this.createScatterPlot()
     }
   }
 
   createScatterPlot() {
     // set the dimensions and margins of the graph
-    var margin = { top: 60, right: 30, bottom: 100, left: 70 },
+    var margin = { top: 60, right: 30, bottom: 50, left: 70 },
       width = 460 - margin.left - margin.right,
       height = 480 - margin.top - margin.bottom;
 
@@ -170,7 +180,7 @@ export class ConnectedScatterplotComponent implements OnChanges {
       .attr("cx", function (d) { return String(x(d.xValue)); })
       .attr("cy", function (d) { return y(d.yValue); })
       .attr("r", 3)
-      .style("fill", "#69b3a2")
+      .style("fill", "rgba(105, 179, 162, .5)")
       .on('mouseover', function (mouseEvent: any, d) {
         pointTip.show(mouseEvent, d, this);
         pointTip.style('left', mouseEvent.x + 10 + 'px');
@@ -195,7 +205,7 @@ export class ConnectedScatterplotComponent implements OnChanges {
       .append("path")
       .attr("class", "line")
       .attr("d", d => line(d[1])) // "d[1]" contains the grouped data, which is an array of points with matching "key" values
-      .style("stroke", "#69b3a2")
+      .style("stroke", "rgba(105, 179, 162, .3)")
       .style("stroke-width", 1)
       .style("fill", "none");
 
