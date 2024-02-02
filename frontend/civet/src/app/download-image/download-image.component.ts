@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import * as domToImage from 'dom-to-image';
+import * as svgAsPng from 'save-svg-as-png';
 
 @Component({
   selector: 'app-download-image',
@@ -16,21 +16,10 @@ export class DownloadImageComponent implements OnInit {
   }
 
   onSaveImagePNG() {
-    const svgElement = document.getElementById(this.containerId);
+    svgAsPng.saveSvgAsPng(
+      document.querySelector(`#${this.containerId} svg`),
+      this.imageName
+    );
 
-    if (svgElement) {
-      domToImage.toPng(svgElement)
-        .then((dataUrl: string) => {
-          const link = document.createElement('a');
-          link.href = dataUrl;
-          link.download = this.imageName || 'chart.png';
-          link.click();
-        })
-        .catch((error: any) => {
-          console.error('Error converting SVG to PNG:', error);
-        });
-    } else {
-      console.error('SVG element not found.');
-    }
   }
 }

@@ -418,6 +418,7 @@ export class DashboardComponent implements OnInit {
           let temp = {}
           temp[key] = 1
           this.dataBarChart[subjectID] = temp
+          console.log("bar chart: ", this.dataBarChart)
         }
       }
     } else {
@@ -428,6 +429,7 @@ export class DashboardComponent implements OnInit {
           let temp = {}
           temp['test'] = key
           this.dataHistogram[subjectID] = temp
+          console.log("histogram: ", this.dataHistogram)
         }
       }
     }

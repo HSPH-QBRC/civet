@@ -19,8 +19,7 @@ export class ConnectedScatterplotComponent implements OnChanges {
   @Input() maxYScatterplot: number;
 
   idValue = 'my_scatterplot';
-  containerId = 'my_scatterplot_Scatter_Plot';
-  imageName = "test_download"
+  imageName = "scatterplot"
 
   dataDictExclude = ['GENDER', 'RACE', 'STRATUM_ENROLLED']
   message = '';
@@ -35,8 +34,6 @@ export class ConnectedScatterplotComponent implements OnChanges {
   lineData: { key: string; xValue: string; yValue: any; }[] = [];
 
   logCheckbox: boolean = false;
-
-
 
   ngOnChanges(changes: SimpleChanges): void {
     this.idValue = 'my_scatterplot_' + this.plotNum;
