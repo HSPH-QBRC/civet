@@ -212,7 +212,7 @@ export class ConnectedScatterplotComponent implements OnChanges {
       .domain([this.minYRange, this.maxYRange])
       .range([height, 0]);
     svg.append("g")
-      .call(this.logCheckbox ? d3.axisLeft(y).tickFormat(d => `${Math.pow(2, +d)}`) : d3.axisLeft(y));
+      .call(this.logCheckbox ? d3.axisLeft(y).tickFormat(d => `${Math.pow(2, +d).toLocaleString()}`) : d3.axisLeft(y));
 
 
     // Add dots
