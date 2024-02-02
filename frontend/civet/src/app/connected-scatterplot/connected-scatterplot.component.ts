@@ -19,6 +19,8 @@ export class ConnectedScatterplotComponent implements OnChanges {
   @Input() maxYScatterplot: number;
 
   idValue = 'my_scatterplot';
+  containerId = 'my_scatterplot_Scatter_Plot';
+  imageName = "test_download"
 
   dataDictExclude = ['GENDER', 'RACE', 'STRATUM_ENROLLED']
   message = '';
@@ -32,7 +34,9 @@ export class ConnectedScatterplotComponent implements OnChanges {
   scatterPlotData: { key: string; xValue: string; yValue: any; }[] = [];
   lineData: { key: string; xValue: string; yValue: any; }[] = [];
 
-  logCheckbox = false;
+  logCheckbox: boolean = false;
+
+
 
   ngOnChanges(changes: SimpleChanges): void {
     this.idValue = 'my_scatterplot_' + this.plotNum;
@@ -41,9 +45,35 @@ export class ConnectedScatterplotComponent implements OnChanges {
     }
   }
 
+  minYRange = 0;
+  maxYRange = 10;
+  newYRangeSet = false;
+
+  updateRange() {
+    this.minYRange = Number(this.minYRange)
+    this.maxYRange = Number(this.maxYRange)
+
+    this.yMin = this.minYRange;
+    this.yMax = this.maxYRange;
+    this.newYRangeSet = true;
+
+    if (this.dataPl) {
+      this.formatData(this.dataPl);
+    }
+  }
+
   onCheckboxChange() {
-    this.yMin = 1000;
-    this.yMax = 0;
+    if (!this.newYRangeSet) {
+      this.yMin = 1000;
+      this.yMax = 0;
+    } else if (this.logCheckbox) {
+      this.minYRange = Math.log2(this.minYRange);
+      this.maxYRange = Math.log2(this.maxYRange);
+    } else {
+      this.minYRange = Math.floor(Math.pow(2, this.minYRange));
+      this.maxYRange = Math.ceil(Math.pow(2, this.maxYRange));
+    }
+
     if (this.dataPl) {
       this.formatData(this.dataPl);
     }
@@ -54,23 +84,34 @@ export class ConnectedScatterplotComponent implements OnChanges {
 
     for (let [key, value] of Object.entries(data)) {
       let xLabel = 'VISIT_1';
-      let yVal1 = this.logCheckbox ? Math.log10(value[xLabel]) : value[xLabel]
+      let yVal1 = this.logCheckbox ? Math.log2(value[xLabel]) : value[xLabel]
       let temp = {
         'key': key,
         'xValue': xLabel,
         'yValue': yVal1
       }
-      this.scatterPlotData.push(temp)
+
+      if (this.newYRangeSet && yVal1 >= this.minYRange && yVal1 <= this.maxYRange) {
+        this.scatterPlotData.push(temp)
+      } else if (!this.newYRangeSet) {
+        this.scatterPlotData.push(temp)
+      }
 
       let xLabel2 = 'VISIT_4';
-      let yVal2 = this.logCheckbox ? Math.log10(value[xLabel2]) : value[xLabel2]
+      let yVal2 = this.logCheckbox ? Math.log2(value[xLabel2]) : value[xLabel2]
       if (value[xLabel2]) {
         let temp2 = {
           'key': key,
           'xValue': xLabel2,
           'yValue': yVal2
         }
-        this.scatterPlotData.push(temp2)
+
+        if (this.newYRangeSet && yVal2 >= this.minYRange && yVal2 <= this.maxYRange) {
+          this.scatterPlotData.push(temp2)
+        } else if (!this.newYRangeSet) {
+          this.scatterPlotData.push(temp2)
+        }
+
         this.lineData.push(temp)
         this.lineData.push(temp2)
       }
@@ -88,7 +129,12 @@ export class ConnectedScatterplotComponent implements OnChanges {
       this.message = 'no plot to show';
     } else {
       this.cdRef.detectChanges();
-      console.log("min/max: ", this.yMin, this.yMax, this.plotNum)
+
+      if (!this.newYRangeSet) {
+        this.minYRange = Math.floor(this.yMin)
+        this.maxYRange = Math.ceil(this.yMax)
+      }
+
       this.createScatterPlot()
     }
   }
@@ -132,9 +178,11 @@ export class ConnectedScatterplotComponent implements OnChanges {
     // append the svg object to the body of the page
     var svg = d3.select(`#my_scatterplot_${this.plotNum}`)
       .append("svg")
+      .attr("id", "yourIdName")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
+
       .attr("transform",
         "translate(" + margin.left + "," + margin.top + ")");
 
@@ -164,10 +212,10 @@ export class ConnectedScatterplotComponent implements OnChanges {
 
     // Add Y axis
     var y = d3.scaleLinear()
-      .domain([this.yMin, this.yMax])
+      .domain([this.minYRange, this.maxYRange])
       .range([height, 0]);
     svg.append("g")
-      .call(d3.axisLeft(y));
+      .call(this.logCheckbox ? d3.axisLeft(y).tickFormat(d => `${Math.pow(2, +d)}`) : d3.axisLeft(y));
 
 
     // Add dots

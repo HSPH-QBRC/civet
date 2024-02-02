@@ -13,7 +13,7 @@
 
     <div class="col-md-9 content">
         <mat-tab-group>
-            <mat-tab label="Tab 1">
+            <mat-tab label="Mitochondrial Counts">
                 <div class="page-container">
                     <br>
                     <div class="sliderLabel">Number of Bins: </div>
@@ -151,20 +151,25 @@
 
                     <h2 *ngIf="selected2ndFilterCategory !== ''">Comparison Plots with Secondary
                         Filter</h2>
-                    <div *ngIf="dataVP2ndFilter" class="plots-container2">
-                        <ng-container *ngFor="let data of getObjectValues(dataVP2ndFilter); let i = index">
-                            <app-violinplot [dataUR]="data" [plotNum]="i" [dataDictionary]="dataDict"
-                                [selectedCategory]="selectedCategory" [minYViolinplot]="minViolinplot"
-                                [maxYViolinplot]="maxViolinplot" [maxValue]="maxNum" [numberOfBins]="numberOfBins">
-                            </app-violinplot>
-                        </ng-container>
-                    </div>
 
                     <div *ngIf="dataSP2ndFilter" class="plots-container2">
                         <ng-container *ngFor="let data of getObjectValues(dataSP2ndFilter); let i = index">
                             <app-connected-scatterplot [dataPl]="data" [plotNum]="i" [dataDictionary]="dataDict"
                                 [selectedCategory]="selectedCategory" [minYScatterplot]="minScatterplot"
                                 [maxYScatterplot]="maxScatterplot"></app-connected-scatterplot>
+                        </ng-container>
+                    </div>
+
+                    <div *ngIf="dataVP2ndFilter" class="plots-container2">
+                        <ng-container *ngFor="let data of getObjectValues(dataVP2ndFilter); let i = index">
+                            <!-- <app-violinplot [dataUR]="data" [plotNum]="i" [dataDictionary]="dataDict"
+                                [selectedCategory]="selectedCategory" [minYViolinplot]="minViolinplot"
+                                [maxYViolinplot]="maxViolinplot" [maxValue]="maxNum" [numberOfBins]="numberOfBins">
+                            </app-violinplot> -->
+                            <!-- what is minviolinplot for?? -->
+                            <app-violinplot [dataUR]="data" [plotNum]="i" [dataDictionary]="dataDict"
+                                [selectedCategory]="selectedCategory" [maxValue]="maxNum" [numberOfBins]="numberOfBins">
+                            </app-violinplot>
                         </ng-container>
                     </div>
 
@@ -194,11 +199,11 @@
                     </div>
                 </div>
             </mat-tab>
-            <mat-tab label="Tab 2">
-                Content for Tab 2
+            <mat-tab label="Dataset 2">
+                Content for Dataset 2
             </mat-tab>
-            <mat-tab label="Tab 3">
-                Some content for Tab 3
+            <mat-tab label="All">
+                Some content for All
             </mat-tab>
         </mat-tab-group>
 

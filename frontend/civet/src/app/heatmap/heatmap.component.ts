@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnInit, Input, OnChanges, SimpleChanges, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import * as d3 from 'd3';
 //@ts-ignore
 import d3Tip from 'd3-tip';
@@ -10,11 +10,14 @@ import d3Tip from 'd3-tip';
   changeDetection: ChangeDetectionStrategy.Default
 })
 
-export class HeatmapComponent implements OnInit, OnChanges {
+export class HeatmapComponent implements OnInit {
   @Input() dataHM
   @Input() xAxisLabel = ''
   @Input() yAxisLabel = ''
   @Input() dataDictionary = {}
+
+  imageName = 'heatmap'
+  idValue = 'my_heatmap'
 
   xArr = [];
   yArr = [];
@@ -24,7 +27,18 @@ export class HeatmapComponent implements OnInit, OnChanges {
   maxCount = 0;
   dataDictExclude = ['GENDER', 'RACE', 'STRATUM_ENROLLED']
 
+  logCounts: boolean = false;
+
   ngOnInit(): void {
+    this.formatData()
+  }
+
+  constructor(
+    private cdRef: ChangeDetectorRef,
+  ) { }
+
+
+  formatData() {
     for (let index in this.dataHM) {
       let xVal = this.dataHM[index]['xValue']
       let yVal = this.dataHM[index]['yValue']
@@ -80,20 +94,33 @@ export class HeatmapComponent implements OnInit, OnChanges {
     }
     //convert heatmap data to be an array
     for (let i in this.heatmapData) {
-      this.minCount = Math.min(this.minCount, this.heatmapData[i]['value'])
-      this.maxCount = Math.max(this.maxCount, this.heatmapData[i]['value'])
+      if (!this.logCounts) {
+        this.minCount = Math.min(this.minCount, this.heatmapData[i]['value'])
+        this.maxCount = Math.max(this.maxCount, this.heatmapData[i]['value'])
+      }
+
       this.heatmapDataArr.push(this.heatmapData[i])
     }
+
+
+
     this.createHeatMapSimple()
-    // console.log("x/y arr: ", this.xArr, this.yArr, this.dataDictionary[this.xAxisLabel])
   }
 
-  constructor(
-    private cdRef: ChangeDetectorRef,
-  ) { }
+  onCheckboxChange() {
 
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log("there was a change to the heatmap")
+    if (this.logCounts) {
+      this.minCount = this.minCount === 0 ? 0 : Math.log2(this.minCount)
+      this.maxCount = Math.log2(this.maxCount);
+    } else {
+      this.heatmapData = {}
+      this.heatmapDataArr = []
+      this.minCount = 1000;
+      this.maxCount = 0;
+
+    }
+
+    this.formatData()
   }
 
   createHeatMapSimple() {
@@ -106,7 +133,7 @@ export class HeatmapComponent implements OnInit, OnChanges {
       .attr('class', 'd3-tip')
       .offset([-10, 0])
       .html((event, d) => {
-        let tipBox = `<div><div class="category">Count: </div> ${d.value}</div>
+        let tipBox = `<div><div class="category">Count: </div> ${this.logCounts ? Math.log2(d.value) : d.value}</div>
      <div><div class="category">X Value: </div> ${d.xValue}</div>
      <div><div class="category">Y Value: </div>${d.yValue}</div>`
         return tipBox
@@ -128,6 +155,10 @@ export class HeatmapComponent implements OnInit, OnChanges {
         let tipBox = `<div><div class="category">${event.target.__data__}</div> </div>`
         return tipBox
       });
+
+    d3.select("#my_heatmap")
+      .selectAll('svg')
+      .remove();
 
     // append the svg object to the body of the page
     var svg = d3.select("#my_heatmap")
@@ -202,6 +233,7 @@ export class HeatmapComponent implements OnInit, OnChanges {
       .range(["royalblue", "crimson"])
       .domain([this.minCount, this.maxCount])
 
+    let logCount = this.logCounts
     svg.selectAll()
       .data(this.heatmapDataArr, function (d) { return d.xValue + '_' + d.yValue; })
       .enter()
@@ -210,7 +242,13 @@ export class HeatmapComponent implements OnInit, OnChanges {
       .attr("y", function (d) { return y(d.yValue) })
       .attr("width", x.bandwidth())
       .attr("height", y.bandwidth())
-      .style("fill", function (d) { return myColor(d.value) })
+      .style("fill", function (d) {
+        if (d.value === 0) {
+          return myColor(d.value);
+        } else {
+          return logCount ? myColor(Math.log2(d.value)) : myColor(d.value);
+        }
+      })
       .on('mouseover', function (mouseEvent: any, d) {
         pointTip.show(mouseEvent, d, this);
         pointTip.style('left', mouseEvent.x + 10 + 'px');
@@ -239,7 +277,10 @@ export class HeatmapComponent implements OnInit, OnChanges {
       .text(this.xAxisLabel)
 
     var countColorData = [{ "color": "royalblue", "value": 0 }, { "color": "crimson", "value": this.maxCount }];
-    var extent = d3.extent(countColorData, d => d.value);
+    // var extent = d3.extent(countColorData, d => this.logCounts ? Math.log2(d.value) : d.value);
+    var extent = d3.extent(countColorData, d => {
+      return (this.logCounts && d.value !== 0) ? Math.log2(d.value) : d.value;
+    });
 
     var paddingGradient = 15;
     var widthGradient = 180;
@@ -252,6 +293,7 @@ export class HeatmapComponent implements OnInit, OnChanges {
       .domain(extent);
 
     // var xTicks = countColorData.filter(f => f.value === this.min || f.value === this.max).map(d => d.value);
+
     let xTicksCorr = [0, this.maxCount]
 
     var xAxisGradient = d3.axisBottom(xScaleCorr)
@@ -273,7 +315,8 @@ export class HeatmapComponent implements OnInit, OnChanges {
     linearGradient.selectAll("stop")
       .data(countColorData)
       .enter().append("stop")
-      .attr("offset", d => ((d.value - extent[0]) / (extent[1] - extent[0]) * 100) + "%")
+      .attr("offset", d =>
+        ((d.value - extent[0]) / (extent[1] - extent[0]) * 100) + "%")
       .attr("stop-color", d => d.color)
 
     var g = countLegend.append("g")
@@ -292,6 +335,17 @@ export class HeatmapComponent implements OnInit, OnChanges {
       .attr("text-anchor", "start")
       .attr("font-weight", "bold")
       .text("Count");
+
+    if(this.logCounts){
+      countLegend.append('text')
+      .attr('y', 55)
+      .attr('x', 55)
+      .style('fill', 'rgba(0,0,0)')
+      .style('font-size', '9px')
+      .attr("text-anchor", "start")
+      .text(this.maxCount.toFixed(2));
+    }
+    
 
     g.append("g")
       .call(xAxisGradient)

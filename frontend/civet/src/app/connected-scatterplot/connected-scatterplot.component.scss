@@ -36,13 +36,23 @@
   align-items: center; /* Center vertically */
 }
 
-.example-margin{
+.example-margin {
   margin-left: 30px;
   font-size: small;
 }
 
 ::ng-deep {
   .mat-checkbox-checked.mat-accent .mat-checkbox-background {
-      background-color: tomato !important;
+    background-color: tomato !important;
   }
+  
+}
+
+.inline-form-field {
+  display: inline-block;
+}
+
+.inputField {
+  width: 75px;
+  margin: 0 10px;
 }

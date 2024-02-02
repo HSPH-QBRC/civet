@@ -113,7 +113,7 @@ export class DashboardComponent implements OnInit {
     if (this.dataVP2ndFilter === undefined) {
       this.dataVP2ndFilter = []
     }
-
+    console.log("passdatavp2: ", data)
     for (let i in data.data) {
       for (let j in data.data[i]) {
         let currentValue = data.data[i][j]

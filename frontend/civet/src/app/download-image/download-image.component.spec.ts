@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { CheckboxPlotsComponent } from './checkbox-plots.component';
+import { DownloadImageComponent } from './download-image.component';
 
-describe('CheckboxPlotsComponent', () => {
-  let component: CheckboxPlotsComponent;
-  let fixture: ComponentFixture<CheckboxPlotsComponent>;
+describe('DownloadImageComponent', () => {
+  let component: DownloadImageComponent;
+  let fixture: ComponentFixture<DownloadImageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ CheckboxPlotsComponent ]
+      declarations: [ DownloadImageComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CheckboxPlotsComponent);
+    fixture = TestBed.createComponent(DownloadImageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

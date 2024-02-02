@@ -1,3 +1,25 @@
 <div #my_scatterplot [id]="idValue" class="chart"></div>
-<mat-checkbox *ngIf="message.length === 0" class="example-margin" [(ngModel)]="logCheckbox" (change)="onCheckboxChange()">Log 10</mat-checkbox>
+<div class="inline-form-field">
+    <mat-form-field class="example-form-field" appearance="outline" class="inputField">
+        <mat-label>Min Y</mat-label>
+        <input matInput type="text" [(ngModel)]="minYRange" >
+    </mat-form-field>
+</div>
+<div class="inline-form-field"> - </div>
+<div class="inline-form-field">
+    <mat-form-field class="example-form-field" appearance="outline" class="inputField">
+        <mat-label>Max Y</mat-label>
+        <input matInput type="text" [(ngModel)]="maxYRange">
+    </mat-form-field>
+</div>
+<div class="inline-form-field">
+    <button mat-stroked-button color="black" class="createPlotsBtn" (click)="updateRange()">Update Range</button>
+</div>
+
+<br>
+<mat-checkbox *ngIf="message.length === 0" class="example-margin" [(ngModel)]="logCheckbox"
+    (change)="onCheckboxChange()">Log 2</mat-checkbox>
+<br>
+<br>
+<app-download-image [containerId]="idValue" [imageName]="imageName"></app-download-image>
 <div *ngIf="message.length > 0" class="centered-container">{{message}}</div>

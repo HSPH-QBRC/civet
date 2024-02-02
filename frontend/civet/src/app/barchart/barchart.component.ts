@@ -15,6 +15,10 @@ export class BarchartComponent implements OnInit, OnChanges {
   @Input() id: string = '';
   @Input() category: string = '';
   @Input() dataDictionary = {}
+
+  imageName = 'barchart';
+  idValue = ''
+
   dataSize = 0;
   isLoading = false;
 
@@ -29,7 +33,7 @@ export class BarchartComponent implements OnInit, OnChanges {
 
   maxXaxisLabelLength = 0;
   hideBarchart = false;
-  logCheckbox: boolean =  false
+  logCounts: boolean = false
 
 
   constructor(
@@ -40,23 +44,23 @@ export class BarchartComponent implements OnInit, OnChanges {
   ngOnInit(): void { }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.hideBarchart = true;
-    this.barChartData = [];
-    this.categoryArr = [];
-    this.categoryCount = {}
-    this.countArr = [];
-    this.maxCount = 1;
-    this.min = Infinity;
-    this.max = -Infinity;
-    this.sumstat = [];
-    this.maxXaxisLabelLength = 0;
+    this.idValue = "my_barchart_"+ this.id
+    this.resetVariables()
 
     if (this.dataBarchart) {
       this.formatData()
     }
   }
 
-  onCheckboxChange() {
+  onCheckboxCounts() {
+    this.resetVariables()
+
+    if (this.dataBarchart) {
+      this.formatData()
+    }
+  }
+
+  resetVariables() {
     this.hideBarchart = true;
     this.barChartData = [];
     this.categoryArr = [];
@@ -67,10 +71,6 @@ export class BarchartComponent implements OnInit, OnChanges {
     this.max = -Infinity;
     this.sumstat = [];
     this.maxXaxisLabelLength = 0;
-
-    if (this.dataBarchart) {
-      this.formatData()
-    }
   }
 
   formatData() {
@@ -102,6 +102,7 @@ export class BarchartComponent implements OnInit, OnChanges {
   }
 
   createBarChart() {
+    let logCounts = this.logCounts;
     // set the dimensions and margins of the graph
     var margin = { top: 30, right: 30, bottom: 100, left: 100 },
       width = 800 - margin.left - margin.right,
@@ -116,12 +117,12 @@ export class BarchartComponent implements OnInit, OnChanges {
         return tipBox
       });
 
-    d3.select(`.my_barchart_${this.id}`)
+    d3.select(`#my_barchart_${this.id}`)
       .selectAll('svg')
       .remove();
 
     // append the svg object to the body of the page
-    var svg = d3.select(`.my_barchart_${this.id}`)
+    var svg = d3.select(`#my_barchart_${this.id}`)
       .append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -150,7 +151,7 @@ export class BarchartComponent implements OnInit, OnChanges {
 
     // Add Y axis
     var y = d3.scaleLinear()
-      .domain([0, this.maxCount])
+      .domain([0, logCounts ? Math.log2(this.maxCount) : this.maxCount])
       .range([height, 0]);
     svg.append("g")
       .call(d3.axisLeft(y));
@@ -161,9 +162,9 @@ export class BarchartComponent implements OnInit, OnChanges {
       .enter()
       .append("rect")
       .attr("x", function (d) { return x(d.name); })
-      .attr("y", function (d) { return y(d.count); })
+      .attr("y", function (d) { return y(logCounts ? Math.log2(d.count) : d.count); })
       .attr("width", x.bandwidth())
-      .attr("height", function (d) { return height - y(d.count); })
+      .attr("height", function (d) { return height - y(logCounts ? Math.log2(d.count) : d.count); })
       .attr("fill", "#69b3a2")
       .on('mouseover', function (mouseEvent: any, d) {
         pointTip.show(mouseEvent, d, this);

@@ -16,6 +16,7 @@ export class ScatterplotComponent implements OnChanges {
   @Input() xAxisLabel = ''
   @Input() yAxisLabel = ''
 
+  imageName = 'scatterplot'
   idValue = 'my_scatterplot';
 
   dataDictExclude = ['GENDER', 'RACE', 'STRATUM_ENROLLED']
@@ -30,7 +31,16 @@ export class ScatterplotComponent implements OnChanges {
   xMin = 1000;
   xMax = 0;
   scatterPlotData: { key: string; xValue: any; yValue: any; }[] = [];
-  logCheckbox: boolean = false;
+  logCheckboxX: boolean = false;
+  logCheckboxY: boolean = false;
+
+  minYRange = 10
+  maxYRange = 0
+  minXRange = 10
+  maxXRange = 0
+
+  newXRangeSet: boolean = false;
+  newYRangeSet: boolean = false;
 
   ngOnChanges(changes: SimpleChanges): void {
     this.idValue = 'my_scatterplot_' + this.plotNum;
@@ -39,12 +49,58 @@ export class ScatterplotComponent implements OnChanges {
     }
   }
 
-  onCheckboxChange() {
-    this.yMin = 1000;
-    this.yMax = 0;
+  updateRange(axis) {
+    if (axis === 'yAxis') {
+      this.minYRange = Number(this.minYRange)
+      this.maxYRange = Number(this.maxYRange)
 
-    this.xMin = 1000;
-    this.xMax = 0;
+      this.yMin = this.minYRange;
+      this.yMax = this.maxYRange;
+      this.newYRangeSet = true;
+    }
+
+    if (axis === 'xAxis') {
+      this.minXRange = Number(this.minXRange)
+      this.maxXRange = Number(this.maxXRange)
+
+      this.xMin = this.minXRange;
+      this.xMax = this.maxXRange;
+      this.newXRangeSet = true;
+    }
+
+
+    if (this.dataPl) {
+      this.formatData(this.dataPl);
+    }
+  }
+
+  onCheckboxChange(axis) {
+    if (axis === 'yAxis') {
+      if (!this.newYRangeSet) {
+        this.yMin = 1000;
+        this.yMax = 0;
+      } else if (this.logCheckboxY) {
+        this.minYRange = Math.log2(this.minYRange);
+        this.maxYRange = Math.log2(this.maxYRange);
+      } else {
+        this.minYRange = Math.floor(Math.pow(2, this.minYRange));
+        this.maxYRange = Math.ceil(Math.pow(2, this.maxYRange));
+      }
+    }
+
+    if (axis === 'xAxis') {
+      if (!this.newXRangeSet) {
+        this.xMin = 1000;
+        this.xMax = 0;
+      } else if (this.logCheckboxX) {
+        this.minXRange = Math.log2(this.minXRange);
+        this.maxXRange = Math.log2(this.maxXRange);
+      } else {
+        this.minXRange = Math.floor(Math.pow(2, this.minXRange));
+        this.maxXRange = Math.ceil(Math.pow(2, this.maxXRange));
+      }
+    }
+
     if (this.dataPl) {
       this.formatData(this.dataPl);
     }
@@ -54,24 +110,46 @@ export class ScatterplotComponent implements OnChanges {
     this.scatterPlotData = [];
 
     for (let [key, value] of Object.entries(data)) {
-      let xValue = this.logCheckbox ? Math.log10(value['xValue']): value['xValue']
-      let yValue = this.logCheckbox ? Math.log10(value['yValue']): value['yValue']
+      let xValue = this.logCheckboxX ? Math.log2(value['xValue']) : value['xValue']
+      let yValue = this.logCheckboxY ? Math.log2(value['yValue']) : value['yValue']
       let temp = {
         'key': key,
         'xValue': xValue,
         'yValue': yValue
       }
-      this.scatterPlotData.push(temp)
-      this.xMin = Math.min(this.xMin, xValue)
-      this.xMax = Math.max(this.xMax, xValue)
-      this.yMin = Math.min(this.yMin, yValue)
-      this.yMax = Math.max(this.yMax, yValue)
+      if (!this.newYRangeSet && !this.newXRangeSet) {
+        this.scatterPlotData.push(temp)
+        this.xMin = Math.min(this.xMin, xValue)
+        this.xMax = Math.max(this.xMax, xValue)
+        this.yMin = Math.min(this.yMin, yValue)
+        this.yMax = Math.max(this.yMax, yValue)
+      }
+      else if ((this.newYRangeSet || this.newXRangeSet) && yValue >= this.minYRange && yValue <= this.maxYRange && xValue >= this.minXRange && xValue <= this.maxXRange) {
+        this.scatterPlotData.push(temp)
+        this.xMin = Math.min(this.xMin, xValue)
+        this.xMax = Math.max(this.xMax, xValue)
+        this.yMin = Math.min(this.yMin, yValue)
+        this.yMax = Math.max(this.yMax, yValue)
+      }
+
+
     }
 
     if (this.scatterPlotData.length === 0) {
       this.message = 'no plot to show';
     } else {
       this.cdRef.detectChanges();
+
+      if (!this.newXRangeSet) {
+        this.minXRange = Math.floor(this.xMin * 100) / 100;
+        this.maxXRange = Math.ceil(this.xMax * 100) / 100;
+      }
+
+      if (!this.newYRangeSet) {
+        this.minYRange = Math.floor(this.yMin * 100) / 100;
+        this.maxYRange = Math.ceil(this.yMax * 100) / 100;
+      }
+
       this.createScatterPlot()
     }
   }
@@ -87,8 +165,8 @@ export class ScatterplotComponent implements OnChanges {
       .offset([-10, 0])
       .html((event, d) => {
         let tipBox = `<div><div class="category">Name: </div> ${d.key}</div>
-     <div><div class="category">X Value: </div> ${d.xValue}</div>
-     <div><div class="category">Y Value: </div>${d.yValue}</div>`
+     <div><div class="category">X Value: </div> ${this.logCheckboxX ? Math.pow(2, d.xValue).toLocaleString() : d.xValue}</div>
+     <div><div class="category">Y Value: </div>${this.logCheckboxY ? Math.pow(2, d.yValue).toLocaleString() : d.yValue}</div>`
         return tipBox
       });
 
@@ -134,16 +212,18 @@ export class ScatterplotComponent implements OnChanges {
     //   // .paddingInner(1)
 
     var x = d3.scaleLinear()
-      .domain([this.xMin, this.xMax])
+      // .domain([this.xMin, this.xMax])
+      .domain([this.minXRange, this.maxXRange])
       .range([0, width]);
 
     // const bandWidth = x.bandwidth();
 
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x)
-        .tickSize(0) // Remove tick marks
-      )
+      // .call(d3.axisBottom(x)
+      //   .tickSize(0) // Remove tick marks
+      // )
+      .call(this.logCheckboxX ? d3.axisBottom(x).tickFormat(d => `${Math.pow(2, +d).toLocaleString()}`) : d3.axisBottom(x))
       .selectAll("text")
       .style("text-anchor", "start") // Align text to the start of the band
       .attr("dx", "-.8em")
@@ -153,10 +233,12 @@ export class ScatterplotComponent implements OnChanges {
 
     // Add Y axis
     var y = d3.scaleLinear()
-      .domain([this.yMin, this.yMax])
+      // .domain([this.yMin, this.yMax])
+      .domain([this.minYRange, this.maxYRange])
       .range([height, 0]);
     svg.append("g")
-      .call(d3.axisLeft(y));
+      // .call(d3.axisLeft(y));
+      .call(this.logCheckboxY ? d3.axisLeft(y).tickFormat(d => `${Math.pow(2, +d).toLocaleString()}`) : d3.axisLeft(y));
 
 
     // Add dots
@@ -212,7 +294,7 @@ export class ScatterplotComponent implements OnChanges {
       .classed('label', true)
       .attr("font-weight", "bold")
       .attr('x', width / 2)
-      .attr('y', height + margin.bottom -40)
+      .attr('y', height + margin.bottom - 40)
       .style('fill', 'rgba(0,0,0,.8)')
       .style('text-anchor', 'middle')
       .style('font-size', '10px')

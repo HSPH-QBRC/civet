@@ -34,7 +34,8 @@ import { ScatterplotComponent } from './scatterplot/scatterplot.component';
 import { HeatmapComponent } from './heatmap/heatmap.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDividerModule } from '@angular/material/divider';
-import { CheckboxPlotsComponent } from './checkbox-plots/checkbox-plots.component';
+import {MatInputModule} from '@angular/material/input';
+import { DownloadImageComponent } from './download-image/download-image.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,7 @@ import { CheckboxPlotsComponent } from './checkbox-plots/checkbox-plots.componen
     HistogramMiniComponent,
     ScatterplotComponent,
     HeatmapComponent,
-    CheckboxPlotsComponent
+    DownloadImageComponent,
   ],
   imports: [
     BrowserModule,
@@ -71,7 +72,8 @@ import { CheckboxPlotsComponent } from './checkbox-plots/checkbox-plots.componen
     MatSelectModule,
     FormsModule,
     MatTabsModule,
-    MatDividerModule
+    MatDividerModule,
+    MatInputModule
   ],
   providers: [
     {

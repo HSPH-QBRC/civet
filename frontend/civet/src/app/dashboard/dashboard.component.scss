@@ -149,7 +149,7 @@ ul {
     display: flex; /* Use Flexbox to horizontally align items */
     // flex-wrap: wrap; /* Allow items to wrap to the next line if needed */
     gap: 100px; /* Adjust the gap between plots as needed */
-    height: 550px
+    height: 600px
 }
 
 app-violinplot,
@@ -184,7 +184,6 @@ app-scatterplot {
 }
 
 .page-container{
-    // height: 120vh;
 }
 
 .hideSummaryPlots{

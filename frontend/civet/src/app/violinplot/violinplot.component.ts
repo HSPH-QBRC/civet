@@ -19,6 +19,8 @@ export class ViolinplotComponent implements OnChanges {
   @Input() yAxisLabel
   @Input() xAxisLabel
 
+  imageName = 'violinplot'
+
   isLoading = false;
 
   dataViolinPlot = []
@@ -55,10 +57,36 @@ export class ViolinplotComponent implements OnChanges {
     }
   }
 
+  minYRange = 0;
+  maxYRange = 10;
+  newYRangeSet = false;
+
+  updateRange() {
+    this.minYRange = Number(this.minYRange)
+    this.maxYRange = Number(this.maxYRange)
+
+    this.resetVariables()
+    this.vpMin = this.minYRange;
+    this.vpMax = this.maxYRange;
+    this.newYRangeSet = true;
+
+    this.formatData();
+  }
+
   onCheckboxChange() {
     this.resetVariables()
+    if (!this.newYRangeSet) {
+      this.vpMin = 10000000000;
+      this.vpMax = -10000000000;
+    }
+    else if (this.logCheckbox) {
+      this.minYRange = Math.log2(this.minYRange);
+      this.maxYRange = Math.log2(this.maxYRange);
+    } else {
+      this.minYRange = Math.floor(Math.pow(2, this.minYRange));
+      this.maxYRange = Math.ceil(Math.pow(2, this.maxYRange));
+    }
     this.formatData();
-
   }
 
   resetVariables() {
@@ -75,7 +103,7 @@ export class ViolinplotComponent implements OnChanges {
       let obj = this.dataUR[key]
       let category = Object.keys(obj)[0];
       // let value = obj[category];
-      let value = this.logCheckbox ? Math.log10(obj[category]) : obj[category];
+      let value = this.logCheckbox ? Math.log2(obj[category]) : obj[category];
 
       if ((parseInt(category) || category === '0') && !this.dataDictExclude.includes(this.xAxisLabel)) {
         category = this.dataDictionary[this.xAxisLabel][category + '.0']
@@ -83,9 +111,15 @@ export class ViolinplotComponent implements OnChanges {
         category = this.dataDictionary[this.xAxisLabel][category]
       }
 
-      if (!this.categoryArr.includes(category)) {
+      if (this.newYRangeSet && value >= this.minYRange && value <= this.maxYRange) {
+        this.categoryArr.push(category)
+      } else if (!this.newYRangeSet) {
         this.categoryArr.push(category)
       }
+
+      // if (!this.categoryArr.includes(category)) {
+      //   this.categoryArr.push(category)
+      // }
 
       if (this.minYViolinplot !== undefined) {
         this.vpMin = this.minYViolinplot;
@@ -99,12 +133,23 @@ export class ViolinplotComponent implements OnChanges {
         category: category,
         value: value
       }
-      this.dataViolinPlot.push(temp)
+
+      if (this.newYRangeSet && value >= this.minYRange && value <= this.maxYRange) {
+        this.dataViolinPlot.push(temp)
+      } else if (!this.newYRangeSet) {
+        this.dataViolinPlot.push(temp)
+      }
     }
     if (this.dataViolinPlot.length === 0) {
       this.message = 'no plot to show';
     } else {
       this.cdRef.detectChanges();
+
+      if (!this.newYRangeSet) {
+        this.minYRange = Math.floor(this.vpMin * 100) / 100;
+        this.maxYRange = Math.ceil(this.vpMax * 100) / 100;
+      }
+
       this.createSvg();
     }
   }
@@ -116,7 +161,7 @@ export class ViolinplotComponent implements OnChanges {
       .exit()
 
     // set the dimensions and margins of the graph
-    var margin = { top: 50, right: 30, bottom: 50, left: 120 },
+    var margin = { top: 50, right: 30, bottom: 120, left: 120 },
       width = 460 - margin.left - margin.right,
       height = 480 - margin.top - margin.bottom;
 
@@ -131,9 +176,12 @@ export class ViolinplotComponent implements OnChanges {
 
     // Build and Show the Y scale
     var y = d3.scaleLinear()
-      .domain([this.vpMin, this.vpMax])          // Note that here the Y scale is set manually
+      // .domain([this.vpMin, this.vpMax])          // Note that here the Y scale is set manually
+      .domain([this.minYRange, this.maxYRange])
       .range([height, 0])
-    svg.append("g").call(d3.axisLeft(y))
+    // svg.append("g").call(d3.axisLeft(y))
+    svg.append("g")
+      .call(this.logCheckbox ? d3.axisLeft(y).tickFormat(d => `${Math.pow(2, +d).toLocaleString()}`) : d3.axisLeft(y));
 
 
     // Build and Show the X scale. It is a band scale like for a boxplot: each group has an dedicated RANGE on the axis. This range has a length of x.bandwidth
@@ -144,12 +192,17 @@ export class ViolinplotComponent implements OnChanges {
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x))
-
-    // console.log("category arr: ", this.categoryArr, this.dataDictionary)
+      .selectAll("text")
+      .style("text-anchor", "end")
+      .call(wrap, width / (this.categoryArr.length * 2))
+      .attr("dx", "-.8em")
+      .attr("dy", ".15em")
+      .attr("transform", "translate(-20,0)rotate(-65)")
 
     // Features of the histogram
     var histogram = d3.histogram()
-      .domain([this.vpMin, this.vpMax])
+      // .domain([this.vpMin, this.vpMax])
+      .domain([this.minYRange, this.maxYRange])
       // .domain(y.domain())
       .thresholds(y.ticks(parseInt(this.numberOfBins)))    // Important: how many bins approx are going to be made? It is the 'resolution' of the violin plot
       .value(d => d)
@@ -201,12 +254,12 @@ export class ViolinplotComponent implements OnChanges {
         .curve(d3.curveCatmullRom)    // This makes the line smoother to give the violin appearance. Try d3.curveStep to see the difference
       )
 
-    svg.append("text")
-      .attr("x", (width / 2)) // Center the text horizontally
-      .attr("y", 0 - (margin.top / 2) + 15) // Position it above the top margin
-      .attr("text-anchor", "middle") // Center-align the text horizontally
-      .style("font-size", "12px") // Set the font size
-      .text(this.dataDictionary[this.selectedCategory] !== undefined ? (this.dataDictionary[this.selectedCategory][this.category] === undefined ? this.category : this.dataDictionary[this.selectedCategory][this.category]) : 'Violin Plot');
+    // svg.append("text")
+    //   .attr("x", (width / 2)) // Center the text horizontally
+    //   .attr("y", 0 - (margin.top / 2) + 15) // Position it above the top margin
+    //   .attr("text-anchor", "middle") // Center-align the text horizontally
+    //   .style("font-size", "12px") // Set the font size
+    //   .text(this.dataDictionary[this.selectedCategory] !== undefined ? (this.dataDictionary[this.selectedCategory][this.category] === undefined ? this.category : this.dataDictionary[this.selectedCategory][this.category]) : 'Violin Plot');
 
     svg.append("text")
       .attr("transform", "rotate(-90)") // Rotate the text to make it vertical
@@ -227,5 +280,29 @@ export class ViolinplotComponent implements OnChanges {
       .style('text-anchor', 'middle')
       .style('font-size', '10px')
       .text(this.xAxisLabel === undefined ? '' : this.xAxisLabel);
+
+    function wrap(text, width) {
+      text.each(function () {
+        var text = d3.select(this),
+          words = text.text().split(/\s+/).reverse(),
+          word,
+          line = [],
+          lineNumber = 0,
+          lineHeight = 1.1, // ems
+          y = text.attr("y"),
+          dy = parseFloat(text.attr("dy")),
+          tspan = text.text(null).append("tspan").attr("x", 0).attr("y", y).attr("dy", dy + "em");
+        while (word = words.pop()) {
+          line.push(word);
+          tspan.text(line.join(" "));
+          if (tspan.node().getComputedTextLength() > width) {
+            line.pop();
+            tspan.text(line.join(" "));
+            line = [word];
+            tspan = text.append("tspan").attr("x", 0).attr("y", y).attr("dy", ++lineNumber * lineHeight + dy + "em").text(word);
+          }
+        }
+      });
+    }
   }
 }

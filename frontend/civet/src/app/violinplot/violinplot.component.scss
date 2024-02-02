@@ -9,8 +9,8 @@
 }
 
 .plot-container {
-    width: 460px;
-    height: 400px;
+    // width: 460px;
+    // height: 400px;
 }
 
 .loading-container {
@@ -31,4 +31,13 @@
     .mat-checkbox-checked.mat-accent .mat-checkbox-background {
         background-color: tomato !important;
     }
+}
+
+.inline-form-field {
+    display: inline-block;
+}
+
+.inputField {
+    width: 75px;
+    margin: 0 10px;
 }
