@@ -1,0 +1,58 @@
+::ng-deep {
+  // .axis path,
+  // .axis line {
+  //   fill: none;
+  //   stroke: rgba(0, 0, 0, 0.1);
+  //   shape-rendering: crispEdges;
+  // }
+
+  // .label {
+  //   fill: initial;
+  //   font-size: 16px;
+  // }
+
+  .d3-tip {
+    line-height: 1;
+    //   font-weight: bold;
+    font-size: 12px;
+    padding: 4px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border-radius: 2px;
+    z-index: 1;
+  }
+  .category {
+    color: #ffbf00;
+    font-weight: bold;
+  }
+}
+
+.centered-container {
+  background-color: rgb(248, 239, 222);
+  width: 460px;
+  height: 400px;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+}
+
+.example-margin {
+  margin-left: 30px;
+  font-size: small;
+}
+
+::ng-deep {
+  .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+    background-color: tomato !important;
+  }
+  
+}
+
+.inline-form-field {
+  display: inline-block;
+}
+
+.inputField {
+  width: 75px;
+  margin: 0 10px;
+}

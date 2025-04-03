@@ -1,0 +1,212 @@
+<app-spinner-overlay class="loading-container" *ngIf="isLoading"></app-spinner-overlay>
+<div class="row flexContainer">
+    <div class="col-md-3 sideBar">
+        <app-data-filter (subjectIdEventSP)="passDataSP($event)" (subjectIdEventVP)="passDataVP($event)"
+            (subjectIdEventVP2ndFilter)="passDataVP2ndFilter($event)"
+            (subjectIdEventSP2ndFilter)="passDataSP2ndFilter($event)"
+            (dataDictionaryShare)="shareDataDictionary($event)" [dataDict]="dataDict"
+            (emitStorageDS)="passDataFilterDataset($event)" (emitSliderDS)="passSliderDataset($event)"
+            (emitCustomPlotData)="passCustomPlotData($event)"
+            (emitCustomPlotData2ndFilter)="passCustomPlotData2ndFilter($event)">
+        </app-data-filter>
+    </div>
+
+    <div class="col-md-9 content">
+        <mat-tab-group>
+            <mat-tab label="Mitochondrial Counts">
+                <div class="page-container">
+                    <br>
+                    <div class="sliderLabel">Number of Bins: </div>
+                    <div class="custom-slider-bins">
+                        <ngx-slider [(value)]="sliderValue" [options]="sliderOptions"
+                            (userChangeEnd)="onNumberBinsSelected($event.value)">
+                        </ngx-slider>
+                    </div>
+                    <br>
+                    <h2 *ngIf="dataPl || dataUR">Mitochondrial Counts for Blood and Urine</h2>
+                    <div *ngIf="dataPl || dataUR" class="plots-container">
+                        <app-connected-scatterplot [dataPl]="dataPl" [plotNum]="'Scatter_Plot'"
+                            [dataDictionary]="dataDict" [selectedCategory]="selectedCategory">
+                        </app-connected-scatterplot>
+                        <app-violinplot [dataUR]="dataUR" [plotNum]="'Violin_Plot'" [dataDictionary]="dataDict"
+                            [selectedCategory]="selectedCategory" [maxValue]="maxNum" [numberOfBins]="numberOfBins">
+                        </app-violinplot>
+                    </div>
+                </div>
+                <mat-divider *ngIf="dataUR"></mat-divider>
+                <br>
+                <div class="page-container">
+                    <div *ngIf="dataUR">
+                        <span class="spanDropdownButton">
+                            <mat-form-field>
+                                <mat-label>Select 1st Category</mat-label>
+                                <mat-select [(ngModel)]="selected1stCategory" (selectionChange)="onCategoryChange()">
+                                    <mat-option *ngFor="let category of filterCategory" [value]="category">
+                                        {{category}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                            <div class="summaryPlotButton">
+                                <button mat-stroked-button color="black" class="createPlotsBtn"
+                                    (click)="displaySummaryPlots(selected1stCategory)">Display Summary
+                                    Plots</button>
+                            </div>
+                        </span>
+                        <ng-container *ngIf="showSummaryPlot">
+                            <div id="summaryPlots">
+                                <h2 *ngIf="showSummaryPlot">Summary Plots</h2>
+                                <div *ngIf="showSummaryPlot"
+                                    [class]="showSummaryPlot ? 'plots-container' : 'hideSummaryPlots'">
+                                    <div *ngIf="dataType[selected1stCategory] === 'Continuous'">
+                                        <app-histogram [dataHistogram]="dataHistogram" [id]="'test_histogram123'"
+                                            [category]="selected1stCategory"></app-histogram>
+                                    </div>
+                                    <div *ngIf="dataType[selected1stCategory] === 'Categorical'">
+                                        <app-barchart [dataBarchart]="dataBarChart" [id]="'test_barchart'"
+                                            [category]="selected1stCategory" [dataDictionary]="dataDict"></app-barchart>
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+
+                        <br>
+                        <br>
+                        <span *ngIf="showSummaryPlot" class="spanDropdownButton">
+                            <mat-form-field>
+                                <mat-label>Select 1st Category</mat-label>
+                                <mat-select [(ngModel)]="selected1stCategory" (selectionChange)="onCategoryChange()"
+                                    disabled>
+                                    <mat-option *ngFor="let category of filterCategory" [value]="category">
+                                        {{category}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
+                        </span>
+                        <br>
+                        <mat-form-field>
+                            <mat-label>Select 2nd Category</mat-label>
+                            <mat-select [(ngModel)]="selected2ndCategory" (selectionChange)="onCategoryChange()">
+                                <mat-option *ngFor="let category of filterCategory" [value]="category">
+                                    {{category}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <br>
+                        <button mat-stroked-button color="black" class="createPlotsBtn" (click)="updatePlots()">Update
+                            Plots</button>
+                        <br>
+                    </div>
+
+
+
+                </div>
+
+
+                <div id="a2ndFilter">
+                    <div *ngIf="isNotEmpty(customPlotData) && showCustomPlots">
+                        <h2>Comparison Plots</h2>
+                        <div
+                            *ngIf="dataType[selected1stCategory] === 'Continuous' && dataType[selected2ndCategory] === 'Continuous'">
+                            <app-scatterplot [dataPl]="customPlotData" [plotNum]="'scatterplot_custom'"
+                                [xAxisLabel]="selected1stCategory" [yAxisLabel]="selected2ndCategory"></app-scatterplot>
+                        </div>
+                        <div
+                            *ngIf="(dataType[selected1stCategory] === 'Continuous' && dataType[selected2ndCategory] === 'Categorical') || (dataType[selected1stCategory] === 'Categorical' && dataType[selected2ndCategory] === 'Continuous')">
+                            <app-violinplot [dataUR]="customPlotData" [plotNum]="'voilinplot_custom'"
+                                [dataDictionary]="dataDict" [selectedCategory]="selectedCategory" [maxValue]="maxNum"
+                                [numberOfBins]="numberOfBins"
+                                [yAxisLabel]="dataType[selected1stCategory] === 'Continuous' ? selected1stCategory: selected2ndCategory"
+                                [xAxisLabel]="dataType[selected1stCategory] === 'Categorical' ? selected1stCategory: selected2ndCategory">
+                            </app-violinplot>
+                        </div>
+                        <div
+                            *ngIf="dataType[selected1stCategory] === 'Categorical' && dataType[selected2ndCategory] === 'Categorical'">
+                            <app-heatmap [dataHM]="customPlotData" [xAxisLabel]="selected1stCategory"
+                                [yAxisLabel]="selected2ndCategory" [dataDictionary]="dataDict"></app-heatmap>
+                        </div>
+
+                    </div>
+                </div>
+                <mat-divider *ngIf="dataUR"></mat-divider>
+                <br>
+                <mat-form-field *ngIf="dataUR">
+                    <mat-label>Add Another Filter</mat-label>
+                    <mat-select (selectionChange)="onFilterSelected($event.value)">
+                        <mat-option *ngFor="let category of filterCategory" [value]="category">
+                            {{category}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <div id="anotherFilter">
+                    <div *ngIf="showNumericSlider">
+                        <div class="sliderLabel">Number of Bins (For Numeric only): </div>
+                        <div class="custom-slider-bins">
+                            <ngx-slider [(value)]="numericSlidervalue" [options]="numericSliderOptions"
+                                (userChangeEnd)="onNumberBinsSelectedNumeric($event.value)">
+                            </ngx-slider>
+                        </div>
+                    </div>
+
+                    <h2 *ngIf="selected2ndFilterCategory !== ''">Comparison Plots with Secondary
+                        Filter</h2>
+
+                    <div *ngIf="dataSP2ndFilter" class="plots-container2">
+                        <ng-container *ngFor="let data of getObjectValues(dataSP2ndFilter); let i = index">
+                            <app-connected-scatterplot [dataPl]="data" [plotNum]="i" [dataDictionary]="dataDict"
+                                [selectedCategory]="selectedCategory" [minYScatterplot]="minScatterplot"
+                                [maxYScatterplot]="maxScatterplot"></app-connected-scatterplot>
+                        </ng-container>
+                    </div>
+
+                    <div *ngIf="dataVP2ndFilter" class="plots-container2">
+                        <ng-container *ngFor="let data of getObjectValues(dataVP2ndFilter); let i = index">
+                            <!-- <app-violinplot [dataUR]="data" [plotNum]="i" [dataDictionary]="dataDict"
+                                [selectedCategory]="selectedCategory" [minYViolinplot]="minViolinplot"
+                                [maxYViolinplot]="maxViolinplot" [maxValue]="maxNum" [numberOfBins]="numberOfBins">
+                            </app-violinplot> -->
+                            <!-- what is minviolinplot for?? -->
+                            <app-violinplot [dataUR]="data" [plotNum]="i" [dataDictionary]="dataDict"
+                                [selectedCategory]="selectedCategory" [maxValue]="maxNum" [numberOfBins]="numberOfBins">
+                            </app-violinplot>
+                        </ng-container>
+                    </div>
+
+                    <div *ngIf="dataCP2ndFilter" class="plots-container2">
+                        <ng-container *ngFor="let data of getObjectValues(dataCP2ndFilter); let i = index">
+                            <div
+                                *ngIf="dataType[selected1stCategory] === 'Continuous' && dataType[selected2ndFilterCategory] === 'Continuous'">
+                                <app-scatterplot [dataPl]="data" [plotNum]="'scatterplot_custom2_'+i"
+                                    [xAxisLabel]="selected1stCategory" [yAxisLabel]="selected2ndFilterCategory">
+                                </app-scatterplot>
+                            </div>
+                            <div
+                                *ngIf="(dataType[selected1stCategory] === 'Continuous' && dataType[selected2ndFilterCategory] === 'Categorical') || (dataType[selected1stCategory] === 'Categorical' && dataType[selected2ndFilterCategory] === 'Continuous')">
+                                <app-violinplot [dataUR]="data" [plotNum]="'voilinplot_custom2_'+i"
+                                    [dataDictionary]="dataDict" [selectedCategory]="selectedCategory"
+                                    [maxValue]="maxNum" [numberOfBins]="numberOfBins"
+                                    [yAxisLabel]="dataType[selected1stCategory] === 'Continuous' ? selected1stCategory: selected2ndFilterCategory"
+                                    [xAxisLabel]="dataType[selected1stCategory] === 'Categorical' ? selected1stCategory: selected2ndFilterCategory">
+                                </app-violinplot>
+                            </div>
+                            <div
+                                *ngIf="dataType[selected1stCategory] === 'Categorical' && dataType[selected2ndFilterCategory] === 'Categorical'">
+                                <app-heatmap [dataHM]="data" [xAxisLabel]="selected1stCategory"
+                                    [yAxisLabel]="selected2ndFilterCategory" [dataDictionary]="dataDict"></app-heatmap>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </mat-tab>
+            <mat-tab label="Dataset 2">
+                Content for Dataset 2
+            </mat-tab>
+            <mat-tab label="All">
+                Some content for All
+            </mat-tab>
+        </mat-tab-group>
+
+
+    </div>
+</div>

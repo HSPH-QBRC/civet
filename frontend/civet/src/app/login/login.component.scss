@@ -1,0 +1,82 @@
+.login-wrapper {
+    height: 100vh; /* Full viewport height */
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center; /* Centers vertically */
+    background-color: #f4f4f4; /* Optional: Adds a background color */
+}
+
+.box {
+    max-width: 400px;
+    width: 100%;
+    padding: 60px 50px 40px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.login-wrapper .example-form {
+    min-width: 100%;
+    max-width: 300px;
+    width: 100%;
+}
+
+.login-wrapper .example-full-width {
+    width: 100%;
+}
+.login-wrapper .btn-block {
+    width: 60%;
+    display: block;
+    margin: 0px auto; /* Center horizontally */
+}
+
+.login-wrapper mat-card-header {
+    text-align: center;
+    width: 100%;
+    display: block;
+    font-weight: 700;
+}
+
+.login-wrapper mat-card-header mat-card-title {
+    font-size: 30px;
+    margin: 0px 0px 5px 0px;
+    color: rgba(55, 71, 79, 0.9);
+}
+
+.login-wrapper .mat-card {
+    padding: 40px 60px 40px;
+}
+
+.login-wrapper .mat-stroked-button {
+    border: 1px solid currentColor;
+    line-height: 54px;
+    background: wheat;
+    color: rgba(55, 71, 79, 0.8);
+}
+
+.login-wrapper .mat-form-field-appearance-legacy .mat-form-field-infix {
+    padding: 0.8375em 0;
+}
+
+/* Disabled button style */
+.btn-block:disabled {
+    background-color: #d3d3d3 !important; /* Light gray */
+    color: #808080 !important; /* Darker gray */
+    cursor: not-allowed;
+    border: none;
+}
+.btn-block:disabled:hover{
+    opacity: 95%;
+}
+
+.btn-block:hover{
+    opacity: 80%;
+}
+
+button[mat-flat-button] {
+    background-color: wheat !important; /* Custom Blue */
+    // color: white !important; /* White text */
+    color: rgba(55, 71, 79, 0.8) !important;;
+    border: 1px solid rgba(55, 71, 79, 0.8) !important; /* Grey border */
+  }
