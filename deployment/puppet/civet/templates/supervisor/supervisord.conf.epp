@@ -1,15 +1,15 @@
-; supervisor config file
+[supervisord]
+logfile = <%= $civet::supervisor::log_dir %>/supervisord.log
+logfile_maxbytes = 1MB
+logfile_backups = 4
+pidfile = /tmp/supervisord.pid
+nocleanup = true
 
 [unix_http_server]
-file=/tmp/supervisor.sock   ; (the path to the socket file)
-chmod=0770                       ; socket file mode (default 0700)
+file = /tmp/supervisor.sock
 
-[supervisord]
-logfile=/tmp/supervisord.log ; (main log file;default $CWD/supervisord.log)
-pidfile=/tmp/supervisord.pid ; (supervisord pidfile;default supervisord.pid)
-childlogdir=/tmp/supervisor            ; ('AUTO' child log dir, default $TEMP)
-user=<%= $civet::app_user %>
-environment = PATH="<%= $civet::django::virtualenv %>/bin",DJANGO_SETTINGS_MODULE="<%= $civet::django_settings_module %>"
+[supervisorctl]
+serverurl = unix:///tmp/supervisor.sock ; use a unix:// URL  for a unix socket
 
 ; the below section must remain in the config file for RPC
 ; (supervisorctl/web interface) to work, additional interfaces may be
@@ -17,15 +17,10 @@ environment = PATH="<%= $civet::django::virtualenv %>/bin",DJANGO_SETTINGS_MODUL
 [rpcinterface:supervisor]
 supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 
-[supervisorctl]
-serverurl=unix:///tmp/supervisor.sock ; use a unix:// URL  for a unix socket
-username=<%= $civet::app_user %>
-
 ; The [include] section can just contain the "files" setting.  This
 ; setting can list multiple files (separated by whitespace or
 ; newlines).  It can also contain wildcards.  The filenames are
 ; interpreted as relative to this file.  Included files *cannot*
 ; include files themselves.
-
 [include]
 files = <%= $civet::supervisor::conf_dir %>/conf.d/*.conf

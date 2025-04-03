@@ -1,27 +1,27 @@
 terraform {
-  required_version = ">= 1.2.6, < 2.0.0"
+  required_version = ">= 1.5.5, < 2.0.0"
 
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.24.0"
+      version = "~> 5.12.0"
     }
     cloudinit = {
       source  = "hashicorp/cloudinit"
-      version = "~> 2.2.0"
+      version = "~> 2.3.2"
     }
     external = {
       source  = "hashicorp/external"
-      version = "~> 2.2.2"
+      version = "~> 2.3.1"
     }
     random = {
       source  = "hashicorp/random"
-      version = "~> 3.3.2"
+      version = "~> 3.5.1"
     }
   }
 
   backend "s3" {
-    bucket               = "civet-tf"
+    bucket               = "civet-terraform"
     key                  = "terraform.state"
     region               = "us-east-2"
     workspace_key_prefix = "workspace"

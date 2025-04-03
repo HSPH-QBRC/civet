@@ -1,5 +1,4 @@
 [program:gunicorn]
-
 command=<%= $civet::django::virtualenv %>/bin/gunicorn
     config.wsgi:application
     --bind=unix:///tmp/gunicorn.sock --workers 3 --timeout 120
@@ -7,17 +6,15 @@ command=<%= $civet::django::virtualenv %>/bin/gunicorn
 ; If supervisord is run as the root user, switch users to this UNIX user account
 ; before doing any processing.
 user=<%= $civet::app_user %>
-environment = HOME="/home/<%= $civet::app_user %>",USER="<%= $civet::app_user %>"
+environment = PATH="<%= $civet::django::virtualenv %>/bin",DJANGO_SETTINGS_MODULE="<%= $civet::django_settings_module %>"
 
 ; Location of Django project
 directory=<%= $civet::django::root %>
 
 ; Put process stdout output in this file
-stdout_logfile = <%= $civet::log_dir %>/%(program_name)s.log
+stdout_logfile = <%= $civet::supervisor::log_dir %>/%(program_name)s.log
+stdout_logfile_maxbytes = 1MB
+stdout_logfile_backups = 4
 
 ; Put process stderr output in stdout file
 redirect_stderr = true
-
-autostart=true
-autorestart=true
-stopsignal=QUIT

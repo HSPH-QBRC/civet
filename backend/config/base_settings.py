@@ -12,16 +12,10 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# regardless of dev or production, we need a DB:
-try:
-    db_name = os.environ['DB_NAME']
-except KeyError:
-    db_name = 'civetdb'
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': db_name,
+        'NAME': get_env('DB_NAME'),
         'USER': get_env('DB_USER'),
         'PASSWORD': get_env('DB_PASSWD'),
         'HOST': get_env('DB_HOST'),
@@ -89,6 +83,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+# custom User model:
+AUTH_USER_MODEL = 'api.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -160,7 +156,6 @@ SILENCED_SYSTEM_CHECKS = ["rest_framework.W001"]
 
 # settings for the DRF JWT app:
 SIMPLE_JWT = {
-    'USER_ID_FIELD': 'user_uuid',
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15)
 }
 
@@ -232,3 +227,32 @@ LOGGING = {
         'level':  LOGLEVEL,
     },
 }
+
+###############################################################################
+# START Parameters for solr
+###############################################################################
+SOLR_BIN_DIR = '/opt/solr/bin'
+
+SOLR_POST_CMD = '{bin_dir}/post'.format(bin_dir=SOLR_BIN_DIR)
+SOLR_CMD = '{bin_dir}/solr'.format(bin_dir=SOLR_BIN_DIR)
+
+# TODO: extract this to settings or otherwise
+SOLR_SERVER = 'http://localhost:8983/solr'
+###############################################################################
+# END Parameters for solr
+###############################################################################
+
+
+###############################################################################
+# START Parameters for metadata files
+###############################################################################
+
+# where the data will be located. From a S3 mount
+DATA_DIR = Path('/data')
+
+# describes the fields available in the subject table
+CLINICAL_DATA_DICT = DATA_DIR / 'clinical_data_dictionary.xlsx'
+
+###############################################################################
+# END Parameters for metadata files
+###############################################################################

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema name="subject-config" version="1.6">
+  <uniqueKey>SUBJID</uniqueKey>
+  
+  <fieldType name="boolean" class="solr.BoolField" sortMissingLast="true"/>
+  <fieldType name="booleans" class="solr.BoolField" sortMissingLast="true" multiValued="true"/>
+
+  <fieldType name="ignored" class="solr.StrField" indexed="false" stored="false" multiValued="true"/>
+  <fieldType name="lowercase" class="solr.TextField" positionIncrementGap="100">
+    <analyzer>
+      <tokenizer class="solr.KeywordTokenizerFactory"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+  </fieldType>
+  <fieldType name="pdate" class="solr.DatePointField" docValues="true"/>
+  <fieldType name="pdates" class="solr.DatePointField" docValues="true" multiValued="true"/>
+  <fieldType name="pdouble" class="solr.DoublePointField" docValues="true"/>
+  <fieldType name="pdoubles" class="solr.DoublePointField" docValues="true" multiValued="true"/>
+  <fieldType name="pfloat" class="solr.FloatPointField" docValues="true"/>
+  <fieldType name="pfloats" class="solr.FloatPointField" docValues="true" multiValued="true"/>
+  <fieldType name="pint" class="solr.IntPointField" docValues="true"/>
+  <fieldType name="pints" class="solr.IntPointField" docValues="true" multiValued="true"/>
+  <fieldType name="plong" class="solr.LongPointField" docValues="true"/>
+  <fieldType name="plongs" class="solr.LongPointField" docValues="true" multiValued="true"/>
+  <fieldType name="point" class="solr.PointType" subFieldSuffix="_d" dimension="2"/>
+  <fieldType name="rank" class="solr.RankField"/>
+  <fieldType name="string" class="solr.StrField" sortMissingLast="true" docValues="true"/>
+  <fieldType name="strings" class="solr.StrField" sortMissingLast="true" docValues="true" multiValued="true"/>
+  <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100" multiValued="true">
+    <analyzer type="index">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+    <analyzer type="query">
+      <tokenizer class="solr.StandardTokenizerFactory"/>
+      <filter class="solr.StopFilterFactory" words="stopwords.txt" ignoreCase="true"/>
+      <filter class="solr.SynonymGraphFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt"/>
+      <filter class="solr.LowerCaseFilterFactory"/>
+    </analyzer>
+  </fieldType>
+  
+  <field name="ADVAIR_DOSE_V1" type="pdoubles"/>
+  <field name="ADVAIR_PUFFSDAY_V1" type="pdoubles"/>
+  <field name="ADVAIR_V1" type="pdoubles"/>
+  <field name="AGE_DERV_V1" type="plongs"/>
+  <field name="ALBUTEROL_NEB_V1" type="pdoubles"/>
+  <field name="ALBUTEROL_PUFFSDAY_V1" type="pdoubles"/>
+  <field name="ALBUTEROL_V1" type="pdoubles"/>
+  <field name="ASTHMA_CHILD_V1" type="pdoubles"/>
+  <field name="ASTHMA_DX_V1" type="pdoubles"/>
+  <field name="BETA_BLOCKER_V1" type="pdoubles"/>
+  <field name="BMH08B_V1" type="pdoubles"/>
+  <field name="BMH08H_V1" type="pdoubles"/>
+  <field name="BMH08I_V1" type="pdoubles"/>
+  <field name="BMI_CM_V1" type="pdoubles"/>
+  <field name="BMI_CM_V2" type="pdoubles"/>
+  <field name="CBC_EOSINOPHIL_PCT_V1" type="pdoubles"/>
+  <field name="CBC_LYMPHOCYTE_PCT_V1" type="pdoubles"/>
+  <field name="CBC_NEUTROPHIL_PCT_V1" type="pdoubles"/>
+  <field name="CURRENT_SMOKER_V1" type="pdoubles"/>
+  <field name="DATE_V1" type="string"/>
+  <field name="DATE_V2" type="string"/>
+  <field name="DATE_V3" type="string"/>
+  <field name="DATE_V4" type="string"/>
+  <field name="DEM02_V1" type="pdoubles"/>
+  <field name="DEM03_V1" type="pdoubles"/>
+  <field name="DEM04_V1" type="pdoubles"/>
+  <field name="DIABETES_DERV_V1" type="pdoubles"/>
+  <field name="ETHNICITY" type="pdoubles"/>
+  <field name="FACIT_SOCIALWELLBEING_V1" type="pdoubles"/>
+  <field name="GENDER" type="plongs"/>
+  <field name="RACE" type="plongs"/>
+  <field name="SITE" type="string"/>
+  <field name="STRATUM_ENROLLED" type="plongs"/>
+  <field name="WT_KG_V1" type="pdoubles"/>
+  <field name="_version_" type="plong" indexed="false" stored="false"/>
+  <field name="SUBJID" type="string" multiValued="false" indexed="true" required="true" stored="true"/>
+  
+</schema>

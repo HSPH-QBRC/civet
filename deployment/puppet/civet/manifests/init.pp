@@ -34,14 +34,8 @@ class civet (
     group  => $app_group,
   }
 
+  $database_name = 'civet'
   $database_user = $app_user
-
-  $log_dir = '/var/log/civet'
-  file { $log_dir:
-    ensure => directory,
-    owner  => $app_user,
-    group  => $app_group,
-  }
 
   $civet_dependencies = [
     'build-essential',
@@ -54,24 +48,30 @@ class civet (
     'libreadline-dev',
     'libbz2-dev',
     'libffi-dev',
+    'libfuse2',
     'liblzma-dev',
     'libsqlite3-dev',
     'libpq-dev',
-    'nano',
-    'git',
-    'curl',
     'pkg-config',
-    'netcat',
-    'procps',
   ]
   package { $civet_dependencies: }
 
-  contain civet::cloudwatch_agent
+  $helper_utilities = [
+    'curl',
+    'nano',
+    'netcat',
+    'nmon',
+    'procps',
+  ]
+  package { $helper_utilities: }
+
+  contain civet::mountpoint_s3
   contain civet::django
   contain civet::nginx
   contain civet::postgresql
   contain civet::solr
   contain civet::supervisor
+  contain civet::cloudwatch_agent
 
   Class['civet::postgresql']
   ->

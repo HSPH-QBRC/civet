@@ -11,7 +11,15 @@ class SubjectVisit(models.Model):
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
 
     # the original tables have VISIT_1, VISIT_2, etc.
-    visit_id = models.CharField(null=False)
+    class VisitIdentifier(models.TextChoices):
+        VISIT_1 = 'VISIT_1', 'Visit 1'
+        VISIT_2 = 'VISIT_2', 'Visit 2'
+        VISIT_3 = 'VISIT_3', 'Visit 3'
+        VISIT_4 = 'VISIT_4', 'Visit 4'
+
+    visit_id = models.CharField(null=False,
+                                max_length=7,
+                                choices=VisitIdentifier.choices)
     date_visit = models.DateField(default=None)
 
     class Meta:

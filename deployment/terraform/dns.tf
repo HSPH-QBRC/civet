@@ -1,9 +1,9 @@
 data "aws_route53_zone" "main" {
-  name = var.route53_managed_zone
+  name = var.route53_hosted_zone
 }
 
 locals {
-  backend_cname  = "${local.common_tags.Name}-api.${data.aws_route53_zone.main.name}"
+  backend_cname  = "${local.stack}-api.${data.aws_route53_zone.main.name}"
 }
 
 resource "aws_route53_record" "web" {
