@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  username: 'saron',
+  username: '',
   password: '',
   API_URL: 'https://dev-civet-api.tm4.org/api'
 };

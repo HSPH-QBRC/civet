@@ -34,8 +34,10 @@ import { ScatterplotComponent } from './scatterplot/scatterplot.component';
 import { HeatmapComponent } from './heatmap/heatmap.component';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDividerModule } from '@angular/material/divider';
-import {MatInputModule} from '@angular/material/input';
+import { MatInputModule } from '@angular/material/input';
 import { DownloadImageComponent } from './download-image/download-image.component';
+import { LoginComponent } from './login/login.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -53,6 +55,7 @@ import { DownloadImageComponent } from './download-image/download-image.componen
     ScatterplotComponent,
     HeatmapComponent,
     DownloadImageComponent,
+    LoginComponent,
   ],
   imports: [
     BrowserModule,
@@ -73,7 +76,8 @@ import { DownloadImageComponent } from './download-image/download-image.componen
     FormsModule,
     MatTabsModule,
     MatDividerModule,
-    MatInputModule
+    MatInputModule,
+    MatSnackBarModule
   ],
   providers: [
     {

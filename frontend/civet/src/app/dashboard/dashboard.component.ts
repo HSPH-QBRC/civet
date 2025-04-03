@@ -29,7 +29,7 @@ export class DashboardComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private apiService: ApiServiceService,
     private el: ElementRef,
-    private renderer: Renderer2
+    // private renderer: Renderer2
   ) { }
 
   username = environment.username;
@@ -92,6 +92,7 @@ export class DashboardComponent implements OnInit {
               this.dataType[item] = res[item]['VALUE TYPE']
             }
             this.createFilterDataset(res)
+            // this.childComponent.getSubjectIds()
           })
         },
         error => {
@@ -102,6 +103,7 @@ export class DashboardComponent implements OnInit {
 
   passDataSP(data: any) {
     this.dataPl = data;
+    console.log("datasp: ", this.dataPl, data)
   }
 
   passDataVP(data: any) {
@@ -113,7 +115,7 @@ export class DashboardComponent implements OnInit {
     if (this.dataVP2ndFilter === undefined) {
       this.dataVP2ndFilter = []
     }
-    console.log("passdatavp2: ", data)
+
     for (let i in data.data) {
       for (let j in data.data[i]) {
         let currentValue = data.data[i][j]

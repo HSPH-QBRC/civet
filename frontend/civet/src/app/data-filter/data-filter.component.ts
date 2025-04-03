@@ -41,7 +41,7 @@ export class DataFilterComponent implements OnInit {
   //advanceFields holds all the fields that are to be hidden
   civetFields = ["GENDER", "ETHNICITY", "RACE", "SITE", "ASTHMA_CHILD_V1", "ASTHMA_DX_V1", "DIABETES_DERV_V1", "CURRENT_SMOKER_V1", "STRATUM_ENROLLED", "WT_KG_V1", "BETA_BLOCKER_V1", "BMH08I_V1", "BMH08H_V1", "BMH08B_V1", "DEM02_V1", "DEM03_V1", "DEM04_V1", "DATE_V1", "DATE_V2", "DATE_V3", "DATE_V4"]
   civetRangeFields = ["AGE_DERV_V1", "BMI_CM_V1", "BMI_CM_V2", "WT_KG_V1"]
-  
+
   advanceFields = ["DEM02_V1", "DEM03_V1", "DEM04_V1", "DATE_V1", "DATE_V2", "DATE_V3", "DATE_V4", "WT_KG_V1"]
   filterFields = {
     'civet': this.civetFields
@@ -110,7 +110,7 @@ export class DataFilterComponent implements OnInit {
   dataDictExclude = ['GENDER', 'RACE', 'STRATUM_ENROLLED']
   filteredSubjectId: string[] = [];
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   initializeFilterData(activeSets: string[]) {
     let dataset = activeSets[0]
@@ -473,9 +473,11 @@ export class DataFilterComponent implements OnInit {
 
   getSubjectIds() {
     this.scrollToTop()
+    this.filteredSubjectId = [];
     this.isLoading = true;
     let searchQuery = this.searchQueryResults !== '' ? `(${this.searchQueryResults})` : '*'
     let query = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID`;
+    console.log("query: ", query)
     this.getQueryResults(query)
       .subscribe(res => {
         let total = res['response']['numFound']
@@ -584,6 +586,7 @@ export class DataFilterComponent implements OnInit {
   getPlotPointsScatterPlot(url, array) {
     this.isLoading = true;
     this.apiService.postSecureData(url, array).subscribe(data => {
+      console.log("getPlotPointsScatterPlot ", url, array, data)
       this.isLoading = false;
       this.subjectIdEventSP.emit(data);
     })
