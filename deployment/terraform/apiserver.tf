@@ -130,6 +130,8 @@ resource "aws_instance" "api" {
   PUPPET_PACKAGE=puppet8-release-$${OS_CODENAME}.deb
   /usr/bin/curl -sO "https://apt.puppetlabs.com/$${PUPPET_PACKAGE}"
   /usr/bin/dpkg -i "$PUPPET_PACKAGE"
+  # workaround to replace expired GPG key
+  /usr/bin/apt-key adv --keyserver hkp://keyserver.ubuntu.com:11371 --recv-key 4528B6CD9E61EF26
   /usr/bin/apt-get -qq update
   /usr/bin/apt-get -qq -y install puppet-agent nvme-cli
 
@@ -142,10 +144,7 @@ resource "aws_instance" "api" {
 
   # install and configure librarian-puppet
   export PUPPET_ROOT="$PROJECT_ROOT/deployment-aws/puppet"
-  /opt/puppetlabs/puppet/bin/gem install --no-document librarian-puppet -v '~> 5'
-  /opt/puppetlabs/puppet/bin/gem uninstall minitar -I
-  /opt/puppetlabs/puppet/bin/gem install --no-document minitar -v '0.12'
-  /opt/puppetlabs/puppet/bin/gem install librarian-puppet -v 5.0.0 --no-document
+  /opt/puppetlabs/puppet/bin/gem install librarian-puppet -v 5.1.0 --no-document
   # need to set $HOME: https://github.com/rodjek/librarian-puppet/issues/258
   export HOME=/root
   /opt/puppetlabs/puppet/bin/librarian-puppet config path /opt/puppetlabs/puppet/modules --global
