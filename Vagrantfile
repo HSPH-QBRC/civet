@@ -27,6 +27,8 @@ Vagrant.configure("2") do |config|
     CODENAME=$(/usr/bin/lsb_release -sc)
     /usr/bin/curl -sO "https://apt.puppetlabs.com/puppet7-release-$CODENAME.deb"
     /usr/bin/dpkg -i "puppet7-release-$CODENAME.deb"
+    # workaround to replace expired GPG key
+    /usr/bin/apt-key adv --keyserver hkp://keyserver.ubuntu.com:11371 --recv-key 4528B6CD9E61EF26
     /usr/bin/apt-get -qq update
     /usr/bin/apt-get -qq -y install puppet-agent
 
