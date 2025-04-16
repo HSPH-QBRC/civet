@@ -98,7 +98,6 @@ export class HistogramComponent implements OnChanges {
       .attr('class', 'd3-tip')
       .offset([-10, 0])
       .html((event, d) => {
-        console.log("d: ", d)
         let tipBox = `<div><div class="category">Interval: ${d.x0} - ${d.x1}</div></div>
     <div><div class="category">Count: </div> ${d.length}</div>`
         return tipBox

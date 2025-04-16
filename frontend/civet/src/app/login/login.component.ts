@@ -1,51 +1,61 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Component } from '@angular/core';
+// import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from '../../environments/environment';
+import { AuthenticationService } from '../authentication.service'
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent {
+  private readonly API_URL = environment.API_URL;
 
-  email = '';
+  username = 'saron';
   password = '';
 
   constructor(
-    private http: HttpClient, 
+    // private http: HttpClient,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private authService: AuthenticationService
   ) { }
 
-  ngOnInit(): void {
-  }
-
   onSubmit() {
-    // this.http.post('http://127.0.0.1:8000/api/token/', {
+    // this.http.post(`${this.API_URL}/token/`, {
     //   username: this.username,
     //   password: this.password
     // }).subscribe((res: any) => {
-    //   localStorage.setItem('token', res.access);
+    //   localStorage.setItem('authToken', res.access);
     //   this.router.navigate(['/dashboard']);  // Redirect after login
     // }, error => {
-    //   console.error('Login failed', error);
+    //   let message = 'Invalid username or password!'
+    //   this.onErrorSnackbar(message)
+    //   this.password = '';
     // });
-    if (this.email === 'saronnhong@gmail.com' && this.password === 'password123') {
-    // Simulating a successful login
-    localStorage.setItem('authToken', 'fake-jwt-token'); // Store a fake token
-    this.router.navigate(['/dashboard']); // Redirect to dashboard
-    }else{
-      let message = 'Invalid email or password!'
-      this.onErrorSnackbar(message)
-      // this.email = '';
+    this.authService.login(this.username, this.password)
+    .subscribe(res=>{
+      this.router.navigate(['/dashboard']);  // Redirect after login
+    }, error => {
+      console.log("log error: ", error)
+      let message = 'Login failed!';
+      if (error.status === 401) {
+        message = 'Invalid username or password!';
+      } else if (error.status === 0) {
+        message = 'Network error. Please check your connection.';
+      } else {
+        message = `Unexpected error: ${error.message}`;
+      }
+      this.onErrorSnackbar(message);
       this.password = '';
     }
+    );
   }
 
   logout() {
-    localStorage.removeItem('authToken');  // Remove auth token
+    localStorage.removeItem('AUTH_TOKEN');  // Remove auth token
     this.router.navigate(['/']);  // Redirect to login page
   }
 
@@ -56,7 +66,4 @@ export class LoginComponent implements OnInit {
       verticalPosition: 'bottom',
     });
   }
-
-
-
 }

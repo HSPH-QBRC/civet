@@ -56,12 +56,12 @@ export class HistogramMiniComponent implements OnChanges {
         for (let i = 0; i < this.histogramDataStorage[dataset][category].length; i++) {
           let object1 = this.histogramDataStorage[dataset][category][i]
           for (const [key, value] of Object.entries(object1)) {
-            for (let j = 0; j < value; j++) {
-              let tempObject = {
-                "value": parseInt(key)
-              }
-              this.countArray.push(tempObject)
-            }
+            // for (let j = 0; j < value; j++) {
+            //   let tempObject = {
+            //     "value": parseInt(key)
+            //   }
+            //   this.countArray.push(tempObject)
+            // }
           }
         }
         let min = this.sliderdata[dataset][category]["floor"];

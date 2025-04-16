@@ -6,12 +6,13 @@
         <form class="example-form" #loginForm="ngForm" (ngSubmit)="onSubmit()">
             <mat-card-content>
                 <mat-form-field class="example-full-width">
-                    <mat-label>Email</mat-label>
-                    <input matInput [(ngModel)]="email" name="email" required email #emailInput="ngModel">
-                    <mat-error *ngIf="emailInput.invalid && emailInput.touched">
+                    <mat-label>Username</mat-label>
+                    <input matInput [(ngModel)]="username" name="username" required >
+                    <!-- <input matInput [(ngModel)]="email" name="email" required email #emailInput="ngModel"> -->
+                    <!-- <mat-error *ngIf="emailInput.invalid && emailInput.touched">
                         <span *ngIf="emailInput.errors?.required">Email is required.</span>
                         <span *ngIf="emailInput.errors?.email">Enter a valid email address.</span>
-                    </mat-error>
+                    </mat-error> -->
                 </mat-form-field>
 
                 <mat-form-field class="example-full-width">

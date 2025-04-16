@@ -143,7 +143,6 @@ export class HeatmapComponent implements OnInit {
       .attr('class', 'd3-tip')
       .offset([-10, 0])
       .html((event) => {
-        // console.log("y axis: ", event)
         let tipBox = `<div><div class="category">${event.target.__data__}</div> </div>`
         return tipBox
       });

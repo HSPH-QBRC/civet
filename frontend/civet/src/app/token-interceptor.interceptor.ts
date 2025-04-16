@@ -29,8 +29,10 @@ export class TokenInterceptorInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError(error => {
+        console.log("intercept catcherror: ", error)
         // if we received a 401, we need to refresh the token
         if (error instanceof HttpErrorResponse && error.status === 401) {
+          console.log("intercept caught 401")
           return this.handle401Error(request, next);
         } else {
           //if the error was something OTHER than a 401...
@@ -50,9 +52,17 @@ export class TokenInterceptorInterceptor implements HttpInterceptor {
       this.refreshTokenSubject.next(null);
       return this.authService.refreshToken().pipe(
         switchMap((token: any) => {
+          console.log("handle 401error and token refreshing, ", token)
           this.isRefreshing = false;
+          this.authService.storeJwtToken(token.access);
           this.refreshTokenSubject.next(token.access);
           return next.handle(this.addToken(request, token.access));
+        }),
+        catchError(err => {
+          console.log("catch error from handle 401error ", err)
+          this.isRefreshing = false;
+          this.authService.logout(); // log out or redirect to login
+          return throwError(err);
         })
       );
     } else {
