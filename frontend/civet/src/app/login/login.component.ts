@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-// import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from '../../environments/environment';
@@ -17,24 +16,12 @@ export class LoginComponent {
   password = '';
 
   constructor(
-    // private http: HttpClient,
     private router: Router,
     private snackBar: MatSnackBar,
     private authService: AuthenticationService
   ) { }
 
   onSubmit() {
-    // this.http.post(`${this.API_URL}/token/`, {
-    //   username: this.username,
-    //   password: this.password
-    // }).subscribe((res: any) => {
-    //   localStorage.setItem('authToken', res.access);
-    //   this.router.navigate(['/dashboard']);  // Redirect after login
-    // }, error => {
-    //   let message = 'Invalid username or password!'
-    //   this.onErrorSnackbar(message)
-    //   this.password = '';
-    // });
     this.authService.login(this.username, this.password)
     .subscribe(res=>{
       this.router.navigate(['/dashboard']);  // Redirect after login
@@ -55,7 +42,8 @@ export class LoginComponent {
   }
 
   logout() {
-    localStorage.removeItem('AUTH_TOKEN');  // Remove auth token
+    // sessionStorage.removeItem('AUTH_TOKEN');  // Remove auth token
+    this.authService.logout();
     this.router.navigate(['/']);  // Redirect to login page
   }
 

@@ -19,7 +19,7 @@ export class ApiServiceService {
   // }
 
   getSecureData(url: string): Observable<any> {
-    const token = localStorage.getItem('AUTH_TOKEN');
+    const token = sessionStorage.getItem('AUTH_TOKEN');
     const headers = new HttpHeaders({
       'Authorization': `Token ${token}` // or 'Bearer' if your API expects Bearer tokens
     });

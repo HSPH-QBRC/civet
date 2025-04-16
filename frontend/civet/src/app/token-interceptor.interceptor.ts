@@ -1,10 +1,5 @@
 import { Injectable, Injector } from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpInterceptor,
-  HttpErrorResponse
-} from '@angular/common/http';
+import { HttpRequest, HttpHandler, HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, BehaviorSubject, of } from 'rxjs';
 import { catchError, filter, take, switchMap } from 'rxjs/operators';
 import { AuthenticationService } from './authentication.service'
@@ -12,9 +7,7 @@ import { AuthenticationService } from './authentication.service'
 @Injectable()
 export class TokenInterceptorInterceptor implements HttpInterceptor {
   private isRefreshing = false;
-  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(
-    null
-  );
+  private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   authService;
 
   constructor(inj: Injector) {
@@ -29,7 +22,6 @@ export class TokenInterceptorInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError(error => {
-        console.log("intercept catcherror: ", error)
         // if we received a 401, we need to refresh the token
         if (error instanceof HttpErrorResponse && error.status === 401) {
           console.log("intercept caught 401")
@@ -41,7 +33,7 @@ export class TokenInterceptorInterceptor implements HttpInterceptor {
           // If it's not caught, then error tracking (e.g. Sentry) 
           // will handle it
           return throwError(error);
-        } 
+        }
       })
     );
   }
