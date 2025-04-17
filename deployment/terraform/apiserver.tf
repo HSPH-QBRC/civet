@@ -162,7 +162,7 @@ resource "aws_instance" "api" {
   export FACTER_DATABASE_SUPERUSER_PASSWORD='${aws_db_instance.default.password}'
   export FACTER_DATABASE_USER_PASSWORD='${var.database_password == null ? random_password.civet_db.result : var.database_password}'
   export FACTER_DEPLOYMENT_STACK='${local.stack}'
-  export FACTER_DJANGO_CORS_ORIGINS='https://${var.frontend_domain},${var.additional_cors_origins}'
+  export FACTER_DJANGO_CORS_ORIGINS='http://${var.frontend_domain},${var.additional_cors_origins}'
   export FACTER_DJANGO_SETTINGS_MODULE='${var.django_settings_module}'
   export FACTER_DJANGO_SUPERUSER_EMAIL='${var.django_superuser_email}'
   export FACTER_DJANGO_SUPERUSER_PASSWORD='${var.django_superuser_password == null ? random_password.django_superuser.result : var.django_superuser_password}'
