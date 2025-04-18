@@ -11,7 +11,7 @@ from api.views import ApiRoot, \
     SubjectQueryView, \
     SubjectDictionaryView
 
-from api.views.csrf import get_csrf
+# from api.views.csrf import get_csrf
 
 urlpatterns = [
 
