@@ -38,6 +38,7 @@ import { MatInputModule } from '@angular/material/input';
 import { DownloadImageComponent } from './download-image/download-image.component';
 import { LoginComponent } from './login/login.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 @NgModule({
   declarations: [
@@ -56,6 +57,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     HeatmapComponent,
     DownloadImageComponent,
     LoginComponent,
+    ForgotPasswordComponent,
   ],
   imports: [
     BrowserModule,

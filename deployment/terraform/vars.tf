@@ -68,3 +68,13 @@ variable "route53_hosted_zone" {
   type        = string
   default     = "civet.tm4.org"
 }
+
+variable "ses_smtp_user" {
+  type        = string
+  description = "SES SMTP User"
+}
+
+variable "ses_smtp_pass" {
+  type        = string
+  description = "SES SMTP Password"
+}

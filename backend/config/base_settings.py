@@ -160,6 +160,38 @@ SIMPLE_JWT = {
 }
 
 ###############################################################################
+# START Email configuration for password reset (using Amazon SES)
+###############################################################################
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'email-smtp.us-east-2.amazonaws.com'  # use your correct AWS SES region
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = get_env('SES_SMTP_USER')  # safer to use env vars
+EMAIL_HOST_PASSWORD = get_env('SES_SMTP_PASS')
+DEFAULT_FROM_EMAIL = 'snhong@hsph.harvard.edu'
+
+###############################################################################
+# END Email configuration for password reset (using Amazon SES)
+###############################################################################
+
+
+###############################################################################
+# START Email configuration for password reset (using Amazon SES)
+###############################################################################
+
+CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = False #Change to True for https
+
+###############################################################################
+# END Email configuration for password reset (using Amazon SES)
+###############################################################################
+
+
+
+###############################################################################
 # Parameters for domains and front-end URLs
 ###############################################################################
 
@@ -255,24 +287,4 @@ CLINICAL_DATA_DICT = DATA_DIR / 'clinical_data_dictionary.xlsx'
 
 ###############################################################################
 # END Parameters for metadata files
-###############################################################################
-
-
-
-###############################################################################
-# START Email configuration for password reset (using Amazon SES)
-###############################################################################
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'email-smtp.us-east-2.amazonaws.com'  # use your correct AWS SES region
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = os.environ.get('SES_SMTP_USER')  # safer to use env vars
-EMAIL_HOST_USER = ''
-# EMAIL_HOST_PASSWORD = os.environ.get('SES_SMTP_PASS')
-EMAIL_HOST_PASSWORD = ''
-DEFAULT_FROM_EMAIL = 'snhong@hsph.harvard.edu'
-
-###############################################################################
-# END Email configuration for password reset (using Amazon SES)
 ###############################################################################

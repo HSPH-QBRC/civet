@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { User } from './_models/user';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
@@ -84,4 +84,60 @@ export class AuthenticationService {
   isLoggedIn() {
     return this.getJwtToken() !== null;
   }
+
+  // requestPasswordReset(email: string) {
+  //   // const headers = new HttpHeaders({
+  //   //   'X-CSRFToken': this.getCookie('csrftoken')  // from cookie
+  //   // });
+  //   console.log("request the reset: ", email)
+  //   let newAPI_URL = 'https://dev-civet-api.tm4.org'; //urlpatterns doesn't have the /api. Will fix this later
+  //   return this.http.post(`${newAPI_URL}/password_reset/`, { email });
+  // }
+
+  // confirmPasswordReset(uid: string, token: string, newPassword1: string, newPassword2: string) {
+  //   return this.http.post(`${this.API_URL}/password_reset_done/`, {
+  //     uid,
+  //     token,
+  //     new_password1: newPassword1,
+  //     new_password2: newPassword2
+  //   });
+  // }
+
+    // ✅ STEP 1: Fetch CSRF token from backend and store cookie
+    fetchCsrfToken() {
+      const newAPI_URL = 'https://dev-civet-api.tm4.org';
+      return this.http.get(`${newAPI_URL}/csrf/`, { withCredentials: true });
+    }
+  
+    // ✅ STEP 2: Request password reset with CSRF token in header
+    requestPasswordReset(email: string) {
+      const csrfToken = this.getCookie('csrftoken');
+      const newAPI_URL = 'https://dev-civet-api.tm4.org';
+  
+      const headers = new HttpHeaders({
+        'X-CSRFToken': csrfToken,
+        'Content-Type': 'application/json',
+      });
+  
+      return this.http.post(
+        `${newAPI_URL}/password_reset/`,
+        { email },
+        {
+          headers: headers,
+          withCredentials: true, // ensures cookie is sent
+        }
+      );
+    }
+  
+    // ✅ STEP 3: Utility to read a cookie by name
+    private getCookie(name: string): string {
+      const cookies = document.cookie.split(';');
+      for (let cookie of cookies) {
+        const [key, value] = cookie.trim().split('=');
+        if (key === name) {
+          return decodeURIComponent(value);
+        }
+      }
+      return '';
+    }
 }
