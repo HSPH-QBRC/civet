@@ -267,8 +267,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'email-smtp.us-east-2.amazonaws.com'  # use your correct AWS SES region
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'AKIARBPQDBB4OXDMHLFB'  
-EMAIL_HOST_PASSWORD = 'BM7b3CbcYUl/paVBC9eAxUQsDvB49YLvdKnoU3spAHYp'
+EMAIL_HOST_USER = ''  
+EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = 'snhong@hsph.harvard.edu'
 
 ###############################################################################
