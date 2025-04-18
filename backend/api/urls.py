@@ -18,7 +18,7 @@ urlpatterns = [
     # for handling api authentication:
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('csrf/', get_csrf, name='get_csrf'),
+#     path('csrf/', get_csrf, name='get_csrf'),
 
     # lists all subjects
     path('subjects/',
