@@ -168,6 +168,8 @@ resource "aws_instance" "api" {
   export FACTER_DJANGO_SUPERUSER_PASSWORD='${var.django_superuser_password == null ? random_password.django_superuser.result : var.django_superuser_password}'
   export FACTER_FRONTEND_DOMAIN='${var.frontend_domain}'
   export FACTER_STORAGE_BUCKET_NAME='${aws_s3_bucket.api_storage_bucket.id}'
+  export FACTER_SES_SMTP_USER='${var.ses_smtp_user}'
+  export FACTER_SES_SMTP_PASS='${var.ses_smtp_pass}'
 
   /opt/puppetlabs/bin/puppet apply $PUPPET_ROOT/manifests/site.pp
   EOT
