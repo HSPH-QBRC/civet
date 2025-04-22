@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 import { User } from './_models/user';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { environment } from '../environments/environment';
@@ -12,6 +12,7 @@ export class AuthenticationService {
   private readonly API_URL = environment.API_URL;
   private currentUserSubject: BehaviorSubject<User | null>;
   public currentUser: Observable<User | null>;
+  private csrfToken: string | null = null;  // Variable to store CSRF token
 
   constructor(private http: HttpClient) {
     const token = sessionStorage.getItem('AUTH_TOKEN');
@@ -85,59 +86,67 @@ export class AuthenticationService {
     return this.getJwtToken() !== null;
   }
 
-  // requestPasswordReset(email: string) {
-  //   // const headers = new HttpHeaders({
-  //   //   'X-CSRFToken': this.getCookie('csrftoken')  // from cookie
-  //   // });
-  //   console.log("request the reset: ", email)
-  //   let newAPI_URL = 'https://dev-civet-api.tm4.org'; //urlpatterns doesn't have the /api. Will fix this later
-  //   return this.http.post(`${newAPI_URL}/password_reset/`, { email });
-  // }
+  // ✅ STEP 1: Fetch CSRF token from backend and store cookie
+  fetchCsrfToken() {
+    const newAPI_URL = 'https://dev-civet-api.tm4.org/api';
+    // return this.http.get(`${newAPI_URL}/csrf/`, { withCredentials: true });
+    return this.http.get(`${newAPI_URL}/csrf/`, { withCredentials: true }).pipe(
+      tap((response) => {
+        console.log("Full response from backend: ", response); 
+        this.csrfToken = this.getCookie('csrftoken');  // Store CSRF token in memory
+        console.log("csrfToken: ", this.csrfToken)
+      })
+    );
+  }
 
-  // confirmPasswordReset(uid: string, token: string, newPassword1: string, newPassword2: string) {
-  //   return this.http.post(`${this.API_URL}/password_reset_done/`, {
-  //     uid,
-  //     token,
-  //     new_password1: newPassword1,
-  //     new_password2: newPassword2
-  //   });
-  // }
+  // ✅ STEP 2: Request password reset with CSRF token in header
+  requestPasswordReset(email: string) {
+    // const csrfToken = this.getCookie('csrftoken');
+    // const newAPI_URL = 'https://dev-civet-api.tm4.org/api';
 
-    // ✅ STEP 1: Fetch CSRF token from backend and store cookie
-    fetchCsrfToken() {
-      const newAPI_URL = 'https://dev-civet-api.tm4.org';
-      return this.http.get(`${newAPI_URL}/csrf/`, { withCredentials: true });
+    // const headers = new HttpHeaders({
+    //   'X-CSRFToken': csrfToken,
+    //   'Content-Type': 'application/json',
+    // });
+
+    // return this.http.post(
+    //   `${newAPI_URL}/password_reset/`,
+    //   { email },
+    //   {
+    //     headers: headers,
+    //     withCredentials: true, // ensures cookie is sent
+    //   }
+    // );
+    if (!this.csrfToken) {
+      throw new Error('CSRF token is not available');
     }
-  
-    // ✅ STEP 2: Request password reset with CSRF token in header
-    requestPasswordReset(email: string) {
-      const csrfToken = this.getCookie('csrftoken');
-      const newAPI_URL = 'https://dev-civet-api.tm4.org';
-  
-      const headers = new HttpHeaders({
-        'X-CSRFToken': csrfToken,
-        'Content-Type': 'application/json',
-      });
-  
-      return this.http.post(
-        `${newAPI_URL}/password_reset/`,
-        { email },
-        {
-          headers: headers,
-          withCredentials: true, // ensures cookie is sent
-        }
-      );
-    }
-  
-    // ✅ STEP 3: Utility to read a cookie by name
-    private getCookie(name: string): string {
-      const cookies = document.cookie.split(';');
-      for (let cookie of cookies) {
-        const [key, value] = cookie.trim().split('=');
-        if (key === name) {
-          return decodeURIComponent(value);
-        }
+
+    const headers = new HttpHeaders({
+      'X-CSRFToken': this.csrfToken,
+      'Content-Type': 'application/json',
+    });
+
+    const newAPI_URL = 'https://dev-civet-api.tm4.org/api';
+
+    return this.http.post(
+      `${newAPI_URL}/password_reset/`,
+      { email },
+      {
+        headers: headers,
+        withCredentials: true, // ensures cookie is sent
       }
-      return '';
+    );
+  }
+
+  // ✅ STEP 3: Utility to read a cookie by name
+  private getCookie(name: string): string {
+    const cookies = document.cookie.split(';');
+    for (let cookie of cookies) {
+      const [key, value] = cookie.trim().split('=');
+      if (key === name) {
+        return decodeURIComponent(value);
+      }
     }
+    return '';
+  }
 }
