@@ -282,9 +282,9 @@ DEFAULT_FROM_EMAIL = 'snhong@hsph.harvard.edu'
 # START Email configuration for password reset (using Amazon SES)
 ###############################################################################
 
-# CSRF_COOKIE_HTTPONLY = False
-# CSRF_COOKIE_SAMESITE = 'Lax'
-# CSRF_COOKIE_SECURE = False #Change to True for https
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = False #Change to True for https
 
 ###############################################################################
 # END Email configuration for password reset (using Amazon SES)
