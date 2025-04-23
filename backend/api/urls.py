@@ -3,15 +3,28 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, \
     TokenRefreshView
 
-from api.views import ApiRoot, \
-    SubjectViewSet, \
-    SubjectVisitList, \
-    MitoDNAList, \
-    MitoDNACohortView, \
-    SubjectQueryView, \
-    SubjectDictionaryView
+# from api.views import ApiRoot, \
+#     SubjectViewSet, \
+#     SubjectVisitList, \
+#     MitoDNAList, \
+#     MitoDNACohortView, \
+#     SubjectQueryView, \
+#     SubjectDictionaryView
 
-from api.views.csrf import get_csrf
+# from api.views.csrf import get_csrf
+from api.views import (
+    ApiRoot,
+    SubjectViewSet,
+    SubjectVisitList,
+    MitoDNAList,
+    MitoDNACohortView,
+    SubjectQueryView,
+    SubjectDictionaryView,
+    get_csrf
+)
+
+from django.contrib.auth import views as auth_views
+from django_rest_passwordreset.views import reset_password_request_token, reset_password_confirm
 
 urlpatterns = [
 
@@ -19,8 +32,12 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('csrf/', get_csrf, name='get_csrf'),
+#     path("password_reset/", auth_views.PasswordResetView.as_view(), name="password_reset"),
+#     path("password_reset/done/", auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
+    path("password_reset/", reset_password_request_token, name='reset-password-request'),
+    path("password_reset/confirm/", reset_password_confirm, name='reset-password-confirm'),
 
-    # lists all subjects
+    # lists all subjectsdjango.middleware.csrf.CsrfViewMiddleware
     path('subjects/',
          SubjectViewSet.as_view({'get': 'list'}),
          name='subject-list'),

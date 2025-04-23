@@ -30,6 +30,10 @@ ALLOWED_HOSTS = [x for x in
 # Necessary for use of the DRF pages and django 4.0+
 CSRF_TRUSTED_ORIGINS = ['https://' + x for x in ALLOWED_HOSTS]
 
+# REMOVE THESE HARDCODED VALUES AFTER DONE TESTING
+CSRF_TRUSTED_ORIGINS.append('http://dev-civet.tm4.org.s3-website.us-east-2.amazonaws.com')
+CORS_ALLOW_CREDENTIALS = True
+
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
     x for x in os.environ.get('DJANGO_CORS_ORIGINS', '').split(',')
@@ -50,6 +54,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'django_rest_passwordreset',
 ]
 
 MIDDLEWARE = [
