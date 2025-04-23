@@ -39,6 +39,7 @@ import { DownloadImageComponent } from './download-image/download-image.componen
 import { LoginComponent } from './login/login.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
+import { PasswordResetComponent } from './password-reset/password-reset.component';
 
 @NgModule({
   declarations: [
@@ -58,6 +59,7 @@ import { ForgotPasswordComponent } from './forgot-password/forgot-password.compo
     DownloadImageComponent,
     LoginComponent,
     ForgotPasswordComponent,
+    PasswordResetComponent,
   ],
   imports: [
     BrowserModule,

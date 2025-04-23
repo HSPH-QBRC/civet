@@ -22,23 +22,34 @@ export class LoginComponent {
   ) { }
 
   onSubmit() {
-    this.authService.login(this.username, this.password)
-    .subscribe(res=>{
-      this.router.navigate(['/dashboard']);  // Redirect after login
-    }, error => {
-      console.log("log error: ", error)
-      let message = 'Login failed!';
-      if (error.status === 401) {
-        message = 'Invalid username or password!';
-      } else if (error.status === 0) {
-        message = 'Network error. Please check your connection.';
-      } else {
-        message = `Unexpected error: ${error.message}`;
-      }
-      this.onErrorSnackbar(message);
-      this.password = '';
+    if (!this.username || !this.password) {
+      this.onErrorSnackbar('Username and password are required.');
+      return;
     }
-    );
+
+    this.authService.login(this.username, this.password).subscribe({
+      next: res => {
+        this.snackBar.open('Login successful!', 'Close', {
+          duration: 2000,
+          horizontalPosition: 'left',
+          verticalPosition: 'bottom',
+        });
+        this.router.navigate(['/']);
+      },
+      error: error => {
+        console.log("log error: ", error);
+        let message = 'Login failed!';
+        if (error.status === 401) {
+          message = 'Invalid username or password!';
+        } else if (error.status === 0) {
+          message = 'Network error. Please check your connection.';
+        } else {
+          message = `Unexpected error: ${error.message}`;
+        }
+        this.onErrorSnackbar(message);
+        this.password = '';
+      }
+    });
   }
 
   logout() {
