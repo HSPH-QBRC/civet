@@ -209,16 +209,6 @@ export class DataFilterComponent implements OnInit {
           throw error;
         }))
   }
-  // getQueryResults(queryString: string) {
-  //   console.log("getquery: ", queryString)
-  //   return this.apiService.getSecureData(queryString).pipe(
-  //     catchError(error => {
-  //       let message = `Error: ${error?.error?.error || error.message}`;
-  //       console.error("err: ", message);
-  //       throw error;
-  //     })
-  //   );
-  // }
 
   updateFilterValues(query, checkboxStatus, dataset, initializeCheckbox) {
     // this.getQueryResults(query)

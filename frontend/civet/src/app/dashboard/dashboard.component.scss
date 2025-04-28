@@ -189,3 +189,9 @@ app-scatterplot {
 .hideSummaryPlots{
     display: none;
 }
+
+.logout-container {
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px;
+  }

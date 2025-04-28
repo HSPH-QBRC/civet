@@ -50,6 +50,10 @@ ul {
         background-color: transparent;
         margin-top: 10px;
         width: 24.5vw;
+
+        @media (max-width: 768px) {
+            width: 45vw;
+        }
     }
     .filter-sidenav {
         flex: 0 0 auto;
@@ -65,15 +69,27 @@ ul {
     color: rgba(0, 0, 0, 0.7);
     margin-bottom: 40px;
     letter-spacing: 3px;
+
+    @media (max-width: 768px) {
+        margin-bottom: 12px;
+    }
 }
 
 .createPlotsBtn {
     margin-left: 10px;
+
+    @media (max-width: 768px) {
+        margin-bottom: 12px;
+    }
 }
 
 .titleContainer {
     display: flex; /* Use a flex container */
     align-items: center; /* Vertically center the items */
+
+    @media (max-width: 768px) {
+        display: block;
+    }
 }
 
 .spacer {

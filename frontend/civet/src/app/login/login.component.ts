@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { environment } from '../../environments/environment';
@@ -9,7 +9,7 @@ import { AuthenticationService } from '../authentication.service'
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private readonly API_URL = environment.API_URL;
 
   username = 'saron';
@@ -21,6 +21,10 @@ export class LoginComponent {
     private authService: AuthenticationService
   ) { }
 
+  ngOnInit(): void {
+    this.authService.areTokensExpired()
+  }
+
   onSubmit() {
     if (!this.username || !this.password) {
       this.onErrorSnackbar('Username and password are required.');
@@ -29,11 +33,6 @@ export class LoginComponent {
 
     this.authService.login(this.username, this.password).subscribe({
       next: res => {
-        this.snackBar.open('Login successful!', 'Close', {
-          duration: 2000,
-          horizontalPosition: 'left',
-          verticalPosition: 'bottom',
-        });
         this.router.navigate(['/']);
       },
       error: error => {
@@ -52,10 +51,10 @@ export class LoginComponent {
     });
   }
 
-  logout() {
-    // sessionStorage.removeItem('AUTH_TOKEN');  // Remove auth token
-    this.authService.logout();
-    this.router.navigate(['/']);  // Redirect to login page
+  logout(): void {
+    sessionStorage.removeItem('AUTH_TOKEN');
+    sessionStorage.removeItem('REFRESH_TOKEN');
+    this.router.navigate(['/login']);
   }
 
   onErrorSnackbar(message): void {

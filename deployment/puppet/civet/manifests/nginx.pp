@@ -35,6 +35,10 @@ class civet::nginx () {
         location         => '/',
         add_header       => {
           'Access-Control-Allow-Origin' => { '$cors_origin' => 'always' },
+            # Add to fix CORS error
+          'Access-Control-Allow-Methods'     => { 'GET, POST, PUT, PATCH, DELETE, OPTIONS' => 'always' },
+          'Access-Control-Allow-Headers'     => { 'Authorization, Content-Type' => 'always' },
+          'Access-Control-Allow-Credentials' => { 'true' => 'always' },
         },
         proxy            => 'http://civet_app',
         proxy_redirect   => 'off',
@@ -50,6 +54,12 @@ class civet::nginx () {
         location       => '/static/',
         location_alias => "${civet::django::static_root}/",
         index_files    => [],
+      },
+      # Add an extra location block for OPTIONS method to fix CORS error
+      limit_except => {
+        'OPTIONS' => {
+          allow => ['all'],
+        },
       },
     },
   }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { map, tap } from 'rxjs/operators';
 import { User } from './_models/user';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { BehaviorSubject, Observable, throwError, EMPTY } from 'rxjs';
 import { environment } from '../environments/environment';
 
 @Injectable(
@@ -31,6 +31,7 @@ export class AuthenticationService {
         if (user && user['access']) {
           this.storeJwtToken(user['access']);
           this.storeRefreshToken(user['refresh']);
+
           this.currentUserSubject.next(user);
         }
         return user;
@@ -40,17 +41,21 @@ export class AuthenticationService {
 
   // store user details and token in local storage to keep user logged in between page refreshes
   private storeJwtToken(jwt: string) {
+    sessionStorage.removeItem('AUTH_TOKEN');
+    sessionStorage.removeItem('TOKEN_TIMESTAMP');
     sessionStorage.setItem('AUTH_TOKEN', jwt);
+    sessionStorage.setItem('TOKEN_TIMESTAMP', Date.now().toString());
   }
 
   private storeRefreshToken(token: string) {
+    sessionStorage.removeItem('REFRESH_TOKEN');
     sessionStorage.setItem("REFRESH_TOKEN", token);
   }
 
   logout() {
-    // remove user from local storage to log user out
     sessionStorage.removeItem('AUTH_TOKEN');
-    sessionStorage.removeItem("REFRESH_TOKEN");
+    sessionStorage.removeItem('REFRESH_TOKEN');
+    sessionStorage.removeItem('TOKEN_TIMESTAMP');
     this.currentUserSubject.next(null);
   }
 
@@ -67,17 +72,16 @@ export class AuthenticationService {
   refreshToken(): Observable<any> {
     const refreshToken = sessionStorage.getItem('REFRESH_TOKEN');
     if (!refreshToken) {
-      console.log('No refresh token');
-      return throwError(() => new Error('No refresh token'));
+      // return throwError(() => new Error('No refresh token'));
+      return EMPTY;
     }
 
     return this.http.post(`${this.API_URL}/token/refresh/`, {
       refresh: refreshToken
-    })  // ← REMOVE `responseType: 'text'`
+    }) 
       .pipe(
         map((response: any) => {
-          console.log('Refresh token response: ', response);
-          return { access: response.access };  // assuming backend returns { access: "..." }
+          return { access: response.access };
         })
       );
   }
@@ -91,8 +95,6 @@ export class AuthenticationService {
     const newAPI_URL = 'https://dev-civet-api.tm4.org/api';
     return this.http.get(`${newAPI_URL}/csrf/`, { withCredentials: true }).pipe(
       tap((response) => {
-        console.log("token is received: ", response)
-        // this.csrfToken = this.getCookie('csrfToken');  // Store CSRF token in memory
         this.csrfToken = response['csrfToken'];
       })
     );
@@ -100,7 +102,6 @@ export class AuthenticationService {
 
   // ✅ STEP 2: Request password reset with CSRF token in header
   requestPasswordReset(email: string) {
-    console.log("from request password sent")
     if (!this.csrfToken) {
       throw new Error('CSRF token is not available');
     }
@@ -110,7 +111,6 @@ export class AuthenticationService {
       'Content-Type': 'application/json',
     });
 
-    console.log("headers from password reset: ", headers, this.csrfToken)
     const newAPI_URL = 'https://dev-civet-api.tm4.org/api';
 
     return this.http.post(
@@ -121,5 +121,19 @@ export class AuthenticationService {
         withCredentials: true, // ensures cookie is sent
       }
     );
+  }
+
+  areTokensExpired(){
+    const authToken = sessionStorage.getItem('AUTH_TOKEN');
+    const refreshToken = sessionStorage.getItem('REFRESH_TOKEN');
+
+    const tokenTime = parseInt(sessionStorage.getItem('TOKEN_TIMESTAMP') || '0');
+    const isExpired = Date.now() - tokenTime > 1000 * 60 * 120; // 120mins example
+
+    if (!authToken || !refreshToken || isExpired) {
+      sessionStorage.removeItem('AUTH_TOKEN');
+      sessionStorage.removeItem('REFRESH_TOKEN');
+      sessionStorage.removeItem('TOKEN_TIMESTAMP');
+    }
   }
 }

@@ -1,8 +1,9 @@
 import { Injectable, Injector } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpInterceptor, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError, BehaviorSubject, of } from 'rxjs';
+import { Observable, throwError, BehaviorSubject } from 'rxjs';
 import { catchError, filter, take, switchMap } from 'rxjs/operators';
 import { AuthenticationService } from './authentication.service'
+import { Router } from '@angular/router';
 
 @Injectable()
 export class TokenInterceptorInterceptor implements HttpInterceptor {
@@ -10,11 +11,26 @@ export class TokenInterceptorInterceptor implements HttpInterceptor {
   private refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject<any>(null);
   authService;
 
-  constructor(inj: Injector) {
+  constructor(
+    inj: Injector,
+    private router: Router,
+  ) {
     this.authService = inj.get(AuthenticationService);
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
+    const authToken = sessionStorage.getItem('AUTH_TOKEN');
+    const tokenTime = parseInt(sessionStorage.getItem('TOKEN_TIMESTAMP') || '0');
+    const isExpired = Date.now() - tokenTime > 1000 * 60 * 120; // 120mins example
+
+    if (authToken && isExpired) {
+      sessionStorage.removeItem('AUTH_TOKEN');
+      sessionStorage.removeItem('REFRESH_TOKEN');
+      sessionStorage.removeItem('TOKEN_TIMESTAMP');
+      this.router.navigate(['/login']); 
+      return throwError(() => new Error('Session expired. Please log in again.'));
+    }
+
     let _token = this.authService.getJwtToken();
     if (_token !== null) {
       request = this.addToken(request, _token);
@@ -24,7 +40,6 @@ export class TokenInterceptorInterceptor implements HttpInterceptor {
       catchError(error => {
         // if we received a 401, we need to refresh the token
         if (error instanceof HttpErrorResponse && error.status === 401) {
-          console.log("intercept caught 401")
           return this.handle401Error(request, next);
         } else {
           //if the error was something OTHER than a 401...
@@ -44,7 +59,6 @@ export class TokenInterceptorInterceptor implements HttpInterceptor {
       this.refreshTokenSubject.next(null);
       return this.authService.refreshToken().pipe(
         switchMap((token: any) => {
-          console.log("handle 401error and token refreshing, ", token)
           this.isRefreshing = false;
           this.authService.storeJwtToken(token.access);
           this.refreshTokenSubject.next(token.access);

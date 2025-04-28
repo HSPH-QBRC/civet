@@ -1,6 +1,6 @@
 <app-spinner-overlay class="loading-container" *ngIf="isLoading"></app-spinner-overlay>
 <div class="row flexContainer">
-    <div class="col-md-3 sideBar">
+    <div class="col-6 col-md-3 sideBar">
         <app-data-filter (subjectIdEventSP)="passDataSP($event)" (subjectIdEventVP)="passDataVP($event)"
             (subjectIdEventVP2ndFilter)="passDataVP2ndFilter($event)"
             (subjectIdEventSP2ndFilter)="passDataSP2ndFilter($event)"
@@ -11,7 +11,12 @@
         </app-data-filter>
     </div>
 
-    <div class="col-md-9 content">
+    <div class="col-6 col-md-9 content">
+        <div class="logout-container">
+            <button mat-stroked-button color="black" class="logout-button"
+            (click)="logout()">Log Out</button>
+        </div>
+        
         <mat-tab-group>
             <mat-tab label="Mitochondrial Counts">
                 <div class="page-container">

@@ -29,12 +29,10 @@ export class DashboardComponent implements OnInit {
   dataType = {}
 
   constructor(
-    private authenticationService: AuthenticationService,
+    private authService: AuthenticationService,
     private apiService: ApiServiceService,
     private el: ElementRef,
-    // private renderer: Renderer2
     private router: Router,
-    private httpClient: HttpClient
   ) { }
 
   username = environment.username;
@@ -69,45 +67,9 @@ export class DashboardComponent implements OnInit {
   selected1stCategory = 'AGE_DERV_V1';
   selected2ndCategory = 'BMI_CM_V1';
 
-  // ngOnInit(): void {
-  //   this.isLoading = true;
-  //   this.authenticationService
-  //     .login(this.username, this.password)
-  //     .subscribe(
-  //       response => {
-  //         const url = `${this.API_URL}/subject-query/?q=GENDER:2&q.op=AND&facet=true&facet.field=ETHNICITY`
-  //         this.apiService.getSecureData(url).subscribe(res => {
-  //           this.isLoading = false
-  //           this.childComponent.initializeFilterData(['civet'])
-  //         })
-
-  //         let dd_url = `${this.API_URL}/subject-dictionary/`;
-  //         this.apiService.getSecureData(dd_url).subscribe(res => {
-  //           this.isLoading = false;
-  //           for (let item in res) {
-  //             const unformattedString = res[item]['VALUES']
-  //             const lines = unformattedString.split('\n');
-  //             let dictObj = {}
-  //             for (const line of lines) {
-  //               const [key, value] = line.split('=');
-  //               let newKey = !isNaN(key) && !this.dataDictExclude.includes(item) ? key + '.0' : key
-  //               dictObj[newKey] = value;
-  //             }
-  //             this.dataDict[item] = dictObj;
-  //             this.dataType[item] = res[item]['VALUE TYPE']
-  //           }
-  //           this.createFilterDataset(res)
-  //           // this.childComponent.getSubjectIds()
-  //         })
-
-  //       },
-  //       error => {
-  //         console.log("err: ", error)
-  //       }
-  //     );
-  // }
-
   ngOnInit() {
+    this.authService.areTokensExpired()
+
     const token = sessionStorage.getItem('AUTH_TOKEN');
     if (!token) {
       this.router.navigate(['/login']); // not logged in
@@ -116,9 +78,6 @@ export class DashboardComponent implements OnInit {
       this.loadSubjectQuery();
       this.loadSubjectDictionary();
     }
-
-
-
   }
 
   loadSubjectQuery() {
@@ -151,16 +110,6 @@ export class DashboardComponent implements OnInit {
       this.createFilterDataset(res);
     });
   }
-
-  // getQueryResults(queryString) {
-  //   return this.httpClient.get(queryString)
-  //     .pipe(
-  //       catchError(error => {
-  //         let message = `Error: ${error.error.error}`
-  //         console.log("err: ", message)
-  //         throw error;
-  //       }))
-  // }
 
   passDataSP(data: any) {
     this.dataPl = data;
@@ -503,6 +452,11 @@ export class DashboardComponent implements OnInit {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  }
+
+  logout(){
+    this.authService.logout()
+    this.router.navigate(['/login']);
   }
 }
 
