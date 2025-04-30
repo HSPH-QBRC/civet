@@ -31,8 +31,8 @@ ALLOWED_HOSTS = [x for x in
 CSRF_TRUSTED_ORIGINS = ['https://' + x for x in ALLOWED_HOSTS]
 
 # REMOVE THESE HARDCODED VALUES AFTER DONE TESTING
-CSRF_TRUSTED_ORIGINS.append('http://dev-civet.tm4.org.s3-website.us-east-2.amazonaws.com')
-CSRF_TRUSTED_ORIGINS.append('https://copd.civet.tm4.org/')
+# CSRF_TRUSTED_ORIGINS.append('http://dev-civet.tm4.org.s3-website.us-east-2.amazonaws.com')
+# CSRF_TRUSTED_ORIGINS.append('https://copd.civet.tm4.org/')
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_ALLOW_ALL = False
