@@ -19,7 +19,7 @@ class civet (
   String                  $frontend_domain,
   Optional[String]        $project_root,
   String                  $storage_bucket_name,
-  String                  $email_host_user
+  String                  $email_host_user,
   String                  $email_host_password
 ) {
   if $facts['virtual'] == 'kvm' {
