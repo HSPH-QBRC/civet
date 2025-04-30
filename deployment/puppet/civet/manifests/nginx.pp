@@ -35,7 +35,7 @@ class civet::nginx () {
         location         => '/',
         add_header       => {
           'Access-Control-Allow-Origin' => { '$cors_origin' => 'always' },
-          'Access-Control-Allow-Methods'     => { 'GET, POST, PUT, PATCH, DELETE' => 'always' },
+          'Access-Control-Allow-Methods'     => { 'GET, POST, PUT, PATCH, DELETE, OPTIONS' => 'always' },
           'Access-Control-Allow-Headers'     => { 'Authorization, Content-Type' => 'always' },
           'Access-Control-Allow-Credentials' => { 'true' => 'always' }
         },
