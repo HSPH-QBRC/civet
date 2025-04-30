@@ -30,9 +30,6 @@ ALLOWED_HOSTS = [x for x in
 # Necessary for use of the DRF pages and django 4.0+
 CSRF_TRUSTED_ORIGINS = ['https://' + x for x in ALLOWED_HOSTS]
 
-# REMOVE THESE HARDCODED VALUES AFTER DONE TESTING
-# CSRF_TRUSTED_ORIGINS.append('http://dev-civet.tm4.org.s3-website.us-east-2.amazonaws.com')
-# CSRF_TRUSTED_ORIGINS.append('https://copd.civet.tm4.org/')
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_ALLOW_ALL = False
@@ -273,8 +270,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'email-smtp.us-east-2.amazonaws.com'  # use your correct AWS SES region
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = ''  
-EMAIL_HOST_PASSWORD = ''
+EMAIL_HOST_USER = get_env('FRONTEND_DOMAIN')
+EMAIL_HOST_PASSWORD = get_env('FRONTEND_DOMAIN')
 DEFAULT_FROM_EMAIL = 'snhong@hsph.harvard.edu'
 
 ###############################################################################

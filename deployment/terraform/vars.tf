@@ -68,3 +68,12 @@ variable "route53_hosted_zone" {
   type        = string
   default     = "civet.tm4.org"
 }
+
+variable "email_host_user" {
+  description = "Email Host User"
+  type        = string
+}
+variable "email_host_password" {
+  description = "Email Host Password"
+  type        = string
+}
