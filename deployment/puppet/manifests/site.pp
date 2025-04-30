@@ -12,7 +12,5 @@ class { 'civet':
   django_superuser_email         => $facts['django_superuser_email'],
   django_superuser_password      => $facts['django_superuser_password'],
   frontend_domain                => $facts['frontend_domain'],
-  storage_bucket_name            => $facts['storage_bucket_name'],
-  email_host_user                => $facts['email_host_user'],
-  email_host_password            => $facts['email_host_password'],
+  storage_bucket_name            => $facts['storage_bucket_name']
 }
