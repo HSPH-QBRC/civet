@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 
 from .settings_helpers import get_env
 
+from corsheaders.defaults import default_headers
+
 # allows us to pull from a .env file
 load_dotenv()
 
@@ -30,11 +32,19 @@ ALLOWED_HOSTS = [x for x in
 # Necessary for use of the DRF pages and django 4.0+
 CSRF_TRUSTED_ORIGINS = ['https://' + x for x in ALLOWED_HOSTS]
 
-# REMOVE THESE HARDCODED VALUES AFTER DONE TESTING from base_settings.py
-#CSRF_TRUSTED_ORIGINS.append('http://dev-civet.tm4.org.s3-website.us-east-2.amazonaws.com')
-#CSRF_TRUSTED_ORIGINS.append('https://copd.civet.tm4.org/')
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'x-csrftoken',
+]
 
-CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_ORIGINS = [
+    "https://copd.civet.tm4.org",
+]
+
+# REMOVE THESE HARDCODED VALUES AFTER DONE TESTING from base_settings.py
+CSRF_TRUSTED_ORIGINS.append('http://dev-civet.tm4.org.s3-website.us-east-2.amazonaws.com')
+CSRF_TRUSTED_ORIGINS.append('https://copd.civet.tm4.org/')
+
+# CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
@@ -291,7 +301,7 @@ DEFAULT_FROM_EMAIL = 'snhong@hsph.harvard.edu'
 
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SAMESITE = 'Lax'
-CSRF_COOKIE_SECURE = False #Change to True for https
+CSRF_COOKIE_SECURE = True #Change to True for https
 
 ###############################################################################
 # END Email configuration for password reset (using Amazon SES)
