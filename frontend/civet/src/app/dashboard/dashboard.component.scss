@@ -35,7 +35,7 @@ ul {
 
 .checkBoxLabel {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 15px;
     text-transform: capitalize;
     height: 20px;
     margin: 8px 10px;
@@ -114,15 +114,15 @@ ul {
     opacity: 0.9;
 }
 
-.labelContainer {
-    background-color: rgba(55, 71, 79, 0.8);
-    width: 108%;
-    height: 40px;
-    margin: -8px 0 10px -10px;
-    color: white;
-    display: flex;
-    flex-direction: row;
-}
+// .labelContainer {
+//     background-color: rgba(55, 71, 79, 0.8);
+//     width: 108%;
+//     height: 40px;
+//     margin: -8px 0 10px -10px;
+//     color: white;
+//     display: flex;
+//     flex-direction: row;
+// }
 
 .mat-checkbox-layout .mat-checkbox-label {
     font-size: 14px;

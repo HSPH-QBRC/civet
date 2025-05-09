@@ -36,15 +36,7 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/']);
       },
       error: error => {
-        console.log("log error: ", error);
-        let message = 'Login failed!';
-        if (error.status === 401) {
-          message = 'Invalid username or password!';
-        } else if (error.status === 0) {
-          message = 'Network error. Please check your connection.';
-        } else {
-          message = `Unexpected error: ${error.message}`;
-        }
+        const message = error.message || 'Login failed!';
         this.onErrorSnackbar(message);
         this.password = '';
       }

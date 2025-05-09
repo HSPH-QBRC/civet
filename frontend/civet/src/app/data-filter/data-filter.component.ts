@@ -498,8 +498,6 @@ export class DataFilterComponent implements OnInit {
               this.filteredSubjectId.push(subjId)
             }
 
-            // let postUrlSP = 'https://dev-civet-api.tm4.org/api/mt-dna/pl/cohort/';
-            // let postUrlVP = 'https://dev-civet-api.tm4.org/api/mt-dna/ur/cohort/';
             let postUrlSP = `${this.API_URL}/mt-dna/pl/cohort/`;
             let postUrlVP = `${this.API_URL}/mt-dna/ur/cohort/`;
 

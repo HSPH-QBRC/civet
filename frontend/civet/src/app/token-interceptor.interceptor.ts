@@ -38,16 +38,19 @@ export class TokenInterceptorInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError(error => {
-        // if we received a 401, we need to refresh the token
-        if (error instanceof HttpErrorResponse && error.status === 401) {
+        const isLoginOrRefresh =
+          request.url.includes('/token/') || request.url.includes('/refresh/');
+    
+        if (
+          error instanceof HttpErrorResponse &&
+          error.status === 401 &&
+          !isLoginOrRefresh
+        ) {
+          // Only refresh if it's NOT the login or token refresh endpoint
           return this.handle401Error(request, next);
         } else {
-          //if the error was something OTHER than a 401...
-          // The calling function (e.g. in a service class) 
-          // can catch the thrown error in the subscribe method.
-          // If it's not caught, then error tracking (e.g. Sentry) 
-          // will handle it
-          return throwError(error);
+          // Re-throw so component can handle it
+          return throwError(() => error);
         }
       })
     );
@@ -65,7 +68,6 @@ export class TokenInterceptorInterceptor implements HttpInterceptor {
           return next.handle(this.addToken(request, token.access));
         }),
         catchError(err => {
-          console.log("catch error from handle 401error ", err)
           this.isRefreshing = false;
           this.authService.logout(); // log out or redirect to login
           return throwError(err);

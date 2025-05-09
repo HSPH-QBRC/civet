@@ -37,7 +37,6 @@ export class BarchartComponent implements OnInit, OnChanges {
 
 
   constructor(
-    // private httpClient: HttpClient,
     private cdRef: ChangeDetectorRef
   ) { }
 

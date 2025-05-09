@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { map, tap } from 'rxjs/operators';
+import { map, tap, catchError } from 'rxjs/operators';
 import { User } from './_models/user';
 import { BehaviorSubject, Observable, throwError, EMPTY } from 'rxjs';
 import { environment } from '../environments/environment';
@@ -35,6 +35,19 @@ export class AuthenticationService {
           this.currentUserSubject.next(user);
         }
         return user;
+      }),
+      catchError(error => {
+        let message = 'An error occurred during login.';
+        if (error.status === 401) {
+          message = 'Invalid username or password.';
+        } else if (error.status === 0) {
+          message = 'Cannot connect to server. Please try again later.';
+        }
+        // Re-throw the full error so that status is available in subscribe
+        return throwError(() => ({
+          ...error,
+          message
+        }));
       })
     );
   }
@@ -107,7 +120,7 @@ export class AuthenticationService {
     }
 
     const headers = new HttpHeaders({
-      'X-CSRFToken': this.csrfToken,
+      'x-csrftoken': this.csrfToken,
       'Content-Type': 'application/json',
     });
 

@@ -5,7 +5,7 @@ ul {
 
 .checkBoxLabel {
     font-weight: bold;
-    font-size: 16px;
+    font-size: 15px;
     text-transform: capitalize;
     height: 20px;
     margin: 8px 10px;
@@ -57,10 +57,14 @@ ul {
         box-sizing: border-box;
         position: relative;
         outline: none;
-        margin: 0px 0;
+        // margin: 0px 0;
+        margin-right: 5px;
     }
     .mat-chip{
         vertical-align: middle !important;
+    }
+    .mat-chip-ripple{
+        margin-top: -2px !important;
     }
 }
 .checkboxSection {
@@ -83,7 +87,7 @@ ul {
 .labelContainer {
     background-color: rgba(55, 71, 79, 0.8);
     width: 108%;
-    height: 40px;
+    // height: 40px;
     margin: -8px 0 10px -10px;
     color: white;
     display: flex;
@@ -97,6 +101,6 @@ ul {
     display: none;
 }
 .expandIcon {
-    margin: auto 20px auto auto;
+    margin: auto 10px auto auto;
     cursor: pointer;
 }

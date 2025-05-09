@@ -143,6 +143,7 @@ export class ViolinplotComponent implements OnChanges {
     if (this.dataViolinPlot.length === 0) {
       this.message = 'no plot to show';
     } else {
+      this.message = '';
       this.cdRef.detectChanges();
 
       if (!this.newYRangeSet) {
@@ -161,7 +162,7 @@ export class ViolinplotComponent implements OnChanges {
       .exit()
 
     // set the dimensions and margins of the graph
-    var margin = { top: 50, right: 30, bottom: 120, left: 120 },
+    var margin = { top: 60, right: 30, bottom: 50, left: 120 },
       width = 460 - margin.left - margin.right,
       height = 480 - margin.top - margin.bottom;
 
@@ -193,11 +194,12 @@ export class ViolinplotComponent implements OnChanges {
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x))
       .selectAll("text")
-      .style("text-anchor", "end")
+      // .style("text-anchor", "end")
+      .style("text-anchor", "middle")
       .call(wrap, width / (this.categoryArr.length * 2))
-      .attr("dx", "-.8em")
+      // .attr("dx", "-.8em")
       .attr("dy", ".15em")
-      .attr("transform", "translate(-20,0)rotate(-65)")
+      // .attr("transform", "translate(-20,0)rotate(-65)")
 
     // Features of the histogram
     var histogram = d3.histogram()
@@ -275,7 +277,7 @@ export class ViolinplotComponent implements OnChanges {
       .classed('label', true)
       .attr("font-weight", "bold")
       .attr('x', width / 2)
-      .attr('y', height + margin.bottom)
+      .attr('y', height + margin.bottom - 40)
       .style('fill', 'rgba(0,0,0,.8)')
       .style('text-anchor', 'middle')
       .style('font-size', '10px')

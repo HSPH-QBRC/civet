@@ -62,12 +62,20 @@ export class HistogramMiniComponent implements OnChanges {
             //   }
             //   this.countArray.push(tempObject)
             // }
+            let tempObject = {
+              "value": parseInt(key)
+            }
+          
+            for (let j = 0; j < Number(value); j++) {
+              this.countArray.push(tempObject)
+            }
+            // this.countArray.push(tempObject)
           }
         }
         let min = this.sliderdata[dataset][category]["floor"];
         let max = this.sliderdata[dataset][category]["ceil"]
         this.createHistogram(min, max);
-        
+
       })
   }
 
@@ -78,8 +86,9 @@ export class HistogramMiniComponent implements OnChanges {
       .exit()
 
     // set the dimensions and margins of the graph
-    let margin = { top: 10, right: 30, bottom: 20, left: 40 },
-      width = 340 - margin.left - margin.right,
+    let margin = { top: 10, right: 10, bottom: 20, left: 10 },
+      width = 180 - margin.left - margin.right,
+      // width = 210,
       height = 140 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
@@ -104,7 +113,7 @@ export class HistogramMiniComponent implements OnChanges {
     let histogram = d3.histogram()
       .value(function (d) { return d['value']; })   // I need to give the vector of value
       // .domain(x.domain())  // then the domain of the graphic
-      .domain([min, max] as [number, number]) 
+      .domain([min, max] as [number, number])
       .thresholds(x.ticks(20)); // then the numbers of bins
 
     // And apply this function to data to get the bins
@@ -130,10 +139,15 @@ export class HistogramMiniComponent implements OnChanges {
       .append("rect")
       .attr("transform", function (d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
       .attr("width", function (d) { return Math.abs(x(d.x1) - x(d.x0) - 1); })
-      .attr("height", function (d) { return height - y(d.length); })
+      .attr("height", function (d) {
+        return height - y(d.length);
+      })
       .style("fill", "#69b3a2")
       .style("opacity", 0.6)
       .merge(bar)
       .attr("height", function (d) { return height - y(d.length); })
   }
+
+
+
 }

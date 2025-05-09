@@ -155,7 +155,11 @@ export class DashboardComponent implements OnInit {
 
   passDataFilterDataset(data: any) {
     this.filterDataset = data;
+    this.currentCategories = [];
     for (let cat in this.filterDataset['civet']) {
+      // if (!this.currentCategories.includes(cat)) {
+      //   this.currentCategories.push(cat)
+      // }
       this.currentCategories.push(cat)
     }
   }
@@ -206,6 +210,7 @@ export class DashboardComponent implements OnInit {
 
     } else if (this.dataType[this.selected1stCategory] === 'Categorical' && this.dataType[this.selected2ndCategory] === 'Categorical') {
       //use heat map
+      this.customPlotData = {};
       for (let index in data) {
         if (data[index][this.selected1stCategory] && data[index][this.selected2ndCategory]) {
           let key = data[index]['SUBJID'];
@@ -411,8 +416,15 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  onCategoryChange() {
+  onCategoryChange(cat, value) {
     this.customPlotData = {}
+    if(cat === 'cat1'){
+      this.displaySummaryPlots(value)
+    }else{
+      this.updatePlots()
+    }
+    
+    
   }
 
   showSummaryPlot = false;
@@ -422,6 +434,7 @@ export class DashboardComponent implements OnInit {
     this.showSummaryPlot = true;
 
     if (this.dataType[category] === 'Categorical') {
+      Object.assign(this.dataBarChart, {}); // empties the opbject
       for (let index in this.filteredDataForCustomPlot) {
         if (this.filteredDataForCustomPlot[index][category]) {
           let subjectID = this.filteredDataForCustomPlot[index]['SUBJID']
@@ -454,7 +467,7 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  logout(){
+  logout() {
     this.authService.logout()
     this.router.navigate(['/login']);
   }
