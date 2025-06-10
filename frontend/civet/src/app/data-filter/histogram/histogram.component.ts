@@ -16,7 +16,7 @@ export class HistogramMiniComponent implements OnChanges {
   @Input() mainQuery
   @Input() sliderdata
 
-  private readonly API_URL = 'https://dev-civet-api.tm4.org/api';
+  private readonly API_URL = 'https://dev-civet-jq-api.tm4.org/api';
 
   facetField
   histogramDataStorage = {

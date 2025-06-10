@@ -37,12 +37,13 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://copd.civet.tm4.org",
+    "https://copd.civet-jq.tm4.org",
 ]
 
 # REMOVE THESE HARDCODED VALUES AFTER DONE TESTING from base_settings.py
-CSRF_TRUSTED_ORIGINS.append('http://dev-civet.tm4.org.s3-website.us-east-2.amazonaws.com')
-CSRF_TRUSTED_ORIGINS.append('https://copd.civet.tm4.org/')
+# CSRF_TRUSTED_ORIGINS.append('http://dev-civet.tm4.org.s3-website.us-east-2.amazonaws.com')
+CSRF_TRUSTED_ORIGINS.append('http://dev-civet-jq.tm4.org.s3-website-us-east-2.amazonaws.com')
+CSRF_TRUSTED_ORIGINS.append('https://copd.civet-jq.tm4.org/')
 
 # CORS_ALLOW_CREDENTIALS = True
 

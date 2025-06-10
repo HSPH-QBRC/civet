@@ -105,7 +105,7 @@ export class AuthenticationService {
 
   // ✅ STEP 1: Fetch CSRF token from backend and store cookie
   fetchCsrfToken() {
-    const newAPI_URL = 'https://dev-civet-api.tm4.org/api';
+    const newAPI_URL = 'https://dev-civet-jq-api.tm4.org/api';
     return this.http.get(`${newAPI_URL}/csrf/`, { withCredentials: true }).pipe(
       tap((response) => {
         this.csrfToken = response['csrfToken'];
@@ -124,7 +124,7 @@ export class AuthenticationService {
       'Content-Type': 'application/json',
     });
 
-    const newAPI_URL = 'https://dev-civet-api.tm4.org/api';
+    const newAPI_URL = 'https://dev-civet-jq-api.tm4.org/api';
 
     return this.http.post(
       `${newAPI_URL}/password_reset/`,

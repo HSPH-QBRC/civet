@@ -44,7 +44,7 @@ export class PasswordResetComponent implements OnInit {
       return;
     }
 
-    const resetUrl = 'https://dev-civet-api.tm4.org/api/password_reset/confirm/';
+    const resetUrl = 'https://dev-civet-jq-api.tm4.org/api/password_reset/confirm/';
     const body = {
       token: this.token,
       password: password

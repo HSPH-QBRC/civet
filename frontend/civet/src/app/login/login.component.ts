@@ -12,7 +12,7 @@ import { AuthenticationService } from '../authentication.service'
 export class LoginComponent implements OnInit {
   private readonly API_URL = environment.API_URL;
 
-  username = 'saron';
+  username = '';
   password = '';
 
   constructor(
@@ -36,6 +36,7 @@ export class LoginComponent implements OnInit {
         this.router.navigate(['/']);
       },
       error: error => {
+        console.log("submit error: ", error)
         const message = error.message || 'Login failed!';
         this.onErrorSnackbar(message);
         this.password = '';

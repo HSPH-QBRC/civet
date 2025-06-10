@@ -1,9 +1,9 @@
 resource "aws_s3_bucket" "api_storage_bucket" {
-    bucket = "${local.stack}-civet-storage"
+    bucket = "${local.stack}-civet-storage-jq"
 }
 
 resource "aws_s3_bucket" "logging" {
-    bucket = "${local.stack}-civet-logs"
+    bucket = "${local.stack}-civet-logs-jq"
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "main_storage" {

@@ -78,3 +78,14 @@ Then run the following to load the subjects file:
 /opt/solr/bin/post -c subjects /data/clinical_data.csv
 ```
 (adjust the path to the clinical/subjects file as necessary)
+
+
+## Add new user
+Connect to EC2 instance
+```
+source ~/venv/bin/activate
+python3 manage.py shell
+from django.contrib.auth import get_user_model
+User = get_user_model()
+user = User.objects.create_user('username', 'email@email.com', 'password')
+```
