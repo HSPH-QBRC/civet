@@ -28,6 +28,7 @@ Vagrant.configure("2") do |config|
     PUPPET_PACKAGE=puppet8-release-${OS_CODENAME}.deb
     /usr/bin/curl -sO "https://apt.puppetlabs.com/${PUPPET_PACKAGE}"
     /usr/bin/dpkg -i "$PUPPET_PACKAGE"
+
     # workaround to replace expired GPG key
     /usr/bin/apt-key adv --keyserver hkp://keyserver.ubuntu.com:11371 --recv-key 4528B6CD9E61EF26
     /usr/bin/apt-get -qq update
