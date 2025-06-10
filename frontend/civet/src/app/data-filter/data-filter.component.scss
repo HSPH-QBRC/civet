@@ -31,7 +31,7 @@ ul {
 
 .checkBoxLabel {
     font-weight: bold;
-    font-size: 12px;
+    font-size: 15px;
     text-transform: capitalize;
 }
 .checkBoxContent {
@@ -49,31 +49,52 @@ ul {
         flex-direction: row;
         background-color: transparent;
         margin-top: 10px;
-        width: 24.5vw;
+        width: 16.67vw;
+
+        @media (max-width: 768px) {
+            width: 45vw;
+        }
     }
     .filter-sidenav {
         flex: 0 0 auto;
     }
     .buttonRow {
         display: flex;
-        justify-content: center;
+        // justify-content: center;
+        flex-direction: column;
     }
 }
 .filtersTitle {
     font-size: 42px;
     font-weight: 300;
     color: rgba(0, 0, 0, 0.7);
-    margin-bottom: 40px;
+    // margin-bottom: 40px;
     letter-spacing: 3px;
+
+    @media (max-width: 768px) {
+        margin-bottom: 12px;
+    }
 }
 
 .createPlotsBtn {
-    margin-left: 10px;
+    // margin-left: 10px;
+    width: 80%;
+    margin-bottom: 16px;
+    margin-top: 5px;
+
+    @media (max-width: 768px) {
+        margin-bottom: 12px;
+    }
 }
 
 .titleContainer {
     display: flex; /* Use a flex container */
-    align-items: center; /* Vertically center the items */
+    // align-items: center; /* Vertically center the items */
+    flex-direction: column;
+
+    @media (max-width: 768px) {
+        display: block;
+    }
 }
 
 .spacer {

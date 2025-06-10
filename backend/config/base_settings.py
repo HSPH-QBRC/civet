@@ -6,6 +6,8 @@ from dotenv import load_dotenv
 
 from .settings_helpers import get_env
 
+from corsheaders.defaults import default_headers
+
 # allows us to pull from a .env file
 load_dotenv()
 
@@ -30,6 +32,21 @@ ALLOWED_HOSTS = [x for x in
 # Necessary for use of the DRF pages and django 4.0+
 CSRF_TRUSTED_ORIGINS = ['https://' + x for x in ALLOWED_HOSTS]
 
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'x-csrftoken',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "https://copd.civet-jq.tm4.org",
+]
+
+# REMOVE THESE HARDCODED VALUES AFTER DONE TESTING from base_settings.py
+# CSRF_TRUSTED_ORIGINS.append('http://dev-civet.tm4.org.s3-website.us-east-2.amazonaws.com')
+CSRF_TRUSTED_ORIGINS.append('http://dev-civet-jq.tm4.org.s3-website-us-east-2.amazonaws.com')
+CSRF_TRUSTED_ORIGINS.append('https://copd.civet-jq.tm4.org/')
+
+# CORS_ALLOW_CREDENTIALS = True
+
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
     x for x in os.environ.get('DJANGO_CORS_ORIGINS', '').split(',')
@@ -50,6 +67,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'django_rest_passwordreset',
 ]
 
 MIDDLEWARE = [
@@ -255,4 +273,37 @@ CLINICAL_DATA_DICT = DATA_DIR / 'clinical_data_dictionary.xlsx'
 
 ###############################################################################
 # END Parameters for metadata files
+###############################################################################
+
+
+
+###############################################################################
+# START Email configuration for password reset (using Amazon SES)
+###############################################################################
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'email-smtp.us-east-2.amazonaws.com'  # use your correct AWS SES region
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
+DEFAULT_FROM_EMAIL = 'snhong@hsph.harvard.edu'
+
+###############################################################################
+# END Email configuration for password reset (using Amazon SES)
+###############################################################################
+
+
+
+
+###############################################################################
+# START Email configuration for password reset (using Amazon SES)
+###############################################################################
+
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SECURE = True #Change to True for https
+
+###############################################################################
+# END Email configuration for password reset (using Amazon SES)
 ###############################################################################

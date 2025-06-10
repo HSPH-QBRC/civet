@@ -1,6 +1,6 @@
 <app-spinner-overlay class="loading-container" *ngIf="isLoading"></app-spinner-overlay>
 <div class="row flexContainer">
-    <div class="col-md-3 sideBar">
+    <div class="col-6 col-md-2 sideBar">
         <app-data-filter (subjectIdEventSP)="passDataSP($event)" (subjectIdEventVP)="passDataVP($event)"
             (subjectIdEventVP2ndFilter)="passDataVP2ndFilter($event)"
             (subjectIdEventSP2ndFilter)="passDataSP2ndFilter($event)"
@@ -11,7 +11,12 @@
         </app-data-filter>
     </div>
 
-    <div class="col-md-9 content">
+    <div class="col-6 col-md-10 content">
+        <div class="logout-container">
+            <button mat-stroked-button color="black" class="logout-button"
+            (click)="logout()">Log Out</button>
+        </div>
+        
         <mat-tab-group>
             <mat-tab label="Mitochondrial Counts">
                 <div class="page-container">
@@ -40,10 +45,13 @@
                         <span class="spanDropdownButton">
                             <mat-form-field>
                                 <mat-label>Select 1st Category</mat-label>
-                                <mat-select [(ngModel)]="selected1stCategory" (selectionChange)="onCategoryChange()">
-                                    <mat-option *ngFor="let category of filterCategory" [value]="category">
+                                <mat-select [(ngModel)]="selected1stCategory" (selectionChange)="onCategoryChange('cat1', selected1stCategory)">
+                                    <!-- <mat-option *ngFor="let category of filterCategory" [value]="category">
                                         {{category}}
-                                    </mat-option>
+                                    </mat-option> -->
+                                    <mat-option *ngFor="let category of currentCategories" [value]="category">
+                                        {{category}}
+                                    </mat-option> 
                                 </mat-select>
                             </mat-form-field>
                             <div class="summaryPlotButton">
@@ -58,11 +66,11 @@
                                 <div *ngIf="showSummaryPlot"
                                     [class]="showSummaryPlot ? 'plots-container' : 'hideSummaryPlots'">
                                     <div *ngIf="dataType[selected1stCategory] === 'Continuous'">
-                                        <app-histogram [dataHistogram]="dataHistogram" [id]="'test_histogram123'"
+                                        <app-histogram [dataHistogram]="dataHistogram" [id]="'histogram'"
                                             [category]="selected1stCategory"></app-histogram>
                                     </div>
                                     <div *ngIf="dataType[selected1stCategory] === 'Categorical'">
-                                        <app-barchart [dataBarchart]="dataBarChart" [id]="'test_barchart'"
+                                        <app-barchart [dataBarchart]="dataBarChart" [id]="'barchart'"
                                             [category]="selected1stCategory" [dataDictionary]="dataDict"></app-barchart>
                                     </div>
                                 </div>
@@ -74,9 +82,12 @@
                         <span *ngIf="showSummaryPlot" class="spanDropdownButton">
                             <mat-form-field>
                                 <mat-label>Select 1st Category</mat-label>
-                                <mat-select [(ngModel)]="selected1stCategory" (selectionChange)="onCategoryChange()"
+                                <mat-select [(ngModel)]="selected1stCategory" (selectionChange)="onCategoryChange('cat2', selected1stCategory)"
                                     disabled>
-                                    <mat-option *ngFor="let category of filterCategory" [value]="category">
+                                    <!-- <mat-option *ngFor="let category of filterCategory" [value]="category">
+                                        {{category}}
+                                    </mat-option> -->
+                                    <mat-option *ngFor="let category of currentCategories" [value]="category">
                                         {{category}}
                                     </mat-option>
                                 </mat-select>
@@ -85,8 +96,11 @@
                         <br>
                         <mat-form-field>
                             <mat-label>Select 2nd Category</mat-label>
-                            <mat-select [(ngModel)]="selected2ndCategory" (selectionChange)="onCategoryChange()">
-                                <mat-option *ngFor="let category of filterCategory" [value]="category">
+                            <mat-select [(ngModel)]="selected2ndCategory" (selectionChange)="onCategoryChange('cat2', selected2ndCategory)">
+                                <!-- <mat-option *ngFor="let category of filterCategory" [value]="category">
+                                    {{category}}
+                                </mat-option> -->
+                                <mat-option *ngFor="let category of currentCategories" [value]="category">
                                     {{category}}
                                 </mat-option>
                             </mat-select>
@@ -122,7 +136,7 @@
                         </div>
                         <div
                             *ngIf="dataType[selected1stCategory] === 'Categorical' && dataType[selected2ndCategory] === 'Categorical'">
-                            <app-heatmap [dataHM]="customPlotData" [xAxisLabel]="selected1stCategory"
+                            <app-heatmap [dataHM]="customPlotData" [plotNum]="'heatmap_custom'" [xAxisLabel]="selected1stCategory"
                                 [yAxisLabel]="selected2ndCategory" [dataDictionary]="dataDict"></app-heatmap>
                         </div>
 
@@ -133,7 +147,10 @@
                 <mat-form-field *ngIf="dataUR">
                     <mat-label>Add Another Filter</mat-label>
                     <mat-select (selectionChange)="onFilterSelected($event.value)">
-                        <mat-option *ngFor="let category of filterCategory" [value]="category">
+                        <!-- <mat-option *ngFor="let category of filterCategory" [value]="category">
+                            {{category}}
+                        </mat-option> -->
+                        <mat-option *ngFor="let category of currentCategories" [value]="category">
                             {{category}}
                         </mat-option>
                     </mat-select>
@@ -192,7 +209,7 @@
                             </div>
                             <div
                                 *ngIf="dataType[selected1stCategory] === 'Categorical' && dataType[selected2ndFilterCategory] === 'Categorical'">
-                                <app-heatmap [dataHM]="data" [xAxisLabel]="selected1stCategory"
+                                <app-heatmap [dataHM]="data" [plotNum]="'heatmap_custom2_'+i" [xAxisLabel]="selected1stCategory"
                                     [yAxisLabel]="selected2ndFilterCategory" [dataDictionary]="dataDict"></app-heatmap>
                             </div>
                         </ng-container>

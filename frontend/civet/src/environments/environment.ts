@@ -4,9 +4,9 @@
 
 export const environment = {
   production: false,
-  username: '',
+  username: 'saron',
   password: '',
-  API_URL: 'https://dev-civet-api.tm4.org/api'
+  API_URL: 'https://dev-civet-jq-api.tm4.org'
 };
 
 /*

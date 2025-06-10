@@ -126,9 +126,12 @@ resource "aws_instance" "api" {
   /usr/bin/hostnamectl set-hostname ${local.backend_cname}
 
   # install Puppet
-  CODENAME=$(/usr/bin/lsb_release -sc)
-  /usr/bin/curl -sO "https://apt.puppetlabs.com/puppet7-release-$CODENAME.deb"
-  /usr/bin/dpkg -i "puppet7-release-$CODENAME.deb"
+  OS_CODENAME=$(/usr/bin/lsb_release -sc)
+  PUPPET_PACKAGE=puppet8-release-$${OS_CODENAME}.deb
+  /usr/bin/curl -sO "https://apt.puppetlabs.com/$${PUPPET_PACKAGE}"
+  /usr/bin/dpkg -i "$PUPPET_PACKAGE"
+  # workaround to replace expired GPG key
+  /usr/bin/apt-key adv --keyserver hkp://keyserver.ubuntu.com:11371 --recv-key 4528B6CD9E61EF26
   /usr/bin/apt-get -qq update
   /usr/bin/apt-get -qq -y install puppet-agent nvme-cli
 
@@ -141,7 +144,7 @@ resource "aws_instance" "api" {
 
   # install and configure librarian-puppet
   export PUPPET_ROOT="$PROJECT_ROOT/deployment/puppet"
-  /opt/puppetlabs/puppet/bin/gem install librarian-puppet -v 5.0.0 --no-document
+  /opt/puppetlabs/puppet/bin/gem install librarian-puppet -v 5.1.0 --no-document
   # need to set $HOME: https://github.com/rodjek/librarian-puppet/issues/258
   export HOME=/root
   /opt/puppetlabs/puppet/bin/librarian-puppet config path /opt/puppetlabs/puppet/modules --global
@@ -159,7 +162,7 @@ resource "aws_instance" "api" {
   export FACTER_DATABASE_SUPERUSER_PASSWORD='${aws_db_instance.default.password}'
   export FACTER_DATABASE_USER_PASSWORD='${var.database_password == null ? random_password.civet_db.result : var.database_password}'
   export FACTER_DEPLOYMENT_STACK='${local.stack}'
-  export FACTER_DJANGO_CORS_ORIGINS='https://${var.frontend_domain},${var.additional_cors_origins}'
+  export FACTER_DJANGO_CORS_ORIGINS='http://${var.frontend_domain},${var.additional_cors_origins}'
   export FACTER_DJANGO_SETTINGS_MODULE='${var.django_settings_module}'
   export FACTER_DJANGO_SUPERUSER_EMAIL='${var.django_superuser_email}'
   export FACTER_DJANGO_SUPERUSER_PASSWORD='${var.django_superuser_password == null ? random_password.django_superuser.result : var.django_superuser_password}'

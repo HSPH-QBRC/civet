@@ -41,6 +41,7 @@ export class ScatterplotComponent implements OnChanges {
 
   newXRangeSet: boolean = false;
   newYRangeSet: boolean = false;
+  noPlot = false;
 
   ngOnChanges(changes: SimpleChanges): void {
     this.idValue = 'my_scatterplot_' + this.plotNum;
@@ -138,6 +139,7 @@ export class ScatterplotComponent implements OnChanges {
     if (this.scatterPlotData.length === 0) {
       this.message = 'no plot to show';
     } else {
+      this.message = '';
       this.cdRef.detectChanges();
 
       if (!this.newXRangeSet) {

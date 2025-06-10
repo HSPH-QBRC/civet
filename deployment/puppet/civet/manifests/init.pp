@@ -18,7 +18,7 @@ class civet (
   String                  $django_superuser_password,
   String                  $frontend_domain,
   Optional[String]        $project_root,
-  String                  $storage_bucket_name,
+  String                  $storage_bucket_name
 ) {
   if $facts['virtual'] == 'kvm' {
     $platform = 'aws'

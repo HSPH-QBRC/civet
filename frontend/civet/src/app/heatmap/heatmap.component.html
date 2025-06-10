@@ -1,5 +1,8 @@
 <div id="my_heatmap"></div>
+<!-- <div [id]="idValue"></div>  -->
 <br>
-<mat-checkbox class="example-margin" [(ngModel)]="logCounts" (change)="onCheckboxChange()">Log 2 (Counts)</mat-checkbox>
-<br>
-<app-download-image [containerId]="idValue" [imageName]="imageName"></app-download-image>
+<div *ngIf="!noData">
+    <mat-checkbox class="example-margin" [(ngModel)]="logCounts" (change)="onCheckboxChange()">Log 2 (Counts)</mat-checkbox>
+    <br>
+    <app-download-image [containerId]="idValue" [imageName]="imageName"></app-download-image>
+</div>

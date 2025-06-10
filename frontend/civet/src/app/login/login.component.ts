@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from '../../environments/environment';
+import { AuthenticationService } from '../authentication.service'
 
 @Component({
   selector: 'app-login',
@@ -9,44 +10,44 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+  private readonly API_URL = environment.API_URL;
 
-  email = '';
+  username = '';
   password = '';
 
   constructor(
-    private http: HttpClient, 
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private authService: AuthenticationService
   ) { }
 
   ngOnInit(): void {
+    this.authService.areTokensExpired()
   }
 
   onSubmit() {
-    // this.http.post('http://127.0.0.1:8000/api/token/', {
-    //   username: this.username,
-    //   password: this.password
-    // }).subscribe((res: any) => {
-    //   localStorage.setItem('token', res.access);
-    //   this.router.navigate(['/dashboard']);  // Redirect after login
-    // }, error => {
-    //   console.error('Login failed', error);
-    // });
-    if (this.email === 'saronnhong@gmail.com' && this.password === 'password123') {
-    // Simulating a successful login
-    localStorage.setItem('authToken', 'fake-jwt-token'); // Store a fake token
-    this.router.navigate(['/dashboard']); // Redirect to dashboard
-    }else{
-      let message = 'Invalid email or password!'
-      this.onErrorSnackbar(message)
-      // this.email = '';
-      this.password = '';
+    if (!this.username || !this.password) {
+      this.onErrorSnackbar('Username and password are required.');
+      return;
     }
+
+    this.authService.login(this.username, this.password).subscribe({
+      next: res => {
+        this.router.navigate(['/']);
+      },
+      error: error => {
+        console.log("submit error: ", error)
+        const message = error.message || 'Login failed!';
+        this.onErrorSnackbar(message);
+        this.password = '';
+      }
+    });
   }
 
-  logout() {
-    localStorage.removeItem('authToken');  // Remove auth token
-    this.router.navigate(['/']);  // Redirect to login page
+  logout(): void {
+    sessionStorage.removeItem('AUTH_TOKEN');
+    sessionStorage.removeItem('REFRESH_TOKEN');
+    this.router.navigate(['/login']);
   }
 
   onErrorSnackbar(message): void {
@@ -56,7 +57,4 @@ export class LoginComponent implements OnInit {
       verticalPosition: 'bottom',
     });
   }
-
-
-
 }

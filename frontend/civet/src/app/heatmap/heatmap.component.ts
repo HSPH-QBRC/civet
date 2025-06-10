@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, OnInit, Input, ChangeDetectorRef } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, Input, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
 import * as d3 from 'd3';
 //@ts-ignore
 import d3Tip from 'd3-tip';
@@ -10,11 +10,12 @@ import d3Tip from 'd3-tip';
   changeDetection: ChangeDetectionStrategy.Default
 })
 
-export class HeatmapComponent implements OnInit {
+export class HeatmapComponent implements OnChanges {
   @Input() dataHM
   @Input() xAxisLabel = ''
   @Input() yAxisLabel = ''
   @Input() dataDictionary = {}
+  @Input() plotNum: any = ''
 
   imageName = 'heatmap'
   idValue = 'my_heatmap'
@@ -29,7 +30,9 @@ export class HeatmapComponent implements OnInit {
 
   logCounts: boolean = false;
 
-  ngOnInit(): void {
+  ngOnChanges(changes: SimpleChanges): void {
+    // this.idValue = 'my_heatmap_' + this.plotNum;
+    this.resetVariables();
     this.formatData()
   }
 
@@ -37,6 +40,14 @@ export class HeatmapComponent implements OnInit {
     private cdRef: ChangeDetectorRef,
   ) { }
 
+  resetVariables() {
+    this.xArr =  [];
+    this.yArr = []
+    this.heatmapData = {}
+    this.heatmapDataArr = []
+    this.minCount = 1000;
+    this.maxCount = 0;
+  }
 
   formatData() {
     for (let index in this.dataHM) {
@@ -102,10 +113,12 @@ export class HeatmapComponent implements OnInit {
       this.heatmapDataArr.push(this.heatmapData[i])
     }
 
-
+    this.noData = Object.keys(this.heatmapData).length <= 1 ? true : false;
 
     this.createHeatMapSimple()
   }
+
+  noData = false;
 
   onCheckboxChange() {
 
@@ -143,7 +156,6 @@ export class HeatmapComponent implements OnInit {
       .attr('class', 'd3-tip')
       .offset([-10, 0])
       .html((event) => {
-        // console.log("y axis: ", event)
         let tipBox = `<div><div class="category">${event.target.__data__}</div> </div>`
         return tipBox
       });
@@ -156,12 +168,13 @@ export class HeatmapComponent implements OnInit {
         return tipBox
       });
 
-    d3.select("#my_heatmap")
+    // d3.select(`#my_heatmap_${this.plotNum}`)
+    d3.select(`#${this.idValue}`)
       .selectAll('svg')
       .remove();
 
     // append the svg object to the body of the page
-    var svg = d3.select("#my_heatmap")
+    var svg = d3.select(`#${this.idValue}`)
       .append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
@@ -300,7 +313,8 @@ export class HeatmapComponent implements OnInit {
       .tickSize(barHeight * 2)
       .tickValues(xTicksCorr);
 
-    var countLegend = d3.select("#my_heatmap").select("svg")
+    var countLegend = d3.select(`#${this.idValue}`)
+      .select("svg")
       .append("svg")
       .attr("width", widthGradient)
       .attr("height", heightGradient)
@@ -336,16 +350,16 @@ export class HeatmapComponent implements OnInit {
       .attr("font-weight", "bold")
       .text("Count");
 
-    if(this.logCounts){
+    if (this.logCounts) {
       countLegend.append('text')
-      .attr('y', 55)
-      .attr('x', 55)
-      .style('fill', 'rgba(0,0,0)')
-      .style('font-size', '9px')
-      .attr("text-anchor", "start")
-      .text(this.maxCount.toFixed(2));
+        .attr('y', 55)
+        .attr('x', 55)
+        .style('fill', 'rgba(0,0,0)')
+        .style('font-size', '9px')
+        .attr("text-anchor", "start")
+        .text(this.maxCount.toFixed(2));
     }
-    
+
 
     g.append("g")
       .call(xAxisGradient)

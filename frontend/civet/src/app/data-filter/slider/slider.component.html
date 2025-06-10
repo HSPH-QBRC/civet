@@ -1,8 +1,8 @@
 <section>
     <div class="labelContainer">
         <label class="sliderGroup sliderLabel">{{info.key.replaceAll("_", " ")}}: <span class="sliderCounter">({{info.value.count}})</span></label>
-        <!-- <mat-icon class="expandIcon" (click)="displayDetails = !displayDetails">{{displayDetails ? "expand_more" :
-            "expand_less"}}</mat-icon> -->
+        <mat-icon class="expandIcon" (click)="displayDetails = !displayDetails">{{displayDetails ? "expand_more" :
+            "expand_less"}}</mat-icon>
     </div>
     <div *ngIf="displayDetails">
         <mev-histogram id={{info.key}} class="histogram" [idValue]="info.key" [data]="info"

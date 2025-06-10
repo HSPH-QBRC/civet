@@ -125,6 +125,7 @@ export class ConnectedScatterplotComponent implements OnChanges {
     if (this.lineData.length === 0) {
       this.message = 'no plot to show';
     } else {
+      this.message = '';
       this.cdRef.detectChanges();
 
       if (!this.newYRangeSet) {

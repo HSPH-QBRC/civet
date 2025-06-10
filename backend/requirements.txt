@@ -1,13 +1,14 @@
-boto3 == 1.28.20
-Django == 4.2.4
-django-cors-headers == 4.2.0
-django-storages == 1.13.2
-djangorestframework == 3.14.0
-djangorestframework-simplejwt == 5.2.2
-gunicorn == 21.2.0
-openpyxl==3.1.2
-pandas==2.0.3
-psycopg2 == 2.9.6
-python-dotenv == 1.0.0
-requests==2.31.0
-watchtower == 3.0.1
+boto3 == 1.37.29
+Django == 5.2
+django-cors-headers == 4.7.0
+django-storages == 1.14.6
+djangorestframework == 3.16.0
+djangorestframework-simplejwt == 5.5.0
+gunicorn == 23.0.0
+openpyxl==3.1.5
+pandas==2.2.3
+psycopg2 == 2.9.10
+python-dotenv == 1.1.0
+requests==2.32.3
+watchtower == 3.4.0
+django-rest-passwordreset == 1.5.0

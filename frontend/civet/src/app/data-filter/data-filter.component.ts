@@ -137,7 +137,8 @@ export class DataFilterComponent implements OnInit {
     for (let i = 0; i < categoryArray.length; i++) {
       query += `&stats.field={!tag=piv1,piv2 min=true max=true}${categoryArray[i]}`
     }
-    this.getQueryResults(query)
+    // this.getQueryResults(query)
+    this.apiService.getSecureData(query)
       .subscribe(res => {
         let stats_field = res["stats"]["stats_fields"];
         for (let cat in stats_field) {
@@ -210,7 +211,8 @@ export class DataFilterComponent implements OnInit {
   }
 
   updateFilterValues(query, checkboxStatus, dataset, initializeCheckbox) {
-    this.getQueryResults(query)
+    // this.getQueryResults(query)
+    this.apiService.getSecureData(query)
       .subscribe(res => {
         this.facetField = res['facet_counts']['facet_fields'];
         for (let category in this.facetField) {
@@ -362,7 +364,8 @@ export class DataFilterComponent implements OnInit {
       this.isLoading = true;
       let query = this.altStorage[dataset][cat]['altQuery'];
       if (query.length > 0) {
-        this.getQueryResults(query)
+        // this.getQueryResults(query)
+        this.apiService.getSecureData(query)
           .subscribe(res => {
             this.isLoading = false;
             this.facetField = res['facet_counts']['facet_fields'];
@@ -477,12 +480,13 @@ export class DataFilterComponent implements OnInit {
     this.isLoading = true;
     let searchQuery = this.searchQueryResults !== '' ? `(${this.searchQueryResults})` : '*'
     let query = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID`;
-    console.log("query: ", query)
-    this.getQueryResults(query)
+    // this.getQueryResults(query)
+    this.apiService.getSecureData(query)
       .subscribe(res => {
         let total = res['response']['numFound']
         let queryToGetAll = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
-        this.getQueryResults(queryToGetAll)
+        // this.getQueryResults(queryToGetAll)
+        this.apiService.getSecureData(queryToGetAll)
           .subscribe(res => {
             this.dataCustomPlots = res['response']['docs']
             this.emitCustomPlotData.emit(this.dataCustomPlots)
@@ -494,8 +498,8 @@ export class DataFilterComponent implements OnInit {
               this.filteredSubjectId.push(subjId)
             }
 
-            let postUrlSP = 'https://dev-civet-api.tm4.org/api/mt-dna/pl/cohort/';
-            let postUrlVP = 'https://dev-civet-api.tm4.org/api/mt-dna/ur/cohort/';
+            let postUrlSP = `${this.API_URL}/mt-dna/pl/cohort/`;
+            let postUrlVP = `${this.API_URL}/mt-dna/ur/cohort/`;
 
             this.getPlotPointsScatterPlot(postUrlSP, this.filteredSubjectId)
             this.getPlotPointsViolinPlot(postUrlVP, this.filteredSubjectId)
@@ -515,13 +519,15 @@ export class DataFilterComponent implements OnInit {
     }
 
     let query = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID`;
-    this.getQueryResults(query)
+    // this.getQueryResults(query)
+    this.apiService.getSecureData(query)
       .subscribe(res => {
         let total = res['response']['numFound']
         let queryToGetAll = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
         if (value === 'numeric') {
 
-          this.getQueryResults(queryToGetAll)
+          // this.getQueryResults(queryToGetAll)
+          this.apiService.getSecureData(queryToGetAll)
             .subscribe(res => {
               this.dataCustomPlots = res['response']['docs']
               this.isLoading = false
@@ -551,7 +557,8 @@ export class DataFilterComponent implements OnInit {
                 newQuery = (searchQuery === '*') ? `${selectedValue}:[${currentRange.start} TO ${currentRange.end}]` : `${selectedValue}:[${currentRange.start} TO ${currentRange.end}] AND ${this.searchQueryResults}`
                 let queryToGetAll = `${this.API_URL}/subject-query/?q=${newQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
 
-                this.getQueryResults(queryToGetAll)
+                // this.getQueryResults(queryToGetAll)
+                this.apiService.getSecureData(queryToGetAll)
                   .subscribe(res => {
                     this.dataCustomPlots = res['response']['docs']
                     //maybe instead of index, use a more descriptive name?????
@@ -561,7 +568,8 @@ export class DataFilterComponent implements OnInit {
 
             })
         } else {
-          this.getQueryResults(queryToGetAll)
+          // this.getQueryResults(queryToGetAll)
+          this.apiService.getSecureData(queryToGetAll)
             .subscribe(res => {
               this.dataCustomPlots = res['response']['docs']
               this.emitCustomPlotData2ndFilter.emit([this.dataCustomPlots, value])
@@ -572,10 +580,12 @@ export class DataFilterComponent implements OnInit {
                 let subjId = subject['SUBJID'];
                 tempArr.push(subjId)
               }
-              let postUrlVP = 'https://dev-civet-api.tm4.org/api/mt-dna/ur/cohort/';
-              this.getPlotPointsViolinPlot2ndFilter(postUrlVP, tempArr, value)
+              // let postUrlVP = 'https://dev-civet-api.tm4.org/api/mt-dna/ur/cohort/';
+              // let postUrlSP = 'https://dev-civet-api.tm4.org/api/mt-dna/pl/cohort/';
+              let postUrlVP = `${this.API_URL}/mt-dna/ur/cohort/`;
+              let postUrlSP = `${this.API_URL}/mt-dna/pl/cohort/`;
 
-              let postUrlSP = 'https://dev-civet-api.tm4.org/api/mt-dna/pl/cohort/'
+              this.getPlotPointsViolinPlot2ndFilter(postUrlVP, tempArr, value)
               this.getPlotPointsScatterPlot2ndFilter(postUrlSP, tempArr, value)
             })
         }
@@ -586,7 +596,6 @@ export class DataFilterComponent implements OnInit {
   getPlotPointsScatterPlot(url, array) {
     this.isLoading = true;
     this.apiService.postSecureData(url, array).subscribe(data => {
-      console.log("getPlotPointsScatterPlot ", url, array, data)
       this.isLoading = false;
       this.subjectIdEventSP.emit(data);
     })

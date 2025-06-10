@@ -3,6 +3,9 @@ import { DataFilterComponent } from '../data-filter/data-filter.component';
 import { ApiServiceService } from '../api-service.service';
 import { AuthenticationService } from '../authentication.service';
 import { environment } from '../../environments/environment';
+import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
+import { catchError } from "rxjs/operators";
 
 @Component({
   selector: 'app-dashboard',
@@ -26,10 +29,10 @@ export class DashboardComponent implements OnInit {
   dataType = {}
 
   constructor(
-    private authenticationService: AuthenticationService,
+    private authService: AuthenticationService,
     private apiService: ApiServiceService,
     private el: ElementRef,
-    // private renderer: Renderer2
+    private router: Router,
   ) { }
 
   username = environment.username;
@@ -64,46 +67,52 @@ export class DashboardComponent implements OnInit {
   selected1stCategory = 'AGE_DERV_V1';
   selected2ndCategory = 'BMI_CM_V1';
 
-  ngOnInit(): void {
-    this.isLoading = true;
-    this.authenticationService
-      .login(this.username, this.password)
-      .subscribe(
-        response => {
-          const url = `${this.API_URL}/subject-query/?q=GENDER:2&q.op=AND&facet=true&facet.field=ETHNICITY`
-          this.apiService.getSecureData(url).subscribe(res => {
-            this.isLoading = false
-            this.childComponent.initializeFilterData(['civet'])
-          })
+  ngOnInit() {
+    this.authService.areTokensExpired()
 
-          let dd_url = 'https://dev-civet-api.tm4.org/api/subject-dictionary/';
-          this.apiService.getSecureData(dd_url).subscribe(res => {
-            this.isLoading = false;
-            for (let item in res) {
-              const unformattedString = res[item]['VALUES']
-              const lines = unformattedString.split('\n');
-              let dictObj = {}
-              for (const line of lines) {
-                const [key, value] = line.split('=');
-                let newKey = !isNaN(key) && !this.dataDictExclude.includes(item) ? key + '.0' : key
-                dictObj[newKey] = value;
-              }
-              this.dataDict[item] = dictObj;
-              this.dataType[item] = res[item]['VALUE TYPE']
-            }
-            this.createFilterDataset(res)
-            // this.childComponent.getSubjectIds()
-          })
-        },
-        error => {
-          console.log("err: ", error)
+    const token = sessionStorage.getItem('AUTH_TOKEN');
+    if (!token) {
+      this.router.navigate(['/login']); // not logged in
+      return;
+    } else {
+      this.loadSubjectQuery();
+      this.loadSubjectDictionary();
+    }
+  }
+
+  loadSubjectQuery() {
+    const url = `${this.API_URL}/subject-query/?q=GENDER:2&q.op=AND&facet=true&facet.field=ETHNICITY`;
+    this.apiService.getSecureData(url).subscribe(res => {
+      // this.getQueryResults(url).subscribe(res => {
+      this.isLoading = false;
+      this.childComponent.initializeFilterData(['civet']);
+    });
+
+  }
+
+  loadSubjectDictionary() {
+    const dd_url = `${this.API_URL}/subject-dictionary/`;
+    this.apiService.getSecureData(dd_url).subscribe(res => {
+      // this.getQueryResults(dd_url).subscribe(res => {
+      this.isLoading = false;
+      for (let item in res) {
+        const unformattedString = res[item]['VALUES'];
+        const lines = unformattedString.split('\n');
+        let dictObj = {};
+        for (const line of lines) {
+          const [key, value] = line.split('=');
+          let newKey = !isNaN(key) && !this.dataDictExclude.includes(item) ? key + '.0' : key;
+          dictObj[newKey] = value;
         }
-      );
+        this.dataDict[item] = dictObj;
+        this.dataType[item] = res[item]['VALUE TYPE'];
+      }
+      this.createFilterDataset(res);
+    });
   }
 
   passDataSP(data: any) {
     this.dataPl = data;
-    console.log("datasp: ", this.dataPl, data)
   }
 
   passDataVP(data: any) {
@@ -146,7 +155,11 @@ export class DashboardComponent implements OnInit {
 
   passDataFilterDataset(data: any) {
     this.filterDataset = data;
+    this.currentCategories = [];
     for (let cat in this.filterDataset['civet']) {
+      // if (!this.currentCategories.includes(cat)) {
+      //   this.currentCategories.push(cat)
+      // }
       this.currentCategories.push(cat)
     }
   }
@@ -197,6 +210,7 @@ export class DashboardComponent implements OnInit {
 
     } else if (this.dataType[this.selected1stCategory] === 'Categorical' && this.dataType[this.selected2ndCategory] === 'Categorical') {
       //use heat map
+      this.customPlotData = {};
       for (let index in data) {
         if (data[index][this.selected1stCategory] && data[index][this.selected2ndCategory]) {
           let key = data[index]['SUBJID'];
@@ -402,8 +416,15 @@ export class DashboardComponent implements OnInit {
     }
   }
 
-  onCategoryChange() {
+  onCategoryChange(cat, value) {
     this.customPlotData = {}
+    if(cat === 'cat1'){
+      this.displaySummaryPlots(value)
+    }else{
+      this.updatePlots()
+    }
+    
+    
   }
 
   showSummaryPlot = false;
@@ -413,6 +434,7 @@ export class DashboardComponent implements OnInit {
     this.showSummaryPlot = true;
 
     if (this.dataType[category] === 'Categorical') {
+      Object.assign(this.dataBarChart, {}); // empties the opbject
       for (let index in this.filteredDataForCustomPlot) {
         if (this.filteredDataForCustomPlot[index][category]) {
           let subjectID = this.filteredDataForCustomPlot[index]['SUBJID']
@@ -420,7 +442,6 @@ export class DashboardComponent implements OnInit {
           let temp = {}
           temp[key] = 1
           this.dataBarChart[subjectID] = temp
-          console.log("bar chart: ", this.dataBarChart)
         }
       }
     } else {
@@ -431,7 +452,6 @@ export class DashboardComponent implements OnInit {
           let temp = {}
           temp['test'] = key
           this.dataHistogram[subjectID] = temp
-          console.log("histogram: ", this.dataHistogram)
         }
       }
     }
@@ -445,6 +465,11 @@ export class DashboardComponent implements OnInit {
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
+  }
+
+  logout() {
+    this.authService.logout()
+    this.router.navigate(['/login']);
   }
 }
 
