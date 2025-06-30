@@ -6,7 +6,6 @@ class civet (
   String                  $aws_region,
   Optional[String]        $app_user,
   String                  $backend_domain,
-  String                  $cloudwatch_log_group,
   String                  $database_host,
   Optional[String]        $database_superuser,
   Optional[String]        $database_superuser_password,
@@ -71,7 +70,6 @@ class civet (
   contain civet::postgresql
   contain civet::solr
   contain civet::supervisor
-  contain civet::cloudwatch_agent
 
   Class['civet::postgresql']
   ->
@@ -80,8 +78,4 @@ class civet (
   Class['civet::supervisor']
   ->
   Class['civet::nginx']
-  ->
-  # Note that we put cloudwatch agent last since
-  # installing/configuring earlier can lead to UID conflicts
-  Class['civet::cloudwatch_agent']
 }

@@ -9,9 +9,6 @@ resource "aws_ssm_document" "session_manager_prefs" {
   "description": "Document to hold regional settings for Session Manager",
   "sessionType": "Standard_Stream",
   "inputs": {
-    "cloudWatchLogGroupName": "${aws_cloudwatch_log_group.default.name}",
-    "cloudWatchEncryptionEnabled": true,
-    "cloudWatchStreamingEnabled": true,
     "idleSessionTimeout": "20",
     "runAsEnabled": false,
     "shellProfile": {
