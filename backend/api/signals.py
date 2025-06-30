@@ -4,8 +4,8 @@ from django.dispatch import receiver
 
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, **kwargs):
-    # reset_url = f"https://copd.civet-jq.tm4.org/reset-password?token={reset_password_token.key}"
-    reset_url = f"https://dev-civet-jq.tm4.org.s3-website.us-east-2.amazonaws.com/reset-password?token={reset_password_token.key}"
+    reset_url = f"https://civet.tm4.org/reset-password?token={reset_password_token.key}"
+
 
     send_mail(
         subject="Reset Your Civet Account Password",
@@ -20,6 +20,6 @@ def password_reset_token_created(sender, instance, reset_password_token, **kwarg
         "Best regards,\n"
         "The Civet Team"
     ),
-        from_email="snhong@hsph.harvard.edu",
+        from_email="noreply@civet.tm4.org",
         recipient_list=[reset_password_token.user.email]
     )

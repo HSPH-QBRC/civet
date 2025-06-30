@@ -114,9 +114,7 @@ export class DataFilterComponent implements OnInit {
 
   initializeFilterData(activeSets: string[]) {
     let dataset = activeSets[0]
-    // for (let dataset of activeSets) {
     this.createRangeDataStorage(dataset);
-    //builds the initial query string
     this.queryStringForFilters = this.getFacetFieldQuery(dataset);
     this.createAltQuery(dataset)
 
@@ -126,9 +124,9 @@ export class DataFilterComponent implements OnInit {
     if (!this.checkboxStatus[dataset]) {
       this.checkboxStatus[dataset] = {}
     }
-    //gets the numbers for each category
+ 
     this.updateFilterValues(this.queryStringForFilters, this.checkboxStatus[dataset], dataset, true);
-    // }
+   
   }
 
   createRangeDataStorage(dataset) {
@@ -137,7 +135,7 @@ export class DataFilterComponent implements OnInit {
     for (let i = 0; i < categoryArray.length; i++) {
       query += `&stats.field={!tag=piv1,piv2 min=true max=true}${categoryArray[i]}`
     }
-    // this.getQueryResults(query)
+   
     this.apiService.getSecureData(query)
       .subscribe(res => {
         let stats_field = res["stats"]["stats_fields"];
@@ -147,10 +145,10 @@ export class DataFilterComponent implements OnInit {
           }
           this.sliderStorage[dataset][cat] = {
             "count": 0,
-            "floor": stats_field[cat]["min"],
-            "ceil": stats_field[cat]["max"],
-            "low": stats_field[cat]["min"],
-            "high": stats_field[cat]["max"],
+            "floor": stats_field[cat]["min"] ? stats_field[cat]["min"] : 0,
+            "ceil": stats_field[cat]["max"] ? stats_field[cat]["max"] : 1,
+            "low": stats_field[cat]["min"] ? stats_field[cat]["min"] : 0,
+            "high": stats_field[cat]["max"] ? stats_field[cat]["max"] : 1,
             "not_reported": true
           }
         }
@@ -211,7 +209,6 @@ export class DataFilterComponent implements OnInit {
   }
 
   updateFilterValues(query, checkboxStatus, dataset, initializeCheckbox) {
-    // this.getQueryResults(query)
     this.apiService.getSecureData(query)
       .subscribe(res => {
         this.facetField = res['facet_counts']['facet_fields'];
