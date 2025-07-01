@@ -46,9 +46,6 @@
                             <mat-form-field>
                                 <mat-label>Select 1st Category</mat-label>
                                 <mat-select [(ngModel)]="selected1stCategory" (selectionChange)="onCategoryChange('cat1', selected1stCategory)">
-                                    <!-- <mat-option *ngFor="let category of filterCategory" [value]="category">
-                                        {{category}}
-                                    </mat-option> -->
                                     <mat-option *ngFor="let category of currentCategories" [value]="category">
                                         {{category}}
                                     </mat-option> 
@@ -84,9 +81,6 @@
                                 <mat-label>Select 1st Category</mat-label>
                                 <mat-select [(ngModel)]="selected1stCategory" (selectionChange)="onCategoryChange('cat2', selected1stCategory)"
                                     disabled>
-                                    <!-- <mat-option *ngFor="let category of filterCategory" [value]="category">
-                                        {{category}}
-                                    </mat-option> -->
                                     <mat-option *ngFor="let category of currentCategories" [value]="category">
                                         {{category}}
                                     </mat-option>
@@ -97,9 +91,6 @@
                         <mat-form-field>
                             <mat-label>Select 2nd Category</mat-label>
                             <mat-select [(ngModel)]="selected2ndCategory" (selectionChange)="onCategoryChange('cat2', selected2ndCategory)">
-                                <!-- <mat-option *ngFor="let category of filterCategory" [value]="category">
-                                    {{category}}
-                                </mat-option> -->
                                 <mat-option *ngFor="let category of currentCategories" [value]="category">
                                     {{category}}
                                 </mat-option>
@@ -111,11 +102,7 @@
                             Plots</button>
                         <br>
                     </div>
-
-
-
                 </div>
-
 
                 <div id="a2ndFilter">
                     <div *ngIf="isNotEmpty(customPlotData) && showCustomPlots">
@@ -147,9 +134,6 @@
                 <mat-form-field *ngIf="dataUR">
                     <mat-label>Add Another Filter</mat-label>
                     <mat-select (selectionChange)="onFilterSelected($event.value)">
-                        <!-- <mat-option *ngFor="let category of filterCategory" [value]="category">
-                            {{category}}
-                        </mat-option> -->
                         <mat-option *ngFor="let category of currentCategories" [value]="category">
                             {{category}}
                         </mat-option>
@@ -179,11 +163,6 @@
 
                     <div *ngIf="dataVP2ndFilter" class="plots-container2">
                         <ng-container *ngFor="let data of getObjectValues(dataVP2ndFilter); let i = index">
-                            <!-- <app-violinplot [dataUR]="data" [plotNum]="i" [dataDictionary]="dataDict"
-                                [selectedCategory]="selectedCategory" [minYViolinplot]="minViolinplot"
-                                [maxYViolinplot]="maxViolinplot" [maxValue]="maxNum" [numberOfBins]="numberOfBins">
-                            </app-violinplot> -->
-                            <!-- what is minviolinplot for?? -->
                             <app-violinplot [dataUR]="data" [plotNum]="i" [dataDictionary]="dataDict"
                                 [selectedCategory]="selectedCategory" [maxValue]="maxNum" [numberOfBins]="numberOfBins">
                             </app-violinplot>
@@ -223,7 +202,6 @@
                 Some content for All
             </mat-tab>
         </mat-tab-group>
-
 
     </div>
 </div>

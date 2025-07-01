@@ -1,6 +1,5 @@
 import { Component, ChangeDetectionStrategy, Input, OnInit } from '@angular/core';
 import { DataFilterComponent } from '../data-filter/data-filter.component';
-// import * as dataDictionary from '../data-filter/data_dictionary';
 
 @Component({
   selector: 'mev-checkbox',
@@ -30,7 +29,6 @@ export class CheckboxComponent implements OnInit {
   
 
   ngOnInit(): void {
-    // this.dataDict = dataDictionary.data_dictionary
     this.dataDict = this.test_dictionary
     this.objectLength = Object.keys(this.info.value).length;
 

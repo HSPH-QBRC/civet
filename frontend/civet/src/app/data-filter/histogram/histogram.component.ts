@@ -38,7 +38,6 @@ export class HistogramMiniComponent implements OnChanges {
   }
 
   getData(dataset, category) {
-    // let query = `${this.API_URL}/public-datasets/query/${dataset}/?q=${this.queryParams}&facet=true&facet.field=${category}`;
     let query = `${this.API_URL}/subject-query/?q=${this.queryParams}&facet=true&facet.field=${category}`;
     this.getQueryResults(query)
       .subscribe(res => {
@@ -56,12 +55,6 @@ export class HistogramMiniComponent implements OnChanges {
         for (let i = 0; i < this.histogramDataStorage[dataset][category].length; i++) {
           let object1 = this.histogramDataStorage[dataset][category][i]
           for (const [key, value] of Object.entries(object1)) {
-            // for (let j = 0; j < value; j++) {
-            //   let tempObject = {
-            //     "value": parseInt(key)
-            //   }
-            //   this.countArray.push(tempObject)
-            // }
             let tempObject = {
               "value": parseInt(key)
             }
@@ -69,7 +62,6 @@ export class HistogramMiniComponent implements OnChanges {
             for (let j = 0; j < Number(value); j++) {
               this.countArray.push(tempObject)
             }
-            // this.countArray.push(tempObject)
           }
         }
         let min = this.sliderdata[dataset][category]["floor"];
@@ -88,7 +80,6 @@ export class HistogramMiniComponent implements OnChanges {
     // set the dimensions and margins of the graph
     let margin = { top: 10, right: 10, bottom: 20, left: 10 },
       width = 180 - margin.left - margin.right,
-      // width = 210,
       height = 140 - margin.top - margin.bottom;
 
     // append the svg object to the body of the page
@@ -102,7 +93,6 @@ export class HistogramMiniComponent implements OnChanges {
 
     // X axis: scale and draw:
     let x = d3.scaleLinear()
-      // .domain([d3.min(this.countArray, function (d) { return +d.value }), d3.max(this.countArray, function (d) { return +d.value })])     // can use this instead of 1000 to have the max of data: d3.max(data, function(d) { return +d.price })
       .domain([min, max])
       .range([0, width]);
     svg.append("g")
@@ -112,7 +102,6 @@ export class HistogramMiniComponent implements OnChanges {
     // set the parameters for the histogram
     let histogram = d3.histogram()
       .value(function (d) { return d['value']; })   // I need to give the vector of value
-      // .domain(x.domain())  // then the domain of the graphic
       .domain([min, max] as [number, number])
       .thresholds(x.ticks(20)); // then the numbers of bins
 
@@ -122,11 +111,8 @@ export class HistogramMiniComponent implements OnChanges {
     let y = d3.scaleLinear()
       .range([height, 0]);
     y.domain([0, d3.max(bins, function (d) { return d.length; })]);   // d3.hist has to be called before the Y axis obviously
-    // svg.append("g")
-    //   .call(d3.axisLeft(y).tickFormat(""))
 
     // append the bar rectangles to the svg element
-    // let bar = svg.selectAll("rect")
     let bar = svg.selectAll<SVGRectElement, d3.Bin<number, number>>("rect")
       .data(bins, d => d['x0'])
 

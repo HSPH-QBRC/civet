@@ -361,7 +361,6 @@ export class DataFilterComponent implements OnInit {
       this.isLoading = true;
       let query = this.altStorage[dataset][cat]['altQuery'];
       if (query.length > 0) {
-        // this.getQueryResults(query)
         this.apiService.getSecureData(query)
           .subscribe(res => {
             this.isLoading = false;
@@ -441,7 +440,6 @@ export class DataFilterComponent implements OnInit {
     this.isLoading = false;
 
     this.checkBoxObj = {};
-    // this.altStorage = {};
     this.mainQuery = '*';
 
     this.resetVariables()
@@ -477,12 +475,10 @@ export class DataFilterComponent implements OnInit {
     this.isLoading = true;
     let searchQuery = this.searchQueryResults !== '' ? `(${this.searchQueryResults})` : '*'
     let query = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID`;
-    // this.getQueryResults(query)
     this.apiService.getSecureData(query)
       .subscribe(res => {
         let total = res['response']['numFound']
         let queryToGetAll = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
-        // this.getQueryResults(queryToGetAll)
         this.apiService.getSecureData(queryToGetAll)
           .subscribe(res => {
             this.dataCustomPlots = res['response']['docs']
@@ -516,14 +512,11 @@ export class DataFilterComponent implements OnInit {
     }
 
     let query = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID`;
-    // this.getQueryResults(query)
     this.apiService.getSecureData(query)
       .subscribe(res => {
         let total = res['response']['numFound']
         let queryToGetAll = `${this.API_URL}/subject-query/?q=${searchQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
         if (value === 'numeric') {
-
-          // this.getQueryResults(queryToGetAll)
           this.apiService.getSecureData(queryToGetAll)
             .subscribe(res => {
               this.dataCustomPlots = res['response']['docs']
@@ -553,19 +546,15 @@ export class DataFilterComponent implements OnInit {
                 let currentRange = bin[index]
                 newQuery = (searchQuery === '*') ? `${selectedValue}:[${currentRange.start} TO ${currentRange.end}]` : `${selectedValue}:[${currentRange.start} TO ${currentRange.end}] AND ${this.searchQueryResults}`
                 let queryToGetAll = `${this.API_URL}/subject-query/?q=${newQuery}&facet=true&facet.field=SUBJID&rows=${total}`;
-
-                // this.getQueryResults(queryToGetAll)
                 this.apiService.getSecureData(queryToGetAll)
                   .subscribe(res => {
                     this.dataCustomPlots = res['response']['docs']
-                    //maybe instead of index, use a more descriptive name?????
                     this.emitCustomPlotData2ndFilter.emit([this.dataCustomPlots, index])
                   })
               }
 
             })
         } else {
-          // this.getQueryResults(queryToGetAll)
           this.apiService.getSecureData(queryToGetAll)
             .subscribe(res => {
               this.dataCustomPlots = res['response']['docs']
@@ -577,8 +566,6 @@ export class DataFilterComponent implements OnInit {
                 let subjId = subject['SUBJID'];
                 tempArr.push(subjId)
               }
-              // let postUrlVP = 'https://dev-civet-api.tm4.org/api/mt-dna/ur/cohort/';
-              // let postUrlSP = 'https://dev-civet-api.tm4.org/api/mt-dna/pl/cohort/';
               let postUrlVP = `${this.API_URL}/mt-dna/ur/cohort/`;
               let postUrlSP = `${this.API_URL}/mt-dna/pl/cohort/`;
 
@@ -586,7 +573,6 @@ export class DataFilterComponent implements OnInit {
               this.getPlotPointsScatterPlot2ndFilter(postUrlSP, tempArr, value)
             })
         }
-
       })
   }
 

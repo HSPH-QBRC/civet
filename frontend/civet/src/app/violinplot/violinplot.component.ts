@@ -102,7 +102,6 @@ export class ViolinplotComponent implements OnChanges {
     for (let key in this.dataUR) {
       let obj = this.dataUR[key]
       let category = Object.keys(obj)[0];
-      // let value = obj[category];
       let value = this.logCheckbox ? Math.log2(obj[category]) : obj[category];
 
       if ((parseInt(category) || category === '0') && !this.dataDictExclude.includes(this.xAxisLabel)) {
@@ -116,10 +115,6 @@ export class ViolinplotComponent implements OnChanges {
       } else if (!this.newYRangeSet) {
         this.categoryArr.push(category)
       }
-
-      // if (!this.categoryArr.includes(category)) {
-      //   this.categoryArr.push(category)
-      // }
 
       if (this.minYViolinplot !== undefined) {
         this.vpMin = this.minYViolinplot;
@@ -177,10 +172,8 @@ export class ViolinplotComponent implements OnChanges {
 
     // Build and Show the Y scale
     var y = d3.scaleLinear()
-      // .domain([this.vpMin, this.vpMax])          // Note that here the Y scale is set manually
       .domain([this.minYRange, this.maxYRange])
       .range([height, 0])
-    // svg.append("g").call(d3.axisLeft(y))
     svg.append("g")
       .call(this.logCheckbox ? d3.axisLeft(y).tickFormat(d => `${Math.pow(2, +d).toLocaleString()}`) : d3.axisLeft(y));
 
@@ -194,18 +187,13 @@ export class ViolinplotComponent implements OnChanges {
       .attr("transform", "translate(0," + height + ")")
       .call(d3.axisBottom(x))
       .selectAll("text")
-      // .style("text-anchor", "end")
       .style("text-anchor", "middle")
       .call(wrap, width / (this.categoryArr.length * 2))
-      // .attr("dx", "-.8em")
       .attr("dy", ".15em")
-      // .attr("transform", "translate(-20,0)rotate(-65)")
 
     // Features of the histogram
     var histogram = d3.histogram()
-      // .domain([this.vpMin, this.vpMax])
       .domain([this.minYRange, this.maxYRange])
-      // .domain(y.domain())
       .thresholds(y.ticks(parseInt(this.numberOfBins)))    // Important: how many bins approx are going to be made? It is the 'resolution' of the violin plot
       .value(d => d)
 
@@ -255,13 +243,6 @@ export class ViolinplotComponent implements OnChanges {
         .y(function (d) { return (y(d['x0'])) })
         .curve(d3.curveCatmullRom)    // This makes the line smoother to give the violin appearance. Try d3.curveStep to see the difference
       )
-
-    // svg.append("text")
-    //   .attr("x", (width / 2)) // Center the text horizontally
-    //   .attr("y", 0 - (margin.top / 2) + 15) // Position it above the top margin
-    //   .attr("text-anchor", "middle") // Center-align the text horizontally
-    //   .style("font-size", "12px") // Set the font size
-    //   .text(this.dataDictionary[this.selectedCategory] !== undefined ? (this.dataDictionary[this.selectedCategory][this.category] === undefined ? this.category : this.dataDictionary[this.selectedCategory][this.category]) : 'Violin Plot');
 
     svg.append("text")
       .attr("transform", "rotate(-90)") // Rotate the text to make it vertical

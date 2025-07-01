@@ -153,9 +153,6 @@ export class DashboardComponent implements OnInit {
     this.filterDataset = data;
     this.currentCategories = [];
     for (let cat in this.filterDataset['civet']) {
-      // if (!this.currentCategories.includes(cat)) {
-      //   this.currentCategories.push(cat)
-      // }
       this.currentCategories.push(cat)
     }
   }
@@ -297,10 +294,6 @@ export class DashboardComponent implements OnInit {
 
   createFilterDataset(data) {
     for (let cat in data) {
-      // let valueType = data[cat]['VALUE TYPE'];
-      // if (valueType === 'Categorical' && this.currentCategories.includes(cat)) {
-      //   this.filterCategory.push(cat)
-      // }
       if (this.currentCategories.includes(cat) || this.currentSliderCategories.includes(cat)) {
         this.filterCategory.push(cat)
       }
