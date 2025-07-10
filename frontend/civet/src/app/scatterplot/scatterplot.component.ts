@@ -207,39 +207,23 @@ export class ScatterplotComponent implements OnChanges {
 
     var categories = ['VISIT_1', 'VISIT_4'];
 
-    // Add X axis
-    // var x = d3.scaleBand() //change to scale linear
-    //   .domain(categories)
-    //   .range([0, width])
-    //   // .paddingInner(1)
-
     var x = d3.scaleLinear()
-      // .domain([this.xMin, this.xMax])
       .domain([this.minXRange, this.maxXRange])
       .range([0, width]);
 
-    // const bandWidth = x.bandwidth();
-
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
-      // .call(d3.axisBottom(x)
-      //   .tickSize(0) // Remove tick marks
-      // )
       .call(this.logCheckboxX ? d3.axisBottom(x).tickFormat(d => `${Math.pow(2, +d).toLocaleString()}`) : d3.axisBottom(x))
       .selectAll("text")
       .style("text-anchor", "start") // Align text to the start of the band
       .attr("dx", "-.8em")
-      // .attr("dx", -bandWidth)
-      // .attr("dx", (-bandWidth / 2 - 15)) // Adjust the horizontal position of labels
       .attr("dy", "20px"); // Adjust the vertical position of labels
 
     // Add Y axis
     var y = d3.scaleLinear()
-      // .domain([this.yMin, this.yMax])
       .domain([this.minYRange, this.maxYRange])
       .range([height, 0]);
     svg.append("g")
-      // .call(d3.axisLeft(y));
       .call(this.logCheckboxY ? d3.axisLeft(y).tickFormat(d => `${Math.pow(2, +d).toLocaleString()}`) : d3.axisLeft(y));
 
 
@@ -250,7 +234,6 @@ export class ScatterplotComponent implements OnChanges {
       .enter()
       .append("circle")
       .attr("cx", function (d) { return x(d.xValue); })
-      // .attr("cx", function (d) { return x(d.xValue); })
       .attr("cy", function (d) { return y(d.yValue); })
       .attr("r", 3)
       .style("fill", "#69b3a2")
@@ -261,26 +244,6 @@ export class ScatterplotComponent implements OnChanges {
       .on('mouseout', pointTip.hide);
 
     const groupedData = d3.group(this.scatterPlotData, d => d.key);
-
-    // const line = d3.line<{ xValue: string; yValue: number }>()
-    //   .x(d => {
-    //     const xValue = x(d.xValue);
-    //     return xValue !== undefined ? xValue : 0; // Provide a default value or handle missing data appropriately
-    //   })
-    //   .y(d => {
-    //     const yValue = y(d.yValue);
-    //     return yValue !== undefined ? yValue : 0; // Provide a default value or handle missing data appropriately
-    //   });
-
-    // svg.selectAll(".line")
-    //   .data(groupedData)
-    //   .enter()
-    //   .append("path")
-    //   .attr("class", "line")
-    //   .attr("d", d => line(d[1])) // "d[1]" contains the grouped data, which is an array of points with matching "key" values
-    //   .style("stroke", "#69b3a2")
-    //   .style("stroke-width", 1)
-    //   .style("fill", "none");
 
     svg.append("text")
       .attr("transform", "rotate(-90)") // Rotate the text to make it vertical
@@ -301,8 +264,6 @@ export class ScatterplotComponent implements OnChanges {
       .style('text-anchor', 'middle')
       .style('font-size', '10px')
       .text(this.xAxisLabel);
-
-    // let category = !isNaN(Number(this.plotNum)) && !this.dataDictExclude.includes(this.selectedCategory) ? this.plotNum + '.0' : this.plotNum
 
     svg.append("text")
       .attr("x", (width / 2)) // Center the text horizontally

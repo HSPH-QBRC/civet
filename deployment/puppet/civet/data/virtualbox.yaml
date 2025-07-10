@@ -2,7 +2,6 @@
 civet::app_user: "vagrant"
 civet::aws_region: ""
 civet::backend_domain: "localhost"
-civet::cloudwatch_log_group: ""
 civet::database_host: "localhost"
 civet::database_user: "%{civet::app_user}"
 civet::database_user_password: "pass"

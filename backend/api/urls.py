@@ -32,8 +32,6 @@ urlpatterns = [
     path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('csrf/', get_csrf, name='get_csrf'),
-#     path("password_reset/", auth_views.PasswordResetView.as_view(), name="password_reset"),
-#     path("password_reset/done/", auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
     path("password_reset/", reset_password_request_token, name='reset-password-request'),
     path("password_reset/confirm/", reset_password_confirm, name='reset-password-confirm'),
 

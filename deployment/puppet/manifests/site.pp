@@ -1,7 +1,6 @@
 class { 'civet':
   aws_region                     => $facts['aws_region'],
   backend_domain                 => $facts['backend_domain'],
-  cloudwatch_log_group           => $facts['cloudwatch_log_group'],
   database_host                  => $facts['database_host'],
   database_superuser             => $facts['database_superuser'],
   database_superuser_password    => $facts['database_superuser_password'],

@@ -51,32 +51,6 @@ resource "aws_iam_role_policy_attachment" "api_server_ssm" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
 
-resource "aws_iam_role_policy_attachment" "api_server_cloudwatch" {
-  role       = aws_iam_role.api_server_role.id
-  policy_arn = "arn:aws:iam::aws:policy/AWSOpsWorksCloudWatchLogs"
-}
-
-resource "aws_iam_role_policy_attachment" "api_server_cloudwatch_agent" {
-  role       = aws_iam_role.api_server_role.id
-  policy_arn = "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
-}
-
-resource "aws_iam_role_policy" "log_retention" {
-  name   = "AllowCLoudWatchLogRetention"
-  role   = aws_iam_role.api_server_role.id
-  policy = jsonencode(
-    {
-      Version   = "2012-10-17",
-      Statement = [
-        {
-          Effect   = "Allow",
-          Action   = ["logs:PutRetentionPolicy"],
-          Resource = "*"
-        }
-      ]
-    }
-  )
-}
 
 resource "aws_iam_instance_profile" "api_server_instance_profile" {
   name = "${local.common_tags.Name}-api"
@@ -156,7 +130,6 @@ resource "aws_instance" "api" {
   # configure and run Puppet
   export FACTER_AWS_REGION='${data.aws_region.current.name}'
   export FACTER_BACKEND_DOMAIN='${var.backend_domain}'
-  export FACTER_CLOUDWATCH_LOG_GROUP='${aws_cloudwatch_log_group.default.name}'
   export FACTER_DATABASE_HOST='${aws_db_instance.default.address}'
   export FACTER_DATABASE_SUPERUSER='${aws_db_instance.default.username}'
   export FACTER_DATABASE_SUPERUSER_PASSWORD='${aws_db_instance.default.password}'

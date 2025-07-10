@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-password-reset',
@@ -13,6 +14,7 @@ export class PasswordResetComponent implements OnInit {
   resetForm: FormGroup;
   token: string | null = null;
   resetError = false;
+  private readonly API_URL = environment.API_URL;
 
   constructor(
     private fb: FormBuilder,
@@ -44,7 +46,7 @@ export class PasswordResetComponent implements OnInit {
       return;
     }
 
-    const resetUrl = 'https://dev-civet-jq-api.tm4.org/api/password_reset/confirm/';
+    const resetUrl = `${this.API_URL}/password_reset/confirm/`;
     const body = {
       token: this.token,
       password: password

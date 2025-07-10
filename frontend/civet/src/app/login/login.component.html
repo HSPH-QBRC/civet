@@ -7,7 +7,6 @@
             <mat-card-content>
                 <mat-form-field class="example-full-width">
                     <mat-label>Username</mat-label>
-                    <!-- <input matInput [(ngModel)]="username" name="username" required > -->
                     <input matInput [(ngModel)]="username" name="username" required #usernameInput="ngModel" />
                     <mat-error *ngIf="usernameInput.invalid && usernameInput.touched">
                         <span *ngIf="usernameInput.errors?.required">Username is required.</span>

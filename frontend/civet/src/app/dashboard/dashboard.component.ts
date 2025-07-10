@@ -1,11 +1,9 @@
-import { Component, OnInit, ViewChild, ElementRef, Renderer2, } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { DataFilterComponent } from '../data-filter/data-filter.component';
 import { ApiServiceService } from '../api-service.service';
 import { AuthenticationService } from '../authentication.service';
 import { environment } from '../../environments/environment';
-import { ActivatedRouteSnapshot, CanActivate, Router } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-import { catchError } from "rxjs/operators";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -83,7 +81,6 @@ export class DashboardComponent implements OnInit {
   loadSubjectQuery() {
     const url = `${this.API_URL}/subject-query/?q=GENDER:2&q.op=AND&facet=true&facet.field=ETHNICITY`;
     this.apiService.getSecureData(url).subscribe(res => {
-      // this.getQueryResults(url).subscribe(res => {
       this.isLoading = false;
       this.childComponent.initializeFilterData(['civet']);
     });
@@ -93,7 +90,6 @@ export class DashboardComponent implements OnInit {
   loadSubjectDictionary() {
     const dd_url = `${this.API_URL}/subject-dictionary/`;
     this.apiService.getSecureData(dd_url).subscribe(res => {
-      // this.getQueryResults(dd_url).subscribe(res => {
       this.isLoading = false;
       for (let item in res) {
         const unformattedString = res[item]['VALUES'];
@@ -157,9 +153,6 @@ export class DashboardComponent implements OnInit {
     this.filterDataset = data;
     this.currentCategories = [];
     for (let cat in this.filterDataset['civet']) {
-      // if (!this.currentCategories.includes(cat)) {
-      //   this.currentCategories.push(cat)
-      // }
       this.currentCategories.push(cat)
     }
   }
@@ -301,10 +294,6 @@ export class DashboardComponent implements OnInit {
 
   createFilterDataset(data) {
     for (let cat in data) {
-      // let valueType = data[cat]['VALUE TYPE'];
-      // if (valueType === 'Categorical' && this.currentCategories.includes(cat)) {
-      //   this.filterCategory.push(cat)
-      // }
       if (this.currentCategories.includes(cat) || this.currentSliderCategories.includes(cat)) {
         this.filterCategory.push(cat)
       }

@@ -222,7 +222,6 @@ export class ConnectedScatterplotComponent implements OnChanges {
       .data(this.scatterPlotData)
       .enter()
       .append("circle")
-      // .attr("cx", function (d) { return x(d.xValue); })
       .attr("cx", function (d) { return String(x(d.xValue)); })
       .attr("cy", function (d) { return y(d.yValue); })
       .attr("r", 3)

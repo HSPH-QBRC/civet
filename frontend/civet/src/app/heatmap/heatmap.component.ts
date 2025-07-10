@@ -31,7 +31,6 @@ export class HeatmapComponent implements OnChanges {
   logCounts: boolean = false;
 
   ngOnChanges(changes: SimpleChanges): void {
-    // this.idValue = 'my_heatmap_' + this.plotNum;
     this.resetVariables();
     this.formatData()
   }
@@ -168,7 +167,6 @@ export class HeatmapComponent implements OnChanges {
         return tipBox
       });
 
-    // d3.select(`#my_heatmap_${this.plotNum}`)
     d3.select(`#${this.idValue}`)
       .selectAll('svg')
       .remove();
@@ -192,9 +190,6 @@ export class HeatmapComponent implements OnChanges {
       .range([0, width])
       .domain(this.xArr)
       .padding(0.01);
-    // svg.append("g")
-    //   .attr("transform", "translate(0," + height + ")")
-    //   .call(d3.axisBottom(x))
 
     svg.append("g")
       .attr("transform", "translate(0," + height + ")")
@@ -290,7 +285,6 @@ export class HeatmapComponent implements OnChanges {
       .text(this.xAxisLabel)
 
     var countColorData = [{ "color": "royalblue", "value": 0 }, { "color": "crimson", "value": this.maxCount }];
-    // var extent = d3.extent(countColorData, d => this.logCounts ? Math.log2(d.value) : d.value);
     var extent = d3.extent(countColorData, d => {
       return (this.logCounts && d.value !== 0) ? Math.log2(d.value) : d.value;
     });
@@ -304,8 +298,6 @@ export class HeatmapComponent implements OnChanges {
     var xScaleCorr = d3.scaleLinear()
       .range([0, innerWidth - 100])
       .domain(extent);
-
-    // var xTicks = countColorData.filter(f => f.value === this.min || f.value === this.max).map(d => d.value);
 
     let xTicksCorr = [0, this.maxCount]
 

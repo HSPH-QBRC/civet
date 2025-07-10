@@ -37,15 +37,8 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://copd.civet-jq.tm4.org",
+    "https://civet.tm4.org",
 ]
-
-# REMOVE THESE HARDCODED VALUES AFTER DONE TESTING from base_settings.py
-# CSRF_TRUSTED_ORIGINS.append('http://dev-civet.tm4.org.s3-website.us-east-2.amazonaws.com')
-CSRF_TRUSTED_ORIGINS.append('http://dev-civet-jq.tm4.org.s3-website-us-east-2.amazonaws.com')
-CSRF_TRUSTED_ORIGINS.append('https://copd.civet-jq.tm4.org/')
-
-# CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_ALLOW_ALL = False
 CORS_ORIGIN_WHITELIST = [
@@ -285,9 +278,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'email-smtp.us-east-2.amazonaws.com'  # use your correct AWS SES region
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = ''
+EMAIL_HOST_USER = 'AKIATSKOPZNVUU3KM3C3'
 EMAIL_HOST_PASSWORD = ''
-DEFAULT_FROM_EMAIL = 'snhong@hsph.harvard.edu'
+DEFAULT_FROM_EMAIL = 'noreply@civet.tm4.org'
 
 ###############################################################################
 # END Email configuration for password reset (using Amazon SES)
