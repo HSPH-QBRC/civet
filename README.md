@@ -110,5 +110,32 @@ To enable password reset by email, you need to set up Amazon SES and configure D
    EMAIL_USE_TLS = True
    DEFAULT_FROM_EMAIL = "<verified_sender@example.com>"
 
+
+
+## CIVET Frontend
+
+
+### Deployment
+
+Replace`{s3 bucket name}` with your actual S3 bucket name:
+
+```bash
+ng build --configuration production
+cd dist/civet
+aws s3 rm s3://{s3 bucket name} --recursive
+aws s3 sync . s3://{s3 bucket name}
+```
+
+## Environmental Variables
+The frontend requires the following environment variables, configured in your `environment.ts` or `environment.prod.ts` file:
+
+```typescript
+export const environment = {
+  production: false, // Set to true in production builds
+  username: '',      // API username
+  password: '',      // API password
+  API_URL: 'https://dev-civet-jq-api.tm4.org' // Base URL for CIVET backend API
+};
+
 ## Website
 [https://civet.tm4.org](https://civet.tm4.org/)
