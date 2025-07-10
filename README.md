@@ -90,5 +90,25 @@ User = get_user_model()
 user = User.objects.create_user('username', 'email@email.com', 'password')
 ```
 
-## URL 
-[COPD link](http://dev-civet-jq.tm4.org.s3-website.us-east-2.amazonaws.com/)
+## Email for Password Reset
+To enable password reset by email, you need to set up Amazon SES and configure Django to send emails.
+1. **Set up Amazon SES**
+   - Go to the [Amazon SES Console](https://console.aws.amazon.com/ses/home).
+   - Verify your sender email address or domain.
+   - If your account is in the SES sandbox, [request production access](https://docs.aws.amazon.com/ses/latest/dg/request-production-access.html) to be able to send to unverified addresses.
+   - Note your SES SMTP settings for your region.
+
+2. **Update Django settings**
+   In your Django settings file (e.g., `base_settings.py`), configure your email backend and credentials, for example:
+
+   ```python
+   EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+   EMAIL_HOST = "email-smtp.us-east-2.amazonaws.com"
+   EMAIL_PORT = 587
+   EMAIL_HOST_USER = "<your_smtp_username>"
+   EMAIL_HOST_PASSWORD = "<your_smtp_password>"
+   EMAIL_USE_TLS = True
+   DEFAULT_FROM_EMAIL = "<verified_sender@example.com>"
+
+## Website
+[https://civet.tm4.org](https://civet.tm4.org/)

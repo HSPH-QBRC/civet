@@ -6,7 +6,6 @@ from django.dispatch import receiver
 def password_reset_token_created(sender, instance, reset_password_token, **kwargs):
     reset_url = f"https://civet.tm4.org/reset-password?token={reset_password_token.key}"
 
-
     send_mail(
         subject="Reset Your Civet Account Password",
         message=(
