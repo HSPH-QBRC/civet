@@ -136,6 +136,7 @@ export const environment = {
   password: '',      // API password
   API_URL: 'https://dev-civet-jq-api.tm4.org' // Base URL for CIVET backend API
 };
+```
 
 ## Website
 [https://civet.tm4.org](https://civet.tm4.org/)
